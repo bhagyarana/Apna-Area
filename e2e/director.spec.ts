@@ -53,6 +53,7 @@ test("director: streams SSE progress chips, drops 5 mission pins, and navigates 
 
     // 1. Skip camera tour with Escape and select the recorded fixture's office via chip/combobox
     await page.keyboard.press("Escape");
+    await expect(page.getByTestId("office-combobox-input")).toBeVisible();
     const targetOffice = worldData.dataset.places.find((p) => p.id === recordedPlan.officePlaceId);
     expect(targetOffice).toBeDefined();
 

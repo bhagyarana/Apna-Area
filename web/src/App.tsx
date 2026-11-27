@@ -5,25 +5,30 @@
  * Outputs: Interactive ORR Neon Dusk map stage with OfficePicker, ProgressChips, WeekProgressBar, MissionCard, and MissionDialog.
  * Deliberately excludes: Client-side API keys or unverified fallback places.
  */
-import { useCallback, useMemo, useState, type JSX } from "react";
-import { resolveComfortLanguage, type DifficultyState } from "@apna-area/shared";
+import { lazy, Suspense, useCallback, useMemo, useState, type JSX } from "react";
+import { resolveComfortLanguage, type DifficultyState, type SurvivalPhrase } from "@apna-area/shared";
 import { HealthBadge } from "./components/HealthBadge";
 import { MissionCard } from "./hud/MissionCard";
+import { PhrasebookPill } from "./hud/PhraseFlyCard";
 import { ProgressChips } from "./hud/ProgressChips";
 import { useDirectorStream } from "./hud/useDirectorStream";
 import { WeekProgressBar } from "./hud/WeekProgressBar";
-import { MissionDialog } from "./live/MissionDialog";
 import { OrrMap } from "./map/OrrMap";
 import { OfficePicker } from "./picker/OfficePicker";
 import { TunePopover } from "./picker/TunePopover";
 import {
   loadPlayerPreferences,
+  recordLearnedPhraseId,
   savePlayerPreferences,
   type BudgetBand,
   type LanguageComfort,
   type PlayerPreferences,
 } from "./state/sessionStore";
 import { useWorldBootstrap } from "./state/useWorldBootstrap";
+
+const LazyMissionDialog = lazy(() =>
+  import("./live/MissionDialog").then((m) => ({ default: m.MissionDialog })),
+);
 
 const INITIAL_DIFFICULTY: DifficultyState = {
   localLanguageShare: 0,
@@ -41,6 +46,7 @@ export function App(): JSX.Element {
   const { config, world, worldReady, loadError } = useWorldBootstrap();
   const [activeMissionIndex, setActiveMissionIndex] = useState(0);
   const [inVoiceMission, setInVoiceMission] = useState(false);
+  const [phrasePulse, setPhrasePulse] = useState(false);
   const { director, buildWeek, cancelGeneration, clearWeek } = useDirectorStream();
 
   const [tourActive, setTourActive] = useState<boolean>(() => {
@@ -98,6 +104,12 @@ export function App(): JSX.Element {
     return m ? placesById.get(m.placeId) : undefined;
   }, [director.weekPlan, activeMissionIndex, placesById]);
 
+  const handlePhraseMastered = useCallback((phrase: SurvivalPhrase) => {
+    setPrefs(recordLearnedPhraseId(phrase.id));
+    setPhrasePulse(true);
+    window.setTimeout(() => setPhrasePulse(false), 620);
+  }, []);
+
   const bannerMessage = loadError ?? director.errorMessage;
 
   return (
@@ -139,6 +151,9 @@ export function App(): JSX.Element {
         )}
 
         <div className="topbar-actions">
+          {!tourActive && config.enabledLanguages.includes("kn") && (
+            <PhrasebookPill count={prefs.learnedPhraseIds.length} pulse={phrasePulse} />
+          )}
           {!tourActive && (
             <TunePopover
               budgetBand={prefs.budgetBand}
@@ -159,20 +174,23 @@ export function App(): JSX.Element {
           Play your first week before it happens.
         </div>
       ) : inVoiceMission && director.weekPlan && selectedOffice && activeMissionPlace ? (
-        <MissionDialog
-          mission={director.weekPlan.missions[activeMissionIndex] ?? director.weekPlan.missions[0]!}
-          missionIndex={activeMissionIndex}
-          office={selectedOffice}
-          missionPlace={activeMissionPlace}
-          difficulty={INITIAL_DIFFICULTY}
-          activeLanguage={resolveComfortLanguage(prefs.languageComfort, config.enabledLanguages)}
-          languageComfort={prefs.languageComfort}
-          onExitMission={() => setInVoiceMission(false)}
-          onAdvanceNextMission={() => {
-            setInVoiceMission(false);
-            setActiveMissionIndex((prev) => (prev + 1) % director.weekPlan!.missions.length);
-          }}
-        />
+        <Suspense fallback={null}>
+          <LazyMissionDialog
+            mission={director.weekPlan.missions[activeMissionIndex] ?? director.weekPlan.missions[0]!}
+            missionIndex={activeMissionIndex}
+            office={selectedOffice}
+            missionPlace={activeMissionPlace}
+            difficulty={INITIAL_DIFFICULTY}
+            activeLanguage={resolveComfortLanguage(prefs.languageComfort, config.enabledLanguages)}
+            languageComfort={prefs.languageComfort}
+            onPhraseMastered={handlePhraseMastered}
+            onExitMission={() => setInVoiceMission(false)}
+            onAdvanceNextMission={() => {
+              setInVoiceMission(false);
+              setActiveMissionIndex((prev) => (prev + 1) % director.weekPlan!.missions.length);
+            }}
+          />
+        </Suspense>
       ) : (
         <main className="shell-main">
           {bannerMessage && (

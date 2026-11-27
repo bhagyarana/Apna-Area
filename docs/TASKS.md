@@ -67,8 +67,8 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 ### Phase 3c · Kannada & Survival Phrases (`phase/p3c-kannada` -> tag `p3c-kannada`)
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
-| `T3c.1` | Parallel A | Carbon / Neon | 25m | `data/phrases.json`, `server/src/live/persona.ts`, `shared/src/config.ts` | Draft & Carbon-review 30 ORR survival phrases across 7 `PhraseSituation` keys using polite plural Kannada and gender-matched honorifics (`aṇṇa` / `akka` / neutral); set `ENABLED_LANGUAGES = ["en", "hi", "kn"]`; register `mark_phrase_attempt`. Proof: schema test validating all 30 phrases. |
-| `T3c.2` | Parallel B | Hydrogen | 25m | `web/src/live/Captions.tsx`, `web/src/hud/PhraseFlyCard.tsx`, `web/index.html` | Noto Sans Kannada font fallback, 3-line Kannada/transliteration/meaning captions, teal pulse + soft chime + flying card animation on `clear` attempt. Proof: unit + visual test -> `ship-phase` -> tag `p3c-kannada` -> **Check-in #4 (Break)**. |
+| `T3c.1` | Parallel A | Carbon / Neon | 25m | `data/phrases.json`, `server/src/live/persona.ts`, `shared/src/config.ts` | [x] Drafted & linguistically audited 30 speaker-gender-neutral, polite-plural ORR Kannada survival phrases across all 7 `PhraseSituation` keys (`honorificGender` matched to `aṇṇa` / `akka` / `neutral`), set `ENABLED_LANGUAGES = ["en", "hi", "kn"]`, and activated `mark_phrase_attempt`. Proof: `phrases.test.ts` (`35/35` total Vitest tests passing) + live `630-717 ms` Kannada/Hindi-bridge voice probes. |
+| `T3c.2` | Parallel B | Hydrogen | 25m | `web/src/live/Captions.tsx`, `web/src/hud/PhraseFlyCard.tsx`, `web/index.html` | [x] `Noto Sans Kannada` (`400..700`), 2-line Kannada/transliteration/meaning target strip inside `Captions.tsx`, `--accent-teal` mastery ring + two-note WebAudio chime (`chime.ts`) + `PhraseFlyCard` flight into `Phrases · N` topbar badge -> merged `--no-ff` to `main` and tagged `p3c-kannada` (`apna-area-00010-puy` live). |
 
 ---
 

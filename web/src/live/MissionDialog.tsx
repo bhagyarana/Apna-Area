@@ -1,23 +1,27 @@
 /**
  * Feature: Live Voice Mission Stage & Cinema Ribbon HUD (web/src/live/MissionDialog.tsx)
- * Purpose: Renders the active 90s voice mission HUD: Objective header, NPC portrait, Cinema Captions, 72px waveform mic orb, and text fallback.
- * Inputs: Active Mission, verified office + stop places, difficulty, active language, and close/advance callbacks.
+ * Purpose: Renders the active 90s voice mission HUD: Objective header, NPC portrait, Cinema Captions, Kannada phrase mastery flight, and 72px mic orb.
+ * Inputs: Active Mission, verified office + stop places, difficulty, active language, and close/advance/phrase callbacks.
  * Outputs: Smoked-acrylic top objective card and bottom Cinema Voice Ribbon over the zoomed ORR map.
  * Deliberately excludes: Blocking full-screen modals that hide the Bengaluru corridor map.
  */
-import { useEffect, useState, type FormEvent, type JSX, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type JSX } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowRight01Icon, Mic01Icon } from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import type {
   DifficultyState,
   LanguageCode,
   LanguageComfort,
   Mission,
   NpcRole,
+  SurvivalPhrase,
   VerifiedPlace,
 } from "@apna-area/shared";
+import { PhraseFlyCard } from "../hud/PhraseFlyCard";
 import { primeUserGestureAudioContext } from "./audioUnlock";
 import { Captions } from "./Captions";
+import { playPhraseMasteryChime } from "./chime";
+import { MicOrbControl } from "./MicOrbControl";
 import { MissionObjectiveHeader } from "./MissionObjectiveHeader";
 import { useLiveSession } from "./useLiveSession";
 
@@ -29,6 +33,7 @@ export interface MissionDialogProps {
   difficulty: DifficultyState;
   activeLanguage: LanguageCode;
   languageComfort?: LanguageComfort;
+  onPhraseMastered?: (phrase: SurvivalPhrase) => void;
   onExitMission: () => void;
   onAdvanceNextMission: () => void;
 }
@@ -42,7 +47,7 @@ const ROLE_LABELS: Record<NpcRole, string> = {
 };
 
 /**
- * Renders the in-mission voice HUD with 72px amplitude mic orb, live captions, and docked text fallback.
+ * Renders the in-mission voice HUD with 72px amplitude mic orb, live captions, Kannada mastery chime, and docked text fallback.
  *
  * @param props - Active mission, verified place metadata, difficulty, language, and navigation callbacks.
  * @returns Full-stage voice HUD overlay.
@@ -55,6 +60,7 @@ export function MissionDialog({
   difficulty,
   activeLanguage,
   languageComfort,
+  onPhraseMastered,
   onExitMission,
   onAdvanceNextMission,
 }: MissionDialogProps): JSX.Element {
@@ -63,10 +69,15 @@ export function MissionDialog({
   const [imgFailed, setImgFailed] = useState(false);
   const [showTextBox, setShowTextBox] = useState(false);
   const [typedText, setTypedText] = useState("");
+  const [masteryFlash, setMasteryFlash] = useState(false);
+  const [flyingPhrase, setFlyingPhrase] = useState<SurvivalPhrase | null>(null);
+  const celebratedMissionRef = useRef<string | null>(null);
   const { localLanguageShare, hintLevel, paceSeconds } = difficulty;
 
   useEffect(() => {
     setImgFailed(false);
+    setFlyingPhrase(null);
+    celebratedMissionRef.current = null;
     void startSession({
       mission,
       officeName: office.name,
@@ -78,6 +89,23 @@ export function MissionDialog({
     });
     return () => stopSession();
   }, [mission, office.name, missionPlace.name, missionPlace.category, localLanguageShare, hintLevel, paceSeconds, activeLanguage, languageComfort, startSession, stopSession]);
+
+  useEffect(() => {
+    if (
+      live.toolSignals.phraseQuality === "clear" &&
+      live.targetPhrase &&
+      celebratedMissionRef.current !== mission.id
+    ) {
+      celebratedMissionRef.current = mission.id;
+      playPhraseMasteryChime();
+      setMasteryFlash(true);
+      setFlyingPhrase(live.targetPhrase);
+      onPhraseMastered?.(live.targetPhrase);
+      const t = window.setTimeout(() => setMasteryFlash(false), 320);
+      return () => window.clearTimeout(t);
+    }
+    return undefined;
+  }, [live.toolSignals.phraseQuality, live.targetPhrase, mission.id, onPhraseMastered]);
 
   const handleRetry = () => {
     primeUserGestureAudioContext();
@@ -92,13 +120,6 @@ export function MissionDialog({
     });
   };
 
-  const handleMicKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (e.code === "Space") {
-      e.preventDefault();
-      toggleMute();
-    }
-  };
-
   const handleSubmitText = (e: FormEvent) => {
     e.preventDefault();
     if (!typedText.trim()) return;
@@ -106,13 +127,14 @@ export function MissionDialog({
     setTypedText("");
   };
 
-  const ringSpreadPx = live.rmsLevel > 0.01 ? Math.round(5 + live.rmsLevel * 20) : 3;
   const roleLabel = ROLE_LABELS[mission.npcRole];
   const isCompleted = live.status === "completed";
   const textInputVisible = !isCompleted && (showTextBox || live.status === "permission_denied");
 
   return (
     <div className="live-stage" data-testid="live-mission-dialog">
+      {flyingPhrase && <PhraseFlyCard phrase={flyingPhrase} />}
+
       <MissionObjectiveHeader
         mission={mission}
         missionIndex={missionIndex}
@@ -166,7 +188,7 @@ export function MissionDialog({
           </div>
         )}
 
-        <div className="cinema-ribbon-panel">
+        <div className={masteryFlash ? "cinema-ribbon-panel cinema-ribbon-mastered" : "cinema-ribbon-panel"}>
           <div className="cinema-ribbon-row">
             <div className="npc-portrait-frame" data-testid="npc-portrait">
               {!imgFailed ? (
@@ -189,6 +211,9 @@ export function MissionDialog({
               status={live.status}
               npcCaption={live.npcCaption}
               playerCaption={live.playerCaption}
+              targetPhrase={live.targetPhrase}
+              phraseQuality={live.toolSignals.phraseQuality}
+              languageComfort={languageComfort}
             />
           </div>
 
@@ -211,29 +236,12 @@ export function MissionDialog({
         </div>
 
         {!isCompleted && (
-          <div className="mic-orb-row">
-            <button
-              type="button"
-              className={`mic-orb mic-orb-${live.status}${live.muted ? " mic-orb-muted" : ""}`}
-              style={{
-                boxShadow:
-                  live.status === "npc_speaking"
-                    ? `0 0 0 ${ringSpreadPx}px rgba(255, 210, 74, 0.24)`
-                    : `0 0 0 ${ringSpreadPx}px rgba(255, 79, 160, 0.24)`,
-              }}
-              disabled={live.status === "connecting"}
-              aria-pressed={!live.muted}
-              aria-label={live.muted ? "Unmute microphone" : "Mute microphone (Space when focused)"}
-              data-testid="live-mic-orb"
-              onClick={toggleMute}
-              onKeyDown={handleMicKeyDown}
-            >
-              <HugeiconsIcon icon={Mic01Icon} size={26} aria-hidden="true" />
-            </button>
-            <p className="live-privacy-note">
-              Voice streams live to Gemini and is never stored.
-            </p>
-          </div>
+          <MicOrbControl
+            status={live.status}
+            muted={live.muted}
+            rmsLevel={live.rmsLevel}
+            onToggleMute={toggleMute}
+          />
         )}
       </section>
     </div>

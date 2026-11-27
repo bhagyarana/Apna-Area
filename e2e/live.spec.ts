@@ -47,6 +47,11 @@ test("live: launches voice mission, renders portrait + captions, handles text re
             callbacks.onOutputTranscript(`Sure, meter is on for "${text}", hop in!`);
             callbacks.onToolCalls([
               {
+                id: "tc-phrase",
+                name: "mark_phrase_attempt",
+                args: { phraseId: "auto_male_1", attempted: true, quality: "clear" },
+              },
+              {
                 id: "tc-done",
                 name: "complete_objective",
                 args: { summary: "Agreed on a metered auto ride to the gate." },
@@ -83,7 +88,16 @@ test("live: launches voice mission, renders portrait + captions, handles text re
         apiVersion: "v1alpha",
         maxDurationSeconds: 90,
         voiceName: "Puck",
-        includePhraseTool: false,
+        includePhraseTool: true,
+        phrase: {
+          id: "auto_male_1",
+          situation: "auto_meter",
+          honorificGender: "male",
+          kannada: "ಅಣ್ಣ, ದಯವಿಟ್ಟು ಮೀಟರ್ ಹಾಕಿ ಬನ್ನಿ.",
+          transliteration: "Aṇṇa, dayaviṭṭu mīṭar hāki banni.",
+          english: "Brother, please put the meter on and come.",
+          hindi: "भैया, कृपया मीटर लगाकर चलिए।",
+        },
       },
     }),
     logSink: () => {},
@@ -94,6 +108,7 @@ test("live: launches voice mission, renders portrait + captions, handles text re
   try {
     await page.goto(address);
     await page.keyboard.press("Escape");
+    await expect(page.getByTestId("office-combobox-input")).toBeVisible();
 
     const targetOffice = worldData.dataset.places.find((p) => p.id === recordedPlan.officePlaceId)!;
     await page.keyboard.press("Control+k");
@@ -102,6 +117,7 @@ test("live: launches voice mission, renders portrait + captions, handles text re
 
     await page.getByTestId("build-week-cta").click();
     await expect(page.getByTestId("mission-card")).toBeVisible();
+    await expect(page.getByTestId("phrasebook-pill")).toContainText("Phrases · 0");
     await expect(page.getByTestId("tune-trigger")).toContainText("Tune · EN");
 
     // Switch comfort language to Hindi + English (Hinglish) via Tune popover
@@ -114,6 +130,7 @@ test("live: launches voice mission, renders portrait + captions, handles text re
     await page.getByTestId("start-mission-cta").click();
     await expect(page.getByTestId("live-mission-dialog")).toBeVisible();
     await expect(page.getByTestId("npc-portrait")).toBeVisible();
+    await expect(page.getByTestId("target-phrase-kn")).toContainText("ಅಣ್ಣ, ದಯವಿಟ್ಟು ಮೀಟರ್ ಹಾಕಿ");
     await expect(page.getByTestId("npc-caption-line")).toContainText("where on Outer Ring Road");
 
     // In headless Chromium getUserMedia fails or user clicks Type instead -> submit typed reply
@@ -125,8 +142,9 @@ test("live: launches voice mission, renders portrait + captions, handles text re
     await page.getByTestId("live-text-send").click();
     await expect(page.getByTestId("live-hint-banner")).toContainText("Ask politely for the meter.");
 
-    await page.getByTestId("live-text-input").fill("Please go by the meter to Bagmane IT park.");
+    await page.getByTestId("live-text-input").fill("Anna, meter haki banni dayavittu.");
     await page.getByTestId("live-text-send").click();
+    await expect(page.getByTestId("phrasebook-pill")).toContainText("Phrases · 1");
     await expect(page.getByTestId("live-completed-banner")).toContainText("Agreed on a metered auto ride");
 
     // Continue cleanly to Stop 2

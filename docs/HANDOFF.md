@@ -1,32 +1,32 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** `phase/p3b-hindi` (all Phase 3b Hindi & Hinglish code-switching changes, unit/contract/E2E tests `4/4`, live `gemini-3.8-live` Hindi/Hinglish voice probes, and Devanagari caption check complete)
-- **Current tag:** `p3a-english` on `main` (`5be2482`, serving 100% live traffic on `apna-area-00005-cux`), with `p3b-hin` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting user `"merge"` confirmation for `p3b-hindi`.
-- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00005-cux`); Phase 3b preview at `https://p3b-hin---apna-area-qhtgwpzhpq-el.a.run.app`.
+- **Current phase:** `phase/p4-adaptive` (checked out cleanly from `main` at tag `p3c-kannada`)
+- **Current tag:** `p3c-kannada` on `main` (preceded by `v0.1-docs`, `p0-skeleton`, `p1-map`, `p2-director`, `p3a-english`, `p3b-hindi`)
+- **Live URL & revision:** `https://apna-area-481049877093.asia-south1.run.app` (`100%` live traffic on `apna-area-00010-puy`, tag `p3c-kan`)
 
 ## 2. Done This Session
-- Shipped Phase 1 (`p1-map`), Phase 2 (`p2-director`), and Phase 3a (`p3a-english`, `5be2482`, `apna-area-00005-cux`) to `main` and 100% Cloud Run traffic.
-- Built `T3b.1` (`phase/p3b-hindi`):
-  - Enabled `ENABLED_LANGUAGES = ["en", "hi"]` in `shared/src/config.ts` and added `resolveComfortLanguage` + `languageComfort` on `LiveTokenRequestSchema` in `shared/src/live.ts`.
-  - Added distinct conversational Hindi (`"hi"`, respectful `aap`/`ji`, `"नमस्ते!"` greeting cue) and Hinglish code-switching (`"en_hi"`, `"Namaste! Hello!"` greeting cue) rules in `server/src/live/persona.ts` and `web/src/live/liveSessionTypes.ts`.
-  - Connected `TunePopover.tsx` (`Tune · EN` / `Tune · HI` / `Tune · HI+EN`) and `App.tsx` directly to `MissionDialog.tsx`, expanded `Noto Sans Devanagari` (`400..700`) in `web/index.html`, and increased caption line-height (`1.46`) in `web/src/styles/live.css` for Devanagari matras.
-  - Verified live `gemini-3.8-live` Hindi (`765 ms` first-audio latency, Devanagari transcript) and Hinglish (`529 ms` first-audio latency, `complete_objective` tool fired) in `docs/TESTING.md`.
+- Shipped `p1-map` (`fed66a2`) and `p2-director` (`2c43311`): `data/orr/places.json` (`121` verified places), `data/orr/corridor.geojson`, `POST /api/world` SSE (`gemini-4-neon`), and `MissionCard.tsx`.
+- Shipped `p3a-english` (`5be2482`, `apna-area-00005-cux`): `POST /api/live-token` (`server/src/live/token.ts`), 16 kHz / 24 kHz WebAudio pipeline (`web/src/live/useLiveSession.ts`), 10 gender-matched `256x256` WebP Nano Banana 2.1 portraits, `MissionDialog.tsx`, Code Review Gate `PASS` (`93/100`), and Design Critic `9.4/10`.
+- Shipped `p3b-hindi` (`9557085`, `apna-area-00007-dit`): `ENABLED_LANGUAGES = ["en", "hi"]`, Hindi (`765 ms`) and Hinglish (`529 ms`) code-switching in `server/src/live/persona.ts`, and `Tune · EN/HI/HI+EN` in `web/src/picker/TunePopover.tsx`.
+- Shipped `p3c-kannada` (`a6a2599`, `apna-area-00010-puy`): 30 audited polite-plural Kannada survival phrases (`data/phrases.json`, `server/src/live/phrases.ts`), `ENABLED_LANGUAGES = ["en", "hi", "kn"]`, `mark_phrase_attempt` (`630-717 ms` live), WebAudio chime (`web/src/live/chime.ts`), `PhraseFlyCard.tsx`, and `React.lazy` `MissionDialog` split (`156.9 KB` gzip initial JS, `0` build warnings).
 
 ## 3. Decisions Made
-- **ADR-006 & ADR-015:** Sequential language rollout continues cleanly (`["en"]` -> `["en", "hi"]`) with `Tune · EN/HI/HI+EN` surfacing the active mode directly in the top utility bar.
+- **ADR-014:** Director `< 10 words` field budget, `32s` upstream timeout, and shared `FallbackPlansMapSchema`.
+- **ADR-015:** `v1alpha` (`uses: 3`) ephemeral tokens for `@google/genai@3.6.1`, lazy `@google/genai` chunk, and `256x256` WebP portraits.
+- **ADR-016:** 30 speaker-gender-neutral, polite-plural Kannada phrases matched by `PhraseSituation` and `honorificGender`.
 
 ## 4. Open Questions
-- **Phase 3b Preview Check:** Try switching `Tune` to `Hindi` or `Hindi + English` and talking with an NPC on the `p3b-hin` Cloud Run preview URL, then confirm `"merge"` to promote `p3b-hin` to 100% live traffic (`tag: p3b-hindi`) and begin **Phase 3c (`phase/p3c-kannada` · Kannada & 30 Survival Phrases)**.
+- None; Phase 4 plan (`T4.1`..`T4.3`) is approved by the user and ready to build.
 
 ## 5. Known Issues
-- None blocking; in `P3c` (`Kannada & Survival Phrases`), keep the 3-tier Kannada + transliteration + meaning caption compact so desktop `1440x900` preserves clearance below the office pin when the keyboard drawer is open.
+- None; `11/11` Vitest suites (`35/35` tests) and `4/4` Playwright E2E specs pass with zero warnings.
 
 ## 6. File State
-- All Phase 3b code, tests (`10/10` Vitest suites / `33/33` tests, `4/4` Playwright E2E), and living docs committed on `phase/p3b-hindi`.
+- Clean working tree on branch `phase/p4-adaptive`, identical to `main` (`tag: p3c-kannada`).
 
 ## 7. The Single Next Task
-- Upon user `"merge"` confirmation, merge `phase/p3b-hindi` (`--no-ff`, tag `p3b-hindi`), route 100% traffic to `p3b-hin`, and start **Phase 3c (`phase/p3c-kannada`, `T3c.1` + `T3c.2`)**: curate and review 30 polite plural Kannada ORR survival phrases (`data/phrases.json`), set `ENABLED_LANGUAGES = ["en", "hi", "kn"]`, activate `mark_phrase_attempt`, and build 3-line Kannada captions + teal pulse + chime + `PhraseFlyCard`.
+- Build and ship **Phase 4 (`phase/p4-adaptive`, `T4.1`..`T4.3`)**: score completed missions in under 1 second via `POST /api/score` (`gemini-decision-1` `v1beta` `decisions.create` with `noul`, `score`, `choice`, sorted option keys + `other`, and `< 0.75` confidence fallback) and render `MissionResultCard.tsx`, `WhyChangedDisclosure.tsx`, and `XpCounter.tsx` with 1-click player pace override.
 
 ## 8. Resume Checklist
 1. `AGENTS.md`

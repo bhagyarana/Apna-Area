@@ -1,11 +1,12 @@
 /**
- * Feature: Three-Tier Cinema Voice Caption Ribbon (web/src/live/Captions.tsx)
- * Purpose: Displays high-contrast live NPC and player transcriptions in a smoked-acrylic subtitle ribbon above the 72px mic orb.
- * Inputs: NPC first name, role label, live session status, NPC transcript text, and player transcript text.
- * Outputs: Accessible aria-live subtitle card following Design.md Section 3.
+ * Feature: Three-Tier Cinema Voice Caption Ribbon & Kannada Phrase Strip (web/src/live/Captions.tsx)
+ * Purpose: Displays high-contrast live NPC/player transcriptions and the mission's polite Kannada survival phrase (`script · transliteration · meaning`).
+ * Inputs: NPC first name, role label, session status, live captions, optional target SurvivalPhrase, phraseQuality, and languageComfort.
+ * Outputs: Accessible aria-live subtitle card following Design.md Section 3 & Section 4.3.
  * Deliberately excludes: Multi-message chat scrollbars that obscure the map.
  */
 import type { JSX } from "react";
+import type { LanguageComfort, SurvivalPhrase } from "@apna-area/shared";
 import type { LiveSessionStatus } from "./useLiveSession";
 
 export interface CaptionsProps {
@@ -14,6 +15,9 @@ export interface CaptionsProps {
   status: LiveSessionStatus;
   npcCaption: string;
   playerCaption: string;
+  targetPhrase?: SurvivalPhrase | null;
+  phraseQuality?: "partial" | "clear";
+  languageComfort?: LanguageComfort;
 }
 
 function statusCue(status: LiveSessionStatus, npcFirstName: string): string {
@@ -34,9 +38,9 @@ function statusCue(status: LiveSessionStatus, npcFirstName: string): string {
 }
 
 /**
- * Renders the 3-tier Cinema Voice Ribbon for live NPC dialogue and player speech.
+ * Renders the Cinema Voice Ribbon for live NPC dialogue, player speech, and Kannada phrase practice.
  *
- * @param props - NPC identity, session status, and live input/output caption strings.
+ * @param props - NPC identity, session status, captions, and optional target Kannada phrase state.
  * @returns Accessible live subtitle panel.
  */
 export function Captions({
@@ -45,7 +49,14 @@ export function Captions({
   status,
   npcCaption,
   playerCaption,
+  targetPhrase = null,
+  phraseQuality,
+  languageComfort = "en",
 }: CaptionsProps): JSX.Element {
+  const isClear = phraseQuality === "clear";
+  const meaningText =
+    targetPhrase && languageComfort === "hi" ? targetPhrase.hindi : targetPhrase?.english;
+
   return (
     <div
       className="cinema-caption-card"
@@ -73,6 +84,28 @@ export function Captions({
             ? "Mic blocked in browser, so send a typed line below."
             : "Your live speech appears here as you talk."}
       </p>
+
+      {targetPhrase && (
+        <div
+          className={isClear ? "target-phrase-strip target-phrase-strip-clear" : "target-phrase-strip"}
+          data-testid="target-phrase-card"
+        >
+          <div className="target-phrase-lines">
+            <span className="target-phrase-kn" data-testid="target-phrase-kn">
+              {targetPhrase.kannada}
+            </span>
+            <span className="target-phrase-sub">
+              {targetPhrase.transliteration} · {meaningText}
+            </span>
+          </div>
+          <span
+            className={isClear ? "target-phrase-badge target-phrase-badge-clear" : "target-phrase-badge"}
+            data-testid="target-phrase-status"
+          >
+            {isClear ? "Saved to kit" : phraseQuality === "partial" ? "Almost there" : "Try in Kannada"}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
