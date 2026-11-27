@@ -125,7 +125,7 @@ export function HealthBadge(): JSX.Element {
           data-status={health.status}
           aria-hidden="true"
         />
-        <span>{label}</span>
+        <span className="health-label">{label}</span>
       </button>
 
       {open && (

@@ -38,3 +38,11 @@ A phase step never merges to `main` until `npm run check` (`tsc -b`, `eslint`, `
 | `P3b` | `auto_driver` (`Ramesh`, `Puck`) | Hinglish switch (`languageComfort: "en_hi"`) | Live `v1alpha` ephemeral session | `529 ms` | Yes (`Namaskara ji, bilkul meter se chalenge! Bagmane IT park main gate drop kar deta hoon.`) | `complete_objective` | PASS (`< 1.2s` target) |
 | `P3c` | `auto_driver` (`Ramesh`, `Puck`) | Kannada phrase coaching -> beginner speaks `auto_male_1` | Live `v1alpha` ephemeral session | `630 ms` | Yes (`Namaskara! You can say: Aṇṇa, dayaviṭṭu mīṭar hāki banni...`) | `mark_phrase_attempt` (`clear`) + `complete_objective` | PASS (`< 1.2s` target) |
 | `P3c` | `darshini_owner` (`Lakshmi`, `Aoede`) | Kannada phrase coaching -> player asks in Hindi for help -> speaks `darshini_female_1` | Live `v1alpha` ephemeral session | `717 ms` | Yes (`Namaskara ji! Koi baat nahi, aap mere saath boliye, "Akka, ondu idli vada, matte filter coffee kodi."`) | `give_hint` + `mark_phrase_attempt` (`clear`) + `complete_objective` | PASS (`< 1.2s` target) |
+
+## 4. Phase 4 Adaptive Scoring & Routing Evidence (`gemini-decision-1` `v1beta`)
+
+| Scenario (Base `localLanguageShare: 0.25, hintLevel: 2, paceSeconds: 75`) | Live Latency | Output Tokens | Calibrated Rubric (`Obj / Phrase / Tone / Conf`) | Route & Stars / XP | Mission 2 `DifficultyState` |
+|---|---|---|---|---|---|
+| Strong Mission 1 (`auto_male_1` spoken clearly, `0` hints, `objectiveCompleted: true`) | `452 ms` cold / `519 ms` warm | `0` (`733` input) | `2.57 / 2.40 / 2.29` (`92%` conf, `P(met)=0.98`) | `step_up` · `3★` · `+300 XP` | `{ localLanguageShare: 0.50, hintLevel: 1, paceSeconds: 60 }` (`50%` Kannada blend) |
+| Weak Mission 1 (`3` hints, confused reply, `objectiveCompleted: false`) | `389 ms` warm | `0` (`727` input) | `0.16 / 0.09 / 0.95` (`97%` conf, `P(met)=0.03`) | `ease_level` · `1★` · `+140 XP` | `{ localLanguageShare: 0.05, hintLevel: 3, paceSeconds: 90 }` (`5%` Kannada blend, early hints) |
+| Low-confidence / `"other"` guard (`confidence: 0.74` or `routeChoice: "other"`) | Deterministic | `0` | Safety threshold `< 0.75` triggered | `keep_level` (safe default) | `{ localLanguageShare: 0.25, hintLevel: 2, paceSeconds: 75 }` (held steady) |

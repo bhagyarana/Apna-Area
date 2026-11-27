@@ -24,7 +24,7 @@ function computeFramedCenter(
       : { lat: target.lat - 0.00055, lng: target.lng - 0.0014, zoom };
   }
   if (isMobile) {
-    return { lat: target.lat - 0.0045, lng: target.lng, zoom };
+    return { lat: target.lat - (zoom >= 15 ? 0.0024 : 0.0045), lng: target.lng, zoom };
   }
   return { lat: target.lat, lng: target.lng - 0.0075, zoom };
 }
@@ -105,7 +105,11 @@ export function CameraGlideController({
     }
 
     const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
-    const zoomTarget = inVoiceMission ? (isMobile ? 16.0 : 16.5) : isMissionStop ? 15.3 : undefined;
+    const zoomTarget = inVoiceMission
+      ? isMobile ? 16.0 : 16.5
+      : isMissionStop
+        ? isMobile ? 14.95 : 15.3
+        : undefined;
     const framed = computeFramedCenter(target, zoomTarget, inVoiceMission);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       map.moveCamera({ center: { lat: framed.lat, lng: framed.lng }, zoom: framed.zoom });

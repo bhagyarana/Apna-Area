@@ -136,6 +136,37 @@ export function applyLocalHintStep(
 }
 
 /**
+ * Appends any buffered input/output speech drafts onto LiveSessionState transcript turns.
+ *
+ * @param prev - Current LiveSessionState.
+ * @param playerDraft - Buffered input speech draft.
+ * @param npcDraft - Buffered output speech draft.
+ * @param completed - When true, sets status to "completed".
+ * @returns Updated LiveSessionState with flushed transcript turns.
+ */
+export function appendDraftTurns(
+  prev: LiveSessionState,
+  playerDraft: string,
+  npcDraft: string,
+  completed = false,
+): LiveSessionState {
+  const pTxt = playerDraft.trim();
+  const nTxt = npcDraft.trim();
+  const now = Date.now();
+  const extra: TranscriptTurn[] = [];
+  if (pTxt) extra.push({ speaker: "player", text: pTxt, timestampMs: now });
+  if (nTxt) extra.push({ speaker: "npc", text: nTxt, timestampMs: now });
+  return {
+    ...prev,
+    ...(completed ? { status: "completed" as const } : {}),
+    rmsLevel: 0,
+    playerCaption: pTxt || prev.playerCaption,
+    npcCaption: nTxt || prev.npcCaption,
+    transcript: extra.length > 0 ? [...prev.transcript, ...extra] : prev.transcript,
+  };
+}
+
+/**
  * Selects the initial scene greeting text matching the active language and comfort mode.
  *
  * @param req - Active LiveTokenRequest.

@@ -116,3 +116,10 @@ Every significant technical, product, or scope decision is recorded here. Update
 - **Why:** Prevents rude singular imperatives (`koḍu`, `bā`), eliminates `aṇṇa`/`akka` addressee mismatches against `mission.npcGender`, ensures any player of any gender can speak every phrase verbatim, and unlocks deterministic TTS caching in Phase 5.
 - **Alternatives rejected:** Generating unreviewed Kannada phrases on the fly inside LLM dialogue turns.
 - **Revisit if:** Additional `PhraseSituation` categories are added post-hackathon.
+
+### ADR-017 · Calibrated `gemini-decision-1` (`v1beta`) Multi-Question Scoring, `< 0.75` Steady Guard & 1-Click Player Override
+- **Date:** 2026-11-28
+- **Decision:** Evaluate every completed mission in one forward pass via `POST /api/score` calling `gemini-decision-1` (`v1beta` `client.decisions.create`) with 5 parallel questions (`objective_met` `noul`, `objective_score` / `phrase_score` / `tone_score` 4-level `score` rubrics, and `next_route` `choice` with alphabetically sorted keys `["ease_level", "keep_level", "other", "step_up"]`), floor-truncate `confidence` to 3 decimals before enforcing `< 0.75` -> `"keep_level"`, redact raw transcripts from `log.logGeminiCall`, and pair `WhyChangedDisclosure` with 1-click player overrides (`Keep gentler pace` / `Step up Kannada anyway`).
+- **Why:** Live `gemini-decision-1` calls return calibrated probabilities in `389-519 ms` with `0` output tokens, keeping post-scene transitions sub-second while guaranteeing human-in-control rule #4 over AI difficulty routing and privacy rule #5 over spoken transcripts.
+- **Alternatives rejected:** Prompting a text-generation model for free-form rubric JSON (slower, uncalibrated confidence, non-zero output token cost) or locking players into AI-chosen difficulty without an override.
+- **Revisit if:** Additional rubric dimensions are introduced after the hackathon.

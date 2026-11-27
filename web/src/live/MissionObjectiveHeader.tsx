@@ -105,17 +105,25 @@ export function MissionObjectiveHeader({
           >
             {activeHint ? "Next hint" : "Need a hint"}
           </button>
-          {status !== "permission_denied" && (
-            <button
-              type="button"
-              className={showTextBox ? "live-chip-btn live-chip-btn-active" : "live-chip-btn"}
-              aria-expanded={showTextBox}
-              onClick={onToggleTextBox}
-              data-testid="toggle-text-fallback-btn"
-            >
-              {showTextBox ? "Hide keyboard reply" : "Type instead"}
-            </button>
-          )}
+          <button
+            type="button"
+            className={
+              showTextBox || status === "permission_denied"
+                ? "live-chip-btn live-chip-btn-active"
+                : "live-chip-btn"
+            }
+            aria-expanded={showTextBox || status === "permission_denied"}
+            onClick={() => {
+              if (status === "permission_denied") {
+                document.querySelector<HTMLInputElement>('[data-testid="live-text-input"]')?.focus();
+                return;
+              }
+              onToggleTextBox();
+            }}
+            data-testid="toggle-text-fallback-btn"
+          >
+            {showTextBox || status === "permission_denied" ? "Keyboard reply active" : "Type instead"}
+          </button>
         </div>
       )}
 

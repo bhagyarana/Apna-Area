@@ -140,7 +140,7 @@ function parseDecisionAnswers(
     phraseScore: Math.round(Math.max(0, Math.min(3, boostPhrase)) * 100) / 100,
     toneScore: Math.round(Math.max(0, Math.min(3, tonScore.score ?? 0)) * 100) / 100,
     routeChoice: parsedChoice.success ? parsedChoice.data : "other",
-    confidence: Math.round(Math.max(0, Math.min(1, routeAns.confidence ?? 0)) * 100) / 100,
+    confidence: Math.floor(Math.max(0, Math.min(1, routeAns.confidence ?? 0)) * 1000) / 1000,
   };
 }
 

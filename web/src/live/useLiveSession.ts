@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { LIVE_VOICE_CONFIG, SAFETY_LIMITS, type LiveTokenRequest, type TranscriptTurn } from "@apna-area/shared";
 import { primeUserGestureAudioContext, releaseUserGestureAudioContext } from "./audioUnlock";
 import {
+  appendDraftTurns,
   applyLiveToolCalls,
   applyLocalHintStep,
   fetchEphemeralToken,
@@ -72,11 +73,12 @@ export function useLiveSession() {
       cleanupSessionNodes();
       const mySeq = sessionSeqRef.current;
       const audioCtx = primeUserGestureAudioContext();
-      secondsLeftRef.current = SAFETY_LIMITS.maxLiveSessionSeconds;
+      const paceCap = Math.min(SAFETY_LIMITS.maxLiveSessionSeconds, req.difficulty.paceSeconds);
+      secondsLeftRef.current = paceCap;
       objectiveDoneRef.current = false;
       npcDraftRef.current = "";
       playerDraftRef.current = "";
-      setState({ ...INITIAL_LIVE_STATE, status: "connecting" });
+      setState({ ...INITIAL_LIVE_STATE, secondsRemaining: paceCap, status: "connecting" });
 
       const tokenRes = await fetchEphemeralToken(req);
       if (sessionSeqRef.current !== mySeq) return;
@@ -98,13 +100,19 @@ export function useLiveSession() {
         });
         playerRef.current = pcmPlayer;
 
-        const scheduleCompletionDrain = () => {
-          if (drainTimerRef.current !== null) return;
-          const waitMs = Math.min(LIVE_VOICE_CONFIG.drainTimeoutMs, pcmPlayer.remainingMs() + 120);
-          drainTimerRef.current = window.setTimeout(() => {
-            cleanupSessionNodes();
-            setState((prev) => ({ ...prev, status: "completed", rmsLevel: 0 }));
-          }, waitMs);
+        const completeWithFlushedDrafts = () => {
+          const pDraft = playerDraftRef.current;
+          const nDraft = npcDraftRef.current;
+          playerDraftRef.current = "";
+          npcDraftRef.current = "";
+          cleanupSessionNodes();
+          setState((prev) => appendDraftTurns(prev, pDraft, nDraft, true));
+        };
+
+        const scheduleCompletionDrain = (fallbackMs?: number) => {
+          if (drainTimerRef.current !== null) window.clearTimeout(drainTimerRef.current);
+          const waitMs = fallbackMs ?? Math.min(LIVE_VOICE_CONFIG.drainTimeoutMs, pcmPlayer.remainingMs() + 120);
+          drainTimerRef.current = window.setTimeout(completeWithFlushedDrafts, waitMs);
         };
 
         let socketOpened = false;
@@ -141,19 +149,11 @@ export function useLiveSession() {
           },
           onTurnComplete: () => {
             if (sessionSeqRef.current !== mySeq) return;
-            const pTxt = playerDraftRef.current.trim();
-            const nTxt = npcDraftRef.current.trim();
+            const pDraft = playerDraftRef.current;
+            const nDraft = npcDraftRef.current;
             playerDraftRef.current = "";
             npcDraftRef.current = "";
-            setState((prev) => {
-              const now = Date.now();
-              const turns: TranscriptTurn[] = [];
-              if (pTxt) turns.push({ speaker: "player", text: pTxt, timestampMs: now });
-              if (nTxt) turns.push({ speaker: "npc", text: nTxt, timestampMs: now });
-              const npcCaption = nTxt || prev.npcCaption;
-              const playerCaption = pTxt || prev.playerCaption;
-              return { ...prev, npcCaption, playerCaption, transcript: [...prev.transcript, ...turns], rmsLevel: 0 };
-            });
+            setState((prev) => appendDraftTurns(prev, pDraft, nDraft, false));
             if (objectiveDoneRef.current) scheduleCompletionDrain();
           },
           onToolCalls: (calls) => {
@@ -163,7 +163,9 @@ export function useLiveSession() {
             if (preview.objectiveJustCompleted) objectiveDoneRef.current = true;
             setState((prev) => applyLiveToolCalls(prev, calls, fallbackHint).nextState);
             transportRef.current?.sendToolResponses(preview.responses);
-            if (preview.objectiveJustCompleted && !pcmPlayer.isPlaying()) scheduleCompletionDrain();
+            if (preview.objectiveJustCompleted) {
+              scheduleCompletionDrain(LIVE_VOICE_CONFIG.drainTimeoutMs);
+            }
           },
           onError: (msg) => {
             if (sessionSeqRef.current !== mySeq) return;
@@ -189,11 +191,9 @@ export function useLiveSession() {
           secondsLeftRef.current = Math.max(0, secondsLeftRef.current - 1);
           const nextSec = secondsLeftRef.current;
           if (nextSec <= 0) {
-            cleanupSessionNodes();
-            setState((prev) => ({ ...prev, secondsRemaining: 0, status: "completed", rmsLevel: 0 }));
-          } else {
-            setState((prev) => ({ ...prev, secondsRemaining: nextSec }));
-          }
+            secondsLeftRef.current = 0;
+            completeWithFlushedDrafts();
+          } else setState((prev) => ({ ...prev, secondsRemaining: nextSec }));
         }, 1_000);
 
         try {

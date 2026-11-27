@@ -77,9 +77,9 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
-| `T4.1` | Parallel A | Hydrogen | 25m | `shared/src/game/scoring.ts`, `shared/src/__tests__/scoring.test.ts` | Pure `xpFor`, `starsFor`, `nextDifficulty` clamped by `ENABLED_LANGUAGES` and `< 0.75` confidence rule. Proof: 100% branch unit tests. |
-| `T4.2` | Parallel B | Neon | 30m | `server/src/score/decide.ts`, `server/src/routes/score.ts`, `server/src/__tests__/score.test.ts` | `POST /api/score` calling `gemini-decision-1` (`v1beta`) with `noul`, `score`, and `choice` questions; contract test with recorded fixture. Proof: `< 1s` live response + contract test. |
-| `T4.3` | Sequential | Hydrogen | 25m | `web/src/score/MissionResultCard.tsx`, `web/src/score/WhyChangedDisclosure.tsx`, `web/src/hud/XpCounter.tsx` | Rolling tabular XP, 200ms spring stars, adaptation explanation line, and `"Why did this change?"` rubric drawer -> `ship-phase` -> tag `p4-adaptive`. |
+| `T4.1` | Parallel A | Hydrogen | 25m | `shared/src/game/scoring.ts`, `shared/src/__tests__/scoring.test.ts` | [x] Pure `xpFor`, `starsFor`, `nextDifficulty`, `applyDifficultyOverride`, and `buildAdaptationSummary` clamped by `ENABLED_LANGUAGES` and `< 0.75` confidence / `"other"` rule (`enableAdaptiveScoring = true`). Proof: 100% branch unit tests (`scoring.test.ts`). |
+| `T4.2` | Parallel B | Neon | 30m | `server/src/score/decide.ts`, `server/src/routes/score.ts`, `server/src/__tests__/score.test.ts` | [x] `POST /api/score` calling `gemini-decision-1` (`v1beta`) with `noul`, `score`, and sorted `choice` + `other` questions (`389-519 ms` live, `0` output tokens), transcript-redacted logging, `30/min` rate limit, and heuristic fallback. Proof: live recorded fixture (`decision-1-score.json`) + `score.test.ts`. |
+| `T4.3` | Sequential | Hydrogen | 25m | `web/src/score/MissionResultCard.tsx`, `web/src/score/WhyChangedDisclosure.tsx`, `web/src/hud/XpCounter.tsx` | [x] Rolling `280ms` tabular XP (`XpCounter.tsx`), `200ms` spring stars, plain-English adaptation copy, 2x2 `"Why did this change?"` rubric drawer + 1-click player pace overrides (`e2e/score.spec.ts`), Code Review Gate `PASS` (`97/100`), and Design Critic `9.2/10` -> Cloud Run `p4-adap` preview deployed. |
 
 ---
 
