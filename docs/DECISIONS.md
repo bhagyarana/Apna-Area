@@ -1,0 +1,75 @@
+# Architecture Decision Log (`docs/DECISIONS.md`)
+
+Every significant technical, product, or scope decision is recorded here. Update `PROJECT_BRIEF.md` first if a core constraint changes.
+
+---
+
+### ADR-001 · Single-Container TypeScript Monorepo on Cloud Run (`asia-south1`)
+- **Date:** 2026-11-27
+- **Decision:** Build `shared/`, `server/` (Fastify on Node 22+), and `web/` (Vite + React) in one npm workspaces monorepo served from a single Cloud Run container in `asia-south1` (`--min-instances 1`, `--timeout 3600`).
+- **Why:** Eliminates CORS configuration between web and API, keeps latency low for Bengaluru demos (`asia-south1` Mumbai), supports long-lived SSE streams, and deploys atomically in one `gcloud run deploy` command.
+- **Alternatives rejected:** Separate Vercel/Firebase Hosting frontend + Cloud Run backend (adds cross-origin setup and two deploy pipelines to keep in sync).
+- **Revisit if:** Static asset bundle needs edge CDN caching beyond hackathon traffic.
+
+### ADR-002 · Zero Database; Verified Static JSON + Browser `localStorage`
+- **Date:** 2026-11-27
+- **Decision:** Store world geography in committed `data/orr/places.json` and `data/orr/corridor.geojson`, survival phrases in `data/phrases.json`, short-lived caches in server memory, and player progress in browser `localStorage`.
+- **Why:** Removes database provisioning, migrations, connection-pool failures, and privacy liability while keeping world verification deterministic and auditable in git.
+- **Alternatives rejected:** Firestore or Cloud SQL (unnecessary operational surface for a single-player pre-arrival rehearsal game with no login).
+- **Revisit if:** Multi-device saved accounts become a post-hackathon requirement.
+
+### ADR-003 · Double-Locked Place Verification (Schema Enum + Server Verifier)
+- **Date:** 2026-11-27
+- **Decision:** Constrain `gemini-4-neon` mission `placeId` output via a dynamic JSON Schema `enum` containing only verified `places.json` IDs within 3 km of the chosen office, AND validate the parsed plan in `server/world/verify.ts` before sending `complete`.
+- **Why:** Guarantees zero hallucinated places on screen and directly proves Gemini 4 structured reasoning paired with deterministic verification.
+- **Alternatives rejected:** Prompt-only instructions ("please only use real places") or live uncached Maps Grounding without `places.json` verification.
+- **Revisit if:** Never; truth rule #1 is non-negotiable.
+
+### ADR-004 · Multi-Model Runtime Routing via `shared/config.ts`
+- **Date:** 2026-11-27
+- **Decision:** Route planning to `gemini-4-neon` (`thinking_level: "medium"`, fallback `gemini-4-hydrogen`), live NPC dialogue to `gemini-3.8-live`, post-mission rubric scoring to `gemini-decision-1` (`v1beta`), area one-liners to `gemini-3.5-flash-lite` (`thinking_level: "minimal"`), phrase audio replay to `gemini-3.8-flash-tts`, and build-time assets to `gemini-nano-banana-2.1` and `lyria-3-clip-preview`.
+- **Why:** Matches each latency, cost, and capability profile: Neon plans structured multi-constraint graphs, Decision 1 delivers calibrated probabilities in ~200 ms with 0 output tokens, and Live handles sub-second bidirectional audio.
+- **Alternatives rejected:** Using a single frontier text model for scoring (uncalibrated probabilities, slower, higher token cost) or generating images/music per visitor (slow and expensive).
+- **Revisit if:** `gemini-4-neon` `medium` thinking produces repetitive missions (raise to `"high"` in `shared/config.ts`).
+
+### ADR-005 · Client-to-Live WebSocket with Server-Locked Ephemeral Auth Tokens
+- **Date:** 2026-11-27
+- **Decision:** Mint single-use (`uses: 1`) `v1beta` ephemeral tokens on `POST /api/live-token` via `client.authTokens.create` with `liveConnectConstraints` locking `model: "gemini-3.8-live"`, `responseModalities: ["AUDIO"]`, NPC `systemInstruction`, transcriptions, and `NON_BLOCKING` tools. Omit `thinkingConfig` (unsupported on `gemini-3.8-live`).
+- **Why:** Keeps `GEMINI_API_KEY` and persona instructions strictly server-controlled while streaming 16 kHz / 24 kHz PCM directly between browser and Gemini Live API without an extra server WebSocket hop.
+- **Alternatives rejected:** Exposing `GEMINI_API_KEY` in client bundle (forbidden) or full server audio proxy (higher latency; kept only as contingency if venue network blocks direct WSS).
+- **Revisit if:** P3a 20-minute audio spike encounters any constraint serialisation quirk on `liveConnectConstraints` (fallback: Fastify WebSocket proxy).
+
+### ADR-006 · Sequential Language Rollout Behind `ENABLED_LANGUAGES`
+- **Date:** 2026-11-27
+- **Decision:** Ship English (`p3a-english`), Hindi (`p3b-hindi`), and Kannada (`p3c-kannada`) on separate phase branches and tags controlled by `ENABLED_LANGUAGES` in `shared/config.ts`.
+- **Why:** Isolates audio/prompt regressions per language and provides an instant 1-line off-switch without losing working voice gameplay.
+- **Alternatives rejected:** Building all three languages simultaneously in one unshipped branch.
+- **Revisit if:** Any language fails the manual quality check in `docs/TESTING.md`.
+
+### ADR-007 · 2D Styled Vector Map (`@vis.gl/react-google-maps`) First, 3D Later
+- **Date:** 2026-11-27
+- **Decision:** Build the ORR corridor map on `@vis.gl/react-google-maps` (`1.10.2`) 2D vector map with tilt, heading, `AdvancedMarkerElement`, `mapId`, and `internalUsageAttributionIds={["gmp_git_agentskills_v1"]}`. Keep `Map3DElement` on the `Later` list.
+- **Why:** Safe, fast, headless-testable (avoids WebGL2 headless crashes in Playwright), and faithful to the `levels.fyi/atlas/bengaluru` camera-tour reference.
+- **Alternatives rejected:** Photorealistic 3D tiles in Phase 1 (unverified ORR tile coverage and WebGL2 fragility in CI/headless).
+- **Revisit if:** Phase 6 finishes early with > 45 minutes spare.
+
+### ADR-008 · Places API (New) Pro SKU Field Mask & Routes API Mode Split
+- **Date:** 2026-11-27
+- **Decision:** Restrict `scripts/verify-places.ts` `X-Goog-FieldMask` strictly to Text Search Pro fields (`id`, `displayName`, `location`, `types`, `primaryType`, `formattedAddress`, `shortFormattedAddress`, `businessStatus`, `googleMapsUri`) and omit `routingPreference` when calling Routes API `TRANSIT` mode.
+- **Why:** Avoids Enterprise/Atmosphere SKU charges on Places queries and prevents HTTP 400 errors on `TRANSIT` route computations.
+- **Alternatives rejected:** Wildcard `*` field masks (expensive and violates Maps best practices).
+- **Revisit if:** Additional place fields are explicitly needed and budgeted.
+
+### ADR-009 · `@ui-sdk/react` for Accessible Behaviour Primitives & Confirm Sheets
+- **Date:** 2026-11-27
+- **Decision:** Use `@ui-sdk/react` (`0.1.0-beta.17`) behaviours for keyboard combobox navigation, roving focus on chips, and modal focus-trapped Confirm Sheets before any external link, copy, or download.
+- **Why:** Enforces human-in-control rule #4 and keyboard accessibility without bloated component libraries.
+- **Alternatives rejected:** Direct `<a target="_blank">` links without confirmation or unstyled ad-hoc keydown handlers.
+- **Revisit if:** Any specific `@ui-sdk/react` beta primitive exhibits an API gap during `P0`/`P1` (wrap native `<dialog>` + ARIA combobox with full unit tests).
+
+### ADR-010 · Branch-per-Phase, Worktree-per-Worker, Preview-Before-Merge
+- **Date:** 2026-11-27
+- **Decision:** Never commit directly to `main` after setup; isolate parallel workers in git worktrees, gate merges with `22-review-gate`, deploy `--no-traffic --tag` Cloud Run previews, smoke test, and `--no-ff` merge to `main`.
+- **Why:** Ensures `main` always matches the healthy live site and makes any phase revertable via a single `git revert -m 1` or Cloud Run traffic switch.
+- **Alternatives rejected:** Trunk-based direct commits by multiple agents in a shared working directory.
+- **Revisit if:** Never during hackathon execution.
