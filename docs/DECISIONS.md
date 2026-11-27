@@ -109,3 +109,10 @@ Every significant technical, product, or scope decision is recorded here. Update
 - **Why:** `@google/genai@3.6.1` restricts `auth_tokens/*` ephemeral WebSocket handshake support to `v1alpha`; lazy-loading `@google/genai` keeps the initial landing bundle at `162.7 KB` gzipped (`< 250 KB` budget) by deferring the `87.6 KB` SDK chunk; gender-matched `256x256` WebP portraits (`~200 KB` total across all 10 variants) prevent visual/voice mismatches when `gemini-4-neon` casts either male or female fictional NPCs.
 - **Alternatives rejected:** Static top-level `@google/genai` import in `App.tsx` (pushes initial bundle to `~250 KB` gzip) or shipping unresized `1024x1024` single-gender PNGs (`~3.7 MB` and gender-mismatched for female darshini/auto/transit characters).
 - **Revisit if:** Upstream `@google/genai` promotes `authTokens` to `v1` stable.
+
+### ADR-016 · Curated Speaker-Gender-Neutral & Addressee-Honorific-Matched Kannada Survival Phrases (`data/phrases.json`)
+- **Date:** 2026-11-27
+- **Decision:** Curate and linguistically audit 30 polite-plural spoken Bengaluru Kannada phrases in `data/phrases.json` across all 7 `PhraseSituation` keys, tagged with `honorificGender: "male" | "female" | "neutral"` (`ಅಣ್ಣ` / `aṇṇa` for male NPCs, `ಅಕ್ಕ` / `akka` for female NPCs, and speaker-gender-neutral phrasing across Kannada, English, and Hindi) and matched deterministically via `selectPhraseForMission` on `POST /api/live-token`.
+- **Why:** Prevents rude singular imperatives (`koḍu`, `bā`), eliminates `aṇṇa`/`akka` addressee mismatches against `mission.npcGender`, ensures any player of any gender can speak every phrase verbatim, and unlocks deterministic TTS caching in Phase 5.
+- **Alternatives rejected:** Generating unreviewed Kannada phrases on the fly inside LLM dialogue turns.
+- **Revisit if:** Additional `PhraseSituation` categories are added post-hackathon.

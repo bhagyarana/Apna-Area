@@ -13,6 +13,7 @@ import {
   type LiveTokenData,
   type LiveTokenRequest,
   type LiveToolSignals,
+  type SurvivalPhrase,
   type TranscriptTurn,
 } from "@apna-area/shared";
 import type { LiveToolCallItem } from "./liveTransport";
@@ -33,6 +34,7 @@ export interface LiveSessionState {
   playerCaption: string;
   transcript: readonly TranscriptTurn[];
   activeHint: string | null;
+  targetPhrase: SurvivalPhrase | null;
   rmsLevel: number;
   muted: boolean;
   toolSignals: LiveToolSignals;
@@ -51,6 +53,7 @@ export const INITIAL_LIVE_STATE: LiveSessionState = {
   playerCaption: "",
   transcript: [],
   activeHint: null,
+  targetPhrase: null,
   rmsLevel: 0,
   muted: false,
   toolSignals: INITIAL_LIVE_SIGNALS,

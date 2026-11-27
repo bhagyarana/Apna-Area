@@ -21,6 +21,7 @@ const StoredPrefsSchema = z.object({
   languageComfort: LanguageComfortSchema.default("en"),
   budgetBand: BudgetBandSchema.default("20_30k"),
   tourCompleted: z.boolean().default(false),
+  learnedPhraseIds: z.array(z.string()).default([]),
 });
 
 export type PlayerPreferences = z.infer<typeof StoredPrefsSchema>;
@@ -30,6 +31,7 @@ const DEFAULT_PREFS: PlayerPreferences = {
   languageComfort: "en",
   budgetBand: "20_30k",
   tourCompleted: false,
+  learnedPhraseIds: [],
 };
 
 /**
@@ -72,6 +74,22 @@ export function savePlayerPreferences(next: Partial<PlayerPreferences>): PlayerP
     });
   }
   return merged;
+}
+
+/**
+ * Adds a mastered Kannada survival phrase ID to persisted player preferences if not already recorded.
+ *
+ * @param phraseId - Mastered phrase identifier from data/phrases.json.
+ * @returns Updated PlayerPreferences object.
+ */
+export function recordLearnedPhraseId(phraseId: string): PlayerPreferences {
+  const current = loadPlayerPreferences();
+  if (current.learnedPhraseIds.includes(phraseId)) {
+    return current;
+  }
+  return savePlayerPreferences({
+    learnedPhraseIds: [...current.learnedPhraseIds, phraseId],
+  });
 }
 
 export type { BudgetBand, LanguageComfort };

@@ -16,6 +16,7 @@ import "./styles/hud.css";
 import "./styles/mission.css";
 import "./styles/live.css";
 import "./styles/mic.css";
+import "./styles/phrase.css";
 import { App } from "./App";
 
 const rootEl = document.getElementById("root");

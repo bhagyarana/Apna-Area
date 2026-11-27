@@ -1,0 +1,275 @@
+{
+  "version": "1.0.0",
+  "phrases": [
+    {
+      "id": "greet_neutral_1",
+      "situation": "greeting",
+      "honorificGender": "neutral",
+      "kannada": "ನಮಸ್ಕಾರ, ಹೇಗಿದ್ದೀರಾ?",
+      "transliteration": "Namaskāra, hēgiddīrā?",
+      "english": "Hello, how are you?",
+      "hindi": "नमस्कार, आप कैसे हैं?"
+    },
+    {
+      "id": "greet_male_1",
+      "situation": "greeting",
+      "honorificGender": "male",
+      "kannada": "ನಮಸ್ಕಾರ ಅಣ್ಣ, ಚೆನ್ನಾಗಿದ್ದೀರಾ?",
+      "transliteration": "Namaskāra aṇṇa, cennāgiddīrā?",
+      "english": "Hello brother, are you doing well?",
+      "hindi": "नमस्कार भैया, आप ठीक हैं?"
+    },
+    {
+      "id": "greet_female_1",
+      "situation": "greeting",
+      "honorificGender": "female",
+      "kannada": "ನಮಸ್ಕಾರ ಅಕ್ಕ, ಚೆನ್ನಾಗಿದ್ದೀರಾ?",
+      "transliteration": "Namaskāra akka, cennāgiddīrā?",
+      "english": "Hello sister, are you doing well?",
+      "hindi": "नमस्कार दीदी, आप ठीक हैं?"
+    },
+    {
+      "id": "greet_neutral_2",
+      "situation": "greeting",
+      "honorificGender": "neutral",
+      "kannada": "ನಮಸ್ಕಾರ, ಬೆಂಗಳೂರಿನಲ್ಲಿ ಇದು ನನ್ನ ಮೊದಲ ವಾರ.",
+      "transliteration": "Namaskāra, Beṅgaḷūrinalli idu nanna modala vāra.",
+      "english": "Hello, this is my first week in Bengaluru.",
+      "hindi": "नमस्कार, बेंगलुरु में यह मेरा पहला हफ़्ता है।"
+    },
+    {
+      "id": "greet_neutral_3",
+      "situation": "greeting",
+      "honorificGender": "neutral",
+      "kannada": "ಸ್ವಲ್ಪ ಕನ್ನಡ ಕಲಿಯುತ್ತಿದ್ದೇನೆ.",
+      "transliteration": "Svalpa Kannaḍa kaliyuttiddēne.",
+      "english": "I am learning a little Kannada.",
+      "hindi": "मैं थोड़ी कन्नड़ सीखने की कोशिश में हूँ।"
+    },
+    {
+      "id": "auto_male_1",
+      "situation": "auto_meter",
+      "honorificGender": "male",
+      "kannada": "ಅಣ್ಣ, ದಯವಿಟ್ಟು ಮೀಟರ್ ಹಾಕಿ ಬನ್ನಿ.",
+      "transliteration": "Aṇṇa, dayaviṭṭu mīṭar hāki banni.",
+      "english": "Brother, please put the meter on and come.",
+      "hindi": "भैया, कृपया मीटर लगाकर चलिए।"
+    },
+    {
+      "id": "auto_female_1",
+      "situation": "auto_meter",
+      "honorificGender": "female",
+      "kannada": "ಅಕ್ಕ, ದಯವಿಟ್ಟು ಮೀಟರ್ ಹಾಕಿ ಬನ್ನಿ.",
+      "transliteration": "Akka, dayaviṭṭu mīṭar hāki banni.",
+      "english": "Sister, please put the meter on and come.",
+      "hindi": "दीदी, कृपया मीटर लगाकर चलिए।"
+    },
+    {
+      "id": "auto_neutral_1",
+      "situation": "auto_meter",
+      "honorificGender": "neutral",
+      "kannada": "ದಯವಿಟ್ಟು ಮೇನ್ ಗೇಟ್ ಹತ್ತಿರ ನಿಲ್ಲಿಸಿ.",
+      "transliteration": "Dayaviṭṭu mēn gēṭ hattira nillisi.",
+      "english": "Please stop near the main gate.",
+      "hindi": "कृपया मेन गेट के पास रोक दीजिए।"
+    },
+    {
+      "id": "auto_neutral_2",
+      "situation": "auto_meter",
+      "honorificGender": "neutral",
+      "kannada": "ಇಲ್ಲೇ ಎಡಗಡೆ ನಿಲ್ಲಿಸಿ.",
+      "transliteration": "Illē eḍagaḍe nillisi.",
+      "english": "Please stop right here on the left.",
+      "hindi": "यहीं बाईं तरफ़ रोक दीजिए।"
+    },
+    {
+      "id": "auto_neutral_3",
+      "situation": "auto_meter",
+      "honorificGender": "neutral",
+      "kannada": "ಯುಪಿಐ ಮಾಡಲಾ?",
+      "transliteration": "UPI māḍalā?",
+      "english": "Shall I pay by UPI?",
+      "hindi": "क्या मैं यूपीआई कर दूँ?"
+    },
+    {
+      "id": "darshini_neutral_1",
+      "situation": "darshini_order",
+      "honorificGender": "neutral",
+      "kannada": "ಒಂದು ಇಡ್ಲಿ ವಡೆ ಕೊಡಿ.",
+      "transliteration": "Ondu iḍli vaḍe koḍi.",
+      "english": "One idli vada, please.",
+      "hindi": "एक इडली वड़ा दीजिए।"
+    },
+    {
+      "id": "darshini_male_1",
+      "situation": "darshini_order",
+      "honorificGender": "male",
+      "kannada": "ಅಣ್ಣ, ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಮತ್ತೆ ಫಿಲ್ಟರ್ ಕಾಫಿ ಕೊಡಿ.",
+      "transliteration": "Aṇṇa, ondu masāle dōse matte filṭar kāfi koḍi.",
+      "english": "Brother, one masala dosa and filter coffee, please.",
+      "hindi": "भैया, एक मसाला डोसा और फ़िल्टर कॉफ़ी दीजिए।"
+    },
+    {
+      "id": "darshini_female_1",
+      "situation": "darshini_order",
+      "honorificGender": "female",
+      "kannada": "ಅಕ್ಕ, ಒಂದು ಇಡ್ಲಿ ವಡೆ ಮತ್ತೆ ಫಿಲ್ಟರ್ ಕಾಫಿ ಕೊಡಿ.",
+      "transliteration": "Akka, ondu iḍli vaḍe matte filṭar kāfi koḍi.",
+      "english": "Sister, one idli vada and filter coffee, please.",
+      "hindi": "दीदी, एक इडली वड़ा और फ़िल्टर कॉफ़ी दीजिए।"
+    },
+    {
+      "id": "darshini_neutral_2",
+      "situation": "darshini_order",
+      "honorificGender": "neutral",
+      "kannada": "ಒಂದು ಕಾಫಿ ಕೊಡಿ, ಸಕ್ಕರೆ ಕಡಿಮೆ.",
+      "transliteration": "Ondu kāfi koḍi, sakkare kaḍime.",
+      "english": "One coffee please, with less sugar.",
+      "hindi": "एक कॉफ़ी दीजिए, चीनी कम।"
+    },
+    {
+      "id": "darshini_neutral_3",
+      "situation": "darshini_order",
+      "honorificGender": "neutral",
+      "kannada": "ದಯವಿಟ್ಟು ಪಾರ್ಸೆಲ್ ಮಾಡಿ ಕೊಡಿ.",
+      "transliteration": "Dayaviṭṭu pārsel māḍi koḍi.",
+      "english": "Please pack it to take away.",
+      "hindi": "कृपया पार्सल कर दीजिए।"
+    },
+    {
+      "id": "dir_male_1",
+      "situation": "directions",
+      "honorificGender": "male",
+      "kannada": "ಅಣ್ಣ, ಸಿಲ್ಕ್ ಬೋರ್ಡ್ ಬಸ್ ಎಲ್ಲಿ ಸಿಗುತ್ತೆ?",
+      "transliteration": "Aṇṇa, Silk Bōrḍ bas elli sigutte?",
+      "english": "Brother, where do I get the Silk Board bus?",
+      "hindi": "भैया, सिल्क बोर्ड की बस कहाँ मिलेगी?"
+    },
+    {
+      "id": "dir_female_1",
+      "situation": "directions",
+      "honorificGender": "female",
+      "kannada": "ಅಕ್ಕ, ಸಿಲ್ಕ್ ಬೋರ್ಡ್ ಬಸ್ ಎಲ್ಲಿ ಸಿಗುತ್ತೆ?",
+      "transliteration": "Akka, Silk Bōrḍ bas elli sigutte?",
+      "english": "Sister, where do I get the Silk Board bus?",
+      "hindi": "दीदी, सिल्क बोर्ड की बस कहाँ मिलेगी?"
+    },
+    {
+      "id": "dir_neutral_1",
+      "situation": "directions",
+      "honorificGender": "neutral",
+      "kannada": "ಈ ಬಸ್ ಬೆಳ್ಳಂದೂರಿಗೆ ಹೋಗುತ್ತಾ?",
+      "transliteration": "Ī bas Beḷḷandūrige hōguttā?",
+      "english": "Does this bus go to Bellandur?",
+      "hindi": "क्या यह बस बेलंदूर जाती है?"
+    },
+    {
+      "id": "dir_neutral_2",
+      "situation": "directions",
+      "honorificGender": "neutral",
+      "kannada": "ಮುಂದಿನ ಸ್ಟಾಪ್ ಬಂದಾಗ ಸ್ವಲ್ಪ ಹೇಳಿ.",
+      "transliteration": "Mundina sṭāp bandāga svalpa hēḷi.",
+      "english": "Please tell me when the next stop comes.",
+      "hindi": "अगला स्टॉप आने पर कृपया बता दीजिए।"
+    },
+    {
+      "id": "rent_male_1",
+      "situation": "renting",
+      "honorificGender": "male",
+      "kannada": "ಅಣ್ಣ, ಇಲ್ಲಿ ರೂಮ್ ಖಾಲಿ ಇದೆಯಾ?",
+      "transliteration": "Aṇṇa, illi rūm khāli ideyā?",
+      "english": "Brother, is there a room vacant here?",
+      "hindi": "भैया, क्या यहाँ कमरा खाली है?"
+    },
+    {
+      "id": "rent_female_1",
+      "situation": "renting",
+      "honorificGender": "female",
+      "kannada": "ಅಕ್ಕ, ಇಲ್ಲಿ ರೂಮ್ ಖಾಲಿ ಇದೆಯಾ?",
+      "transliteration": "Akka, illi rūm khāli ideyā?",
+      "english": "Sister, is there a room vacant here?",
+      "hindi": "दीदी, क्या यहाँ कमरा खाली है?"
+    },
+    {
+      "id": "rent_neutral_1",
+      "situation": "renting",
+      "honorificGender": "neutral",
+      "kannada": "ಪವರ್ ಬ್ಯಾಕಪ್ ಮತ್ತೆ ನೀರು ಸರಿಯಾಗಿ ಇರುತ್ತಾ?",
+      "transliteration": "Pavar byākap matte nīru sariyāgi iruttā?",
+      "english": "Is there reliable power backup and water supply?",
+      "hindi": "क्या पावर बैकअप और पानी ठीक से रहता है?"
+    },
+    {
+      "id": "rent_neutral_2",
+      "situation": "renting",
+      "honorificGender": "neutral",
+      "kannada": "ದಯವಿಟ್ಟು ರೂಮ್ ಒಮ್ಮೆ ತೋರಿಸುತ್ತೀರಾ?",
+      "transliteration": "Dayaviṭṭu rūm omme tōrisuttīrā?",
+      "english": "Could you please show me the room once?",
+      "hindi": "कृपया एक बार कमरा दिखा दीजिए।"
+    },
+    {
+      "id": "thanks_neutral_1",
+      "situation": "thanks",
+      "honorificGender": "neutral",
+      "kannada": "ತುಂಬಾ ಧನ್ಯವಾದಗಳು!",
+      "transliteration": "Tumbā dhanyavādagaḷu!",
+      "english": "Thank you very much!",
+      "hindi": "बहुत-बहुत धन्यवाद!"
+    },
+    {
+      "id": "thanks_male_1",
+      "situation": "thanks",
+      "honorificGender": "male",
+      "kannada": "ಧನ್ಯವಾದಗಳು ಅಣ್ಣ, ತುಂಬಾ ಸಹಾಯ ಆಯ್ತು.",
+      "transliteration": "Dhanyavādagaḷu aṇṇa, tumbā sahāya āytu.",
+      "english": "Thank you brother, that helped a lot.",
+      "hindi": "धन्यवाद भैया, बहुत मदद मिली।"
+    },
+    {
+      "id": "thanks_female_1",
+      "situation": "thanks",
+      "honorificGender": "female",
+      "kannada": "ಧನ್ಯವಾದಗಳು ಅಕ್ಕ, ತುಂಬಾ ಸಹಾಯ ಆಯ್ತು.",
+      "transliteration": "Dhanyavādagaḷu akka, tumbā sahāya āytu.",
+      "english": "Thank you sister, that helped a lot.",
+      "hindi": "धन्यवाद दीदी, बहुत मदद मिली।"
+    },
+    {
+      "id": "thanks_neutral_2",
+      "situation": "thanks",
+      "honorificGender": "neutral",
+      "kannada": "ಆಯ್ತು, ಮತ್ತೆ ಸಿಗೋಣ!",
+      "transliteration": "Āytu, matte sigōṇa!",
+      "english": "Alright, see you again!",
+      "hindi": "ठीक है, फिर मिलेंगे!"
+    },
+    {
+      "id": "refusal_neutral_1",
+      "situation": "polite_refusal",
+      "honorificGender": "neutral",
+      "kannada": "ಬೇಡ, ಧನ್ಯವಾದಗಳು.",
+      "transliteration": "Bēḍa, dhanyavādagaḷu.",
+      "english": "No, thank you.",
+      "hindi": "नहीं चाहिए, धन्यवाद।"
+    },
+    {
+      "id": "refusal_male_1",
+      "situation": "polite_refusal",
+      "honorificGender": "male",
+      "kannada": "ಪರವಾಗಿಲ್ಲ ಅಣ್ಣ, ನಾನು ನೋಡಿಕೊಳ್ಳುತ್ತೇನೆ.",
+      "transliteration": "Paravāgilla aṇṇa, nānu nōḍikoḷḷuttēne.",
+      "english": "That is alright brother, I will manage.",
+      "hindi": "कोई बात नहीं भैया, मुझसे हो जाएगा।"
+    },
+    {
+      "id": "refusal_female_1",
+      "situation": "polite_refusal",
+      "honorificGender": "female",
+      "kannada": "ಪರವಾಗಿಲ್ಲ ಅಕ್ಕ, ನಾನು ನೋಡಿಕೊಳ್ಳುತ್ತೇನೆ.",
+      "transliteration": "Paravāgilla akka, nānu nōḍikoḷḷuttēne.",
+      "english": "That is alright sister, I will manage.",
+      "hindi": "कोई बात नहीं दीदी, मुझसे हो जाएगा।"
+    }
+  ]
+}

@@ -1,32 +1,32 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** `phase/p3b-hindi` (all Phase 3b Hindi & Hinglish code-switching changes, unit/contract/E2E tests `4/4`, live `gemini-3.8-live` Hindi/Hinglish voice probes, and Devanagari caption check complete)
-- **Current tag:** `p3a-english` on `main` (`5be2482`, serving 100% live traffic on `apna-area-00005-cux`), with `p3b-hin` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting user `"merge"` confirmation for `p3b-hindi`.
-- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00005-cux`); Phase 3b preview at `https://p3b-hin---apna-area-qhtgwpzhpq-el.a.run.app`.
+- **Current phase:** `phase/p3c-kannada` (**Check-in #4**: all 3 Voice NPC language steps `P3a` English, `P3b` Hindi/Hinglish, and `P3c` Kannada + 30 Survival Phrases complete!)
+- **Current tag:** `p3b-hindi` on `main` (`9557085`, serving 100% live traffic on `apna-area-00007-dit`), with `p3c-kan` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting user `"merge"` confirmation for `p3c-kannada`.
+- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00007-dit`); Phase 3c preview at `https://p3c-kan---apna-area-qhtgwpzhpq-el.a.run.app`.
 
 ## 2. Done This Session
-- Shipped Phase 1 (`p1-map`), Phase 2 (`p2-director`), and Phase 3a (`p3a-english`, `5be2482`, `apna-area-00005-cux`) to `main` and 100% Cloud Run traffic.
-- Built `T3b.1` (`phase/p3b-hindi`):
-  - Enabled `ENABLED_LANGUAGES = ["en", "hi"]` in `shared/src/config.ts` and added `resolveComfortLanguage` + `languageComfort` on `LiveTokenRequestSchema` in `shared/src/live.ts`.
-  - Added distinct conversational Hindi (`"hi"`, respectful `aap`/`ji`, `"नमस्ते!"` greeting cue) and Hinglish code-switching (`"en_hi"`, `"Namaste! Hello!"` greeting cue) rules in `server/src/live/persona.ts` and `web/src/live/liveSessionTypes.ts`.
-  - Connected `TunePopover.tsx` (`Tune · EN` / `Tune · HI` / `Tune · HI+EN`) and `App.tsx` directly to `MissionDialog.tsx`, expanded `Noto Sans Devanagari` (`400..700`) in `web/index.html`, and increased caption line-height (`1.46`) in `web/src/styles/live.css` for Devanagari matras.
-  - Verified live `gemini-3.8-live` Hindi (`765 ms` first-audio latency, Devanagari transcript) and Hinglish (`529 ms` first-audio latency, `complete_objective` tool fired) in `docs/TESTING.md`.
+- Shipped Phase 1 (`p1-map`), Phase 2 (`p2-director`), Phase 3a (`p3a-english`), and Phase 3b (`p3b-hindi`, `9557085`) to `main` and 100% Cloud Run traffic.
+- Built `T3c.1` + `T3c.2` (`phase/p3c-kannada`):
+  - Authored and linguistically audited 30 speaker-gender-neutral, polite-plural Bengaluru Kannada survival phrases in `data/phrases.json` across all 7 `PhraseSituation` keys (`server/src/live/phrases.ts` + `server/src/__tests__/phrases.test.ts`).
+  - Enabled `ENABLED_LANGUAGES = ["en", "hi", "kn"]` in `shared/src/config.ts`, attached matched `targetPhrase` on `POST /api/live-token`, and activated `mark_phrase_attempt` (`NON_BLOCKING`) in `server/src/live/persona.ts`.
+  - Built 2-line Kannada/transliteration/meaning phrase coaching strip in `Captions.tsx`, two-note WebAudio ascending fifth chime (`chime.ts`), `260ms` `--accent-teal` mastery ring, `PhraseFlyCard.tsx` flight animation into the persisted `Phrases · N` topbar badge (`sessionStore.ts`), and extracted `MicOrbControl.tsx` + `vendor-ui` Rollup chunk so zero files exceed 250 lines and zero Vite build warnings occur.
+  - Verified live `gemini-3.8-live` Kannada phrase mastery (`630 ms`) and Hindi-to-Kannada coaching bridge (`717 ms`, firing `give_hint` -> `mark_phrase_attempt("clear")` -> `complete_objective`) in `docs/TESTING.md`.
 
 ## 3. Decisions Made
-- **ADR-006 & ADR-015:** Sequential language rollout continues cleanly (`["en"]` -> `["en", "hi"]`) with `Tune · EN/HI/HI+EN` surfacing the active mode directly in the top utility bar.
+- **ADR-016:** Curate 30 speaker-gender-neutral, polite-plural spoken Bengaluru Kannada phrases in `data/phrases.json` matched by `PhraseSituation` and `honorificGender` (`aṇṇa` / `akka` / `neutral`).
 
 ## 4. Open Questions
-- **Phase 3b Preview Check:** Try switching `Tune` to `Hindi` or `Hindi + English` and talking with an NPC on the `p3b-hin` Cloud Run preview URL, then confirm `"merge"` to promote `p3b-hin` to 100% live traffic (`tag: p3b-hindi`) and begin **Phase 3c (`phase/p3c-kannada` · Kannada & 30 Survival Phrases)**.
+- **Check-in #4:** Try speaking or typing the mission's Kannada survival phrase on the `p3c-kan` Cloud Run preview URL to watch the teal mastery ring, chime, and flying card land in `Phrases · 1`, then confirm `"merge"` to promote `p3c-kan` to 100% live traffic (`tag: p3c-kannada`) and begin **Phase 4 (`phase/p4-adaptive` · Gemini Decision 1 Adaptive Scoring & XP HUD)**.
 
 ## 5. Known Issues
-- None blocking; in `P3c` (`Kannada & Survival Phrases`), keep the 3-tier Kannada + transliteration + meaning caption compact so desktop `1440x900` preserves clearance below the office pin when the keyboard drawer is open.
+- None; all 9 rows of the Phase 3 Manual Voice Test Matrix in `docs/TESTING.md` are green (`529-823 ms` first-audio latency).
 
 ## 6. File State
-- All Phase 3b code, tests (`10/10` Vitest suites / `33/33` tests, `4/4` Playwright E2E), and living docs committed on `phase/p3b-hindi`.
+- All Phase 3c code, `data/phrases.json`, tests (`11/11` Vitest suites / `35/35` tests, `4/4` Playwright E2E), and living docs committed on `phase/p3c-kannada`.
 
 ## 7. The Single Next Task
-- Upon user `"merge"` confirmation, merge `phase/p3b-hindi` (`--no-ff`, tag `p3b-hindi`), route 100% traffic to `p3b-hin`, and start **Phase 3c (`phase/p3c-kannada`, `T3c.1` + `T3c.2`)**: curate and review 30 polite plural Kannada ORR survival phrases (`data/phrases.json`), set `ENABLED_LANGUAGES = ["en", "hi", "kn"]`, activate `mark_phrase_attempt`, and build 3-line Kannada captions + teal pulse + chime + `PhraseFlyCard`.
+- Upon user `"merge"` confirmation, merge `phase/p3c-kannada` (`--no-ff`, tag `p3c-kannada`), route 100% traffic to `p3c-kan`, and start **Phase 4 (`phase/p4-adaptive`, `T4.1`..`T4.3`)**: pure `xpFor` / `starsFor` / `nextDifficulty`, `POST /api/score` calling `gemini-decision-1` (`v1beta` `decisions.create` with `noul`, `score`, `choice`, `< 0.75` confidence guard, sorted choice keys + `other`), `MissionResultCard.tsx`, `WhyChangedDisclosure.tsx`, and `XpCounter.tsx`.
 
 ## 8. Resume Checklist
 1. `AGENTS.md`

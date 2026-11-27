@@ -6,9 +6,10 @@
  * Deliberately excludes: Client-side API keys or unverified fallback places.
  */
 import { useCallback, useMemo, useState, type JSX } from "react";
-import { resolveComfortLanguage, type DifficultyState } from "@apna-area/shared";
+import { resolveComfortLanguage, type DifficultyState, type SurvivalPhrase } from "@apna-area/shared";
 import { HealthBadge } from "./components/HealthBadge";
 import { MissionCard } from "./hud/MissionCard";
+import { PhrasebookPill } from "./hud/PhraseFlyCard";
 import { ProgressChips } from "./hud/ProgressChips";
 import { useDirectorStream } from "./hud/useDirectorStream";
 import { WeekProgressBar } from "./hud/WeekProgressBar";
@@ -18,6 +19,7 @@ import { OfficePicker } from "./picker/OfficePicker";
 import { TunePopover } from "./picker/TunePopover";
 import {
   loadPlayerPreferences,
+  recordLearnedPhraseId,
   savePlayerPreferences,
   type BudgetBand,
   type LanguageComfort,
@@ -41,6 +43,7 @@ export function App(): JSX.Element {
   const { config, world, worldReady, loadError } = useWorldBootstrap();
   const [activeMissionIndex, setActiveMissionIndex] = useState(0);
   const [inVoiceMission, setInVoiceMission] = useState(false);
+  const [phrasePulse, setPhrasePulse] = useState(false);
   const { director, buildWeek, cancelGeneration, clearWeek } = useDirectorStream();
 
   const [tourActive, setTourActive] = useState<boolean>(() => {
@@ -98,6 +101,12 @@ export function App(): JSX.Element {
     return m ? placesById.get(m.placeId) : undefined;
   }, [director.weekPlan, activeMissionIndex, placesById]);
 
+  const handlePhraseMastered = useCallback((phrase: SurvivalPhrase) => {
+    setPrefs(recordLearnedPhraseId(phrase.id));
+    setPhrasePulse(true);
+    window.setTimeout(() => setPhrasePulse(false), 620);
+  }, []);
+
   const bannerMessage = loadError ?? director.errorMessage;
 
   return (
@@ -139,6 +148,9 @@ export function App(): JSX.Element {
         )}
 
         <div className="topbar-actions">
+          {!tourActive && config.enabledLanguages.includes("kn") && (
+            <PhrasebookPill count={prefs.learnedPhraseIds.length} pulse={phrasePulse} />
+          )}
           {!tourActive && (
             <TunePopover
               budgetBand={prefs.budgetBand}
@@ -167,6 +179,7 @@ export function App(): JSX.Element {
           difficulty={INITIAL_DIFFICULTY}
           activeLanguage={resolveComfortLanguage(prefs.languageComfort, config.enabledLanguages)}
           languageComfort={prefs.languageComfort}
+          onPhraseMastered={handlePhraseMastered}
           onExitMission={() => setInVoiceMission(false)}
           onAdvanceNextMission={() => {
             setInVoiceMission(false);

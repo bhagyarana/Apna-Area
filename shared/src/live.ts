@@ -17,15 +17,25 @@ import {
 } from "./types.js";
 import { MissionSchema } from "./world.js";
 
+export const HonorificGenderSchema = z.enum(["male", "female", "neutral"]);
+export type HonorificGender = z.infer<typeof HonorificGenderSchema>;
+
 export const SurvivalPhraseSchema = z.object({
   id: z.string().min(1),
   situation: PhraseSituationSchema,
+  honorificGender: HonorificGenderSchema.default("neutral"),
   kannada: z.string().min(1),
   transliteration: z.string().min(1),
   english: z.string().min(1),
   hindi: z.string().min(1),
 });
 export type SurvivalPhrase = z.infer<typeof SurvivalPhraseSchema>;
+
+export const PhrasesDatasetSchema = z.object({
+  version: z.string().min(1),
+  phrases: z.array(SurvivalPhraseSchema).length(30),
+});
+export type PhrasesDataset = z.infer<typeof PhrasesDatasetSchema>;
 
 export const TranscriptTurnSchema = z.object({
   speaker: z.enum(["player", "npc"]),

@@ -10,10 +10,13 @@ import {
   createApiError,
   createApiSuccess,
   createLogger,
+  ENABLED_LANGUAGES,
   LiveTokenRequestSchema,
   SAFETY_LIMITS,
+  type LanguageCode,
 } from "@apna-area/shared";
 import type { LoadedWorldData } from "./places.js";
+import { loadSurvivalPhrases, selectPhraseForMission } from "../live/phrases.js";
 import { createGenAiLiveTokenMinter, type LiveTokenMinter } from "../live/token.js";
 
 export interface RegisterLiveTokenOptions {
@@ -34,6 +37,8 @@ export async function registerLiveTokenRoutes(
   app: FastifyInstance,
   opts: RegisterLiveTokenOptions,
 ): Promise<void> {
+  const phrasesDataset = loadSurvivalPhrases();
+  const enabledList: readonly LanguageCode[] = ENABLED_LANGUAGES;
   const minter: LiveTokenMinter | null =
     opts.minter ??
     (opts.geminiApiKey && opts.geminiApiKey.length > 0
@@ -96,7 +101,20 @@ export async function registerLiveTokenRoutes(
           );
       }
 
-      const result = await minter(parsed.data, request.id);
+      const hydratedReq =
+        !parsed.data.targetPhrase && enabledList.includes("kn")
+          ? {
+              ...parsed.data,
+              targetPhrase: selectPhraseForMission(
+                phrasesDataset.phrases,
+                parsed.data.mission.phraseSituation,
+                parsed.data.mission.npcGender,
+                parsed.data.mission.id,
+              ),
+            }
+          : parsed.data;
+
+      const result = await minter(hydratedReq, request.id);
       if (!result.ok) {
         return reply
           .status(503)

@@ -87,6 +87,7 @@ export function useLiveSession() {
 
       try {
         const tokenData = tokenRes.data;
+        setState((prev) => ({ ...prev, targetPhrase: tokenData.phrase ?? req.targetPhrase ?? null }));
         const pcmPlayer = createPcmPlayer(audioCtx, (speaking) => {
           if (sessionSeqRef.current !== mySeq) return;
           setState((prev) =>

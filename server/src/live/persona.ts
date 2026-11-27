@@ -112,7 +112,8 @@ export function buildNpcSystemInstruction(
 
   if (targetPhrase && enabledLanguages.includes("kn")) {
     lines.push(
-      `Target Kannada survival phrase to teach naturally once: "${targetPhrase.kannada}" (${targetPhrase.transliteration}, meaning "${targetPhrase.english}"). Invite them to try saying it and call mark_phrase_attempt as soon as they attempt it.`,
+      `Kannada welcome & phrase coaching: Open with a short, warm Bengaluru Kannada greeting followed right away by a friendly bridge in ${LANGUAGE_NAMES[leadLang]} so a beginner feels completely welcome.`,
+      `Target Kannada survival phrase to teach naturally once in this scene (phraseId "${targetPhrase.id}"): "${targetPhrase.kannada}" (pronounced "${targetPhrase.transliteration}", meaning "${targetPhrase.english}"). Invite the player to try saying "${targetPhrase.transliteration}" out loud, and call mark_phrase_attempt with phraseId "${targetPhrase.id}" (quality "clear" when spoken or typed recognizably, or "partial" if incomplete) as soon as they attempt it. If they ask for help in Hindi or English, answer warmly in that language and gently coach the phrase.`,
     );
   }
 

@@ -31,8 +31,8 @@ describe("shared/config", () => {
     expect(ORR_BBOX.north).toBeGreaterThanOrEqual(12.9569);
   });
 
-  it("enables English and Hindi in P3b and caps Live sessions at 90 seconds", () => {
-    expect(ENABLED_LANGUAGES).toEqual(["en", "hi"]);
+  it("enables English, Hindi, and Kannada in P3c and caps Live sessions at 90 seconds", () => {
+    expect(ENABLED_LANGUAGES).toEqual(["en", "hi", "kn"]);
     expect(SAFETY_LIMITS.maxLiveSessionSeconds).toBe(90);
   });
 });
