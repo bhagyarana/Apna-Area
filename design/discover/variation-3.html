@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Area · Variation 3 · Viewfinder Frame & Darshini Token Tray</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-night: #0E0A1C;
+      --bg-surface: rgba(25, 19, 46, 0.9);
+      --text-primary: #F7F1FF;
+      --text-secondary: #CFC4E8;
+      --text-muted: #A397C2;
+      --pink: #FF4FA0;
+      --yellow: #FFD24A;
+      --teal: #3DE6D0;
+      --ring: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 45%, rgba(255, 210, 74, 0.08), transparent 45%), var(--bg-night);
+      color: var(--text-primary);
+      font-family: "Hanken Grotesk", system-ui, sans-serif;
+      overflow: hidden;
+    }
+    .TopBar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-surface);
+      border-radius: 999px;
+      padding: 8px 20px;
+      box-shadow: 0 12px 32px rgba(4, 2, 10, 0.6), var(--ring);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-variant-numeric: tabular-nums;
+    }
+    .TokenTray {
+      display: flex;
+      gap: 8px;
+    }
+    .Token {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+    .Token.earned { background: var(--teal); color: var(--bg-night); }
+    .Token.current { background: var(--yellow); color: var(--bg-night); }
+    .Viewfinder {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 440px;
+      height: 240px;
+      transform: translate(-50%, -62%);
+      pointer-events: none;
+    }
+    .Corner {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: rgba(255, 210, 74, 0.55);
+      border-style: solid;
+    }
+    .tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+    .tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+    .bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+    .br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+    .BottomSplit {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      display: grid;
+      grid-template-columns: 320px 1fr 220px;
+      gap: 16px;
+      align-items: end;
+    }
+    .Panel {
+      background: var(--bg-surface);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 16px 40px rgba(4, 2, 10, 0.6), var(--ring);
+    }
+  </style>
+</head>
+<body>
+  <header class="TopBar">
+    <span style="font-family:'Anton',sans-serif;letter-spacing:0.04em;">APNA AREA</span>
+    <div class="TokenTray" aria-label="5 darshini tokens">
+      <span class="Token earned">1</span>
+      <span class="Token current">2</span>
+      <span class="Token">3</span>
+      <span class="Token">4</span>
+      <span class="Token">5</span>
+    </div>
+    <span style="font-size:14px;font-weight:600;">1,240 XP · 01:12</span>
+  </header>
+
+  <div class="Viewfinder" aria-hidden="true">
+    <span class="Corner tl"></span><span class="Corner tr"></span>
+    <span class="Corner bl"></span><span class="Corner br"></span>
+  </div>
+
+  <footer class="BottomSplit">
+    <section class="Panel">
+      <p style="font-size:12px;color:var(--text-muted);">OBJECTIVE</p>
+      <p style="font-size:15px;margin-top:4px;">Order breakfast in Kannada at <strong style="color:var(--yellow);">Arogya Ahaara Darshini</strong>.</p>
+    </section>
+    <section class="Panel" style="text-align:center;">
+      <p style="font-family:'Noto Sans Kannada',sans-serif;font-size:20px;font-weight:600;">ಒಂದು ಕಾಫಿ ಕೊಡಿ</p>
+      <p style="font-size:14px;color:var(--text-secondary);margin-top:4px;">ondu kāfi koḍi · One coffee, please</p>
+    </section>
+    <section class="Panel" style="display:grid;place-items:center;">
+      <button type="button" style="width:100%;height:48px;border-radius:12px;border:0;background:var(--pink);color:var(--bg-night);font-weight:700;cursor:pointer;">HOLD TO SPEAK</button>
+    </section>
+  </footer>
+</body>
+</html>

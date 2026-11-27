@@ -6,7 +6,7 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 - [x] `T-SETUP`: `.gitignore` committed first (`5b8b64f`), agent rules/skills copied (`e693716`).
 - [x] `T-DOCS`: All 11 living docs drafted, self-checked, and committed.
 - [x] `T-REVIEW`: Adversarial review (`03-adversarial-review.md`) run on fresh Carbon agent and top 6 fixes applied.
-- [ ] `T-DISCOVER`: Design Discover (`04-design-discover.md`) taste check-in + 3 seeded variations -> lock Section 3 of `Design.md`.
+- [x] `T-DISCOVER`: Design Discover (`04-design-discover.md`) 3 seeded HTML variations created in `design/discover/` and Section 3 of `Design.md` locked.
 
 ---
 
