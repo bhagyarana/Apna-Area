@@ -58,6 +58,7 @@ export interface RegisterWorldRouteOptions {
   runner?: ModelInteractionRunner;
   fallbackPlans?: Readonly<Record<string, WeekPlan>>;
   cache?: WorldPlanCache;
+  onPlanReady?: (plan: WeekPlan, requestId: string) => void;
   log?: ReturnType<typeof createLogger>;
 }
 
@@ -136,6 +137,7 @@ export async function registerWorldRoutes(
 
       if (!raw.writableEnded) {
         if (result.ok) {
+          opts.onPlanReady?.(result.data.plan, request.id);
           writeSseEvent(raw, {
             type: "complete",
             plan: result.data.plan,
@@ -172,6 +174,7 @@ export async function registerWorldRoutes(
         .send(createApiError(result.code, result.message, result.retryable, request.id));
     }
 
+    opts.onPlanReady?.(result.data.plan, request.id);
     return createApiSuccess(result.data, request.id);
   });
 }

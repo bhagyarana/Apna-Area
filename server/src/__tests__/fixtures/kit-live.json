@@ -1,0 +1,139 @@
+{
+  "recordedAt": "2026-11-27T19:15:10.015Z",
+  "kitPayload": {
+    "office": {
+      "id": "ChIJ10E9RAQRrjsRJxXRmkKBqcw",
+      "name": "Bagmane IT park",
+      "category": "tech_park",
+      "neighbourhood": "Marathahalli",
+      "lat": 12.972884,
+      "lng": 77.708782,
+      "shortAddress": "XPF5+5G3 Manyata Tech Park 3, Kundalahalli Colony, Brookefield, Bengaluru",
+      "googleMapsUri": "https://maps.google.com/?cid=14747460577866618151&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "primaryType": "corporate_office"
+    },
+    "mondayMorningIso": "2026-11-30T03:30:00.000Z",
+    "mondayEveningIso": "2026-11-30T13:00:00.000Z",
+    "neighbourhoods": [
+      {
+        "neighbourhoodId": "marathahalli",
+        "areaName": "Marathahalli",
+        "originPlaceName": "Marathahalli Multiplex",
+        "originPlaceId": "ChIJ_-JLMjUSrjsRkBg-q3n1ots",
+        "originLat": 12.950786,
+        "originLng": 77.699563,
+        "distanceKm": 5.1,
+        "morningDriveMin": 21,
+        "eveningDriveMin": 20,
+        "twoWheelerMin": 19,
+        "transitMin": 26,
+        "fitReason": "Connected directly to Marathahalli along the Outer Ring Road corridor.",
+        "oneLine": "Marathahalli is located 5.1 km away from Bagmane IT park, offering a morning drive of 21 minutes and an evening drive of 20 minutes.",
+        "mapsDirectionsUri": "https://www.google.com/maps/dir/?api=1&origin=Marathahalli+Multiplex%2C+Bengaluru&origin_place_id=ChIJ_-JLMjUSrjsRkBg-q3n1ots&destination=Bagmane+IT+park%2C+Bengaluru&destination_place_id=ChIJ10E9RAQRrjsRJxXRmkKBqcw&travelmode=driving",
+        "commuteSource": "routes_api"
+      },
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "areaName": "Kadubeesanahalli",
+        "originPlaceName": "SUMANTH PREMIUM COLIVING PG",
+        "originPlaceId": "ChIJ17U9OagTrjsRKtJ5kXwZ1bA",
+        "originLat": 12.927979,
+        "originLng": 77.696015,
+        "distanceKm": 11.2,
+        "morningDriveMin": 36,
+        "eveningDriveMin": 35,
+        "twoWheelerMin": 28,
+        "transitMin": 52,
+        "fitReason": "Connected directly to Marathahalli along the Outer Ring Road corridor.",
+        "oneLine": "Kadubeesanahalli sits 11.2 km from Bagmane IT park, resulting in a morning drive of 36 minutes and an evening drive of 35 minutes.",
+        "mapsDirectionsUri": "https://www.google.com/maps/dir/?api=1&origin=SUMANTH+PREMIUM+COLIVING+PG%2C+Bengaluru&origin_place_id=ChIJ17U9OagTrjsRKtJ5kXwZ1bA&destination=Bagmane+IT+park%2C+Bengaluru&destination_place_id=ChIJ10E9RAQRrjsRJxXRmkKBqcw&travelmode=driving",
+        "commuteSource": "routes_api"
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "areaName": "Devarabisanahalli",
+        "originPlaceName": "Sri Shreshta Udupi",
+        "originPlaceId": "ChIJ_2wgIZATrjsRfGYJU3FfAQk",
+        "originLat": 12.930776,
+        "originLng": 77.685009,
+        "distanceKm": 8.5,
+        "morningDriveMin": 31,
+        "eveningDriveMin": 33,
+        "twoWheelerMin": 26,
+        "transitMin": 40,
+        "fitReason": "Connected directly to Marathahalli along the Outer Ring Road corridor.",
+        "oneLine": "Devarabisanahalli is 8.5 km away from Bagmane IT park, with a morning commute taking 31 minutes and the return trip taking 33 minutes.",
+        "mapsDirectionsUri": "https://www.google.com/maps/dir/?api=1&origin=Sri+Shreshta+Udupi%2C+Bengaluru&origin_place_id=ChIJ_2wgIZATrjsRfGYJU3FfAQk&destination=Bagmane+IT+park%2C+Bengaluru&destination_place_id=ChIJ10E9RAQRrjsRJxXRmkKBqcw&travelmode=driving",
+        "commuteSource": "routes_api"
+      }
+    ],
+    "phrases": [
+      {
+        "id": "auto_male_1",
+        "situation": "auto_meter",
+        "honorificGender": "male",
+        "kannada": "ಅಣ್ಣ, ದಯವಿಟ್ಟು ಮೀಟರ್ ಹಾಕಿ ಬನ್ನಿ.",
+        "transliteration": "Aṇṇa, dayaviṭṭu mīṭar hāki banni.",
+        "english": "Brother, please put the meter on and come.",
+        "hindi": "भैया, कृपया मीटर लगाकर चलिए।"
+      },
+      {
+        "id": "greet_neutral_1",
+        "situation": "greeting",
+        "honorificGender": "neutral",
+        "kannada": "ನಮಸ್ಕಾರ, ಹೇಗಿದ್ದೀರಾ?",
+        "transliteration": "Namaskāra, hēgiddīrā?",
+        "english": "Hello, how are you?",
+        "hindi": "नमस्कार, आप कैसे हैं?"
+      },
+      {
+        "id": "auto_neutral_1",
+        "situation": "auto_meter",
+        "honorificGender": "neutral",
+        "kannada": "ದಯವಿಟ್ಟು ಮೇನ್ ಗೇಟ್ ಹತ್ತಿರ ನಿಲ್ಲಿಸಿ.",
+        "transliteration": "Dayaviṭṭu mēn gēṭ hattira nillisi.",
+        "english": "Please stop near the main gate.",
+        "hindi": "कृपया मेन गेट के पास रोक दीजिए।"
+      }
+    ],
+    "starterPhraseIds": [
+      "greet_neutral_1",
+      "auto_neutral_1"
+    ],
+    "checklist": [
+      {
+        "id": "flat_water_power",
+        "label": "Ask flatmates about tanker water frequency and BESCOM backup",
+        "detail": "Check whether the building has full DG backup or bedroom-only inverter lines."
+      },
+      {
+        "id": "flat_written_split",
+        "label": "Confirm maintenance, cook, and notice terms in writing",
+        "detail": "Align on shared kitchen timings and society move-in registration before shifting."
+      },
+      {
+        "id": "walk_rush_gate",
+        "label": "Walk the 09:00 office gate crossing once before Monday",
+        "detail": "Check which Outer Ring Road skywalk or service-lane entry reaches your campus block."
+      },
+      {
+        "id": "transit_upi_pass",
+        "label": "Set up Namma BMTC and Namma Yatri on your phone",
+        "detail": "Keep UPI Autopay or small change ready for Vajra AC buses and metered autos."
+      },
+      {
+        "id": "darshini_morning_spot",
+        "label": "Pick one go-to darshini within 500 metres of home",
+        "detail": "Fast breakfast counters move quickly when you order in short polite Kannada."
+      },
+      {
+        "id": "monsoon_rain_layer",
+        "label": "Pack a compact umbrella and water-resistant backpack cover",
+        "detail": "Evening showers on the Bellandur and Silk Board stretch slow down service lanes."
+      }
+    ],
+    "summaryFallbackUsed": false
+  },
+  "ttsHeaderAscii": "RIFF",
+  "ttsSampleWavBase64Prefix": "UklGRrQ/AgBXQVZFZm10IBAAAAABAAEAwF0AAIC7AAACABAAZGF0YaAhAgA2AAsAFwDf/77/nv+L/2z/fv89/1b/Wf85/1r/iP97/7j/tP/9/x8ANQA2AEEAOwBCACgA"
+}

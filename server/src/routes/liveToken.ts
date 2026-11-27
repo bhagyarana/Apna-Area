@@ -23,6 +23,7 @@ export interface RegisterLiveTokenOptions {
   worldData: LoadedWorldData;
   geminiApiKey?: string;
   minter?: LiveTokenMinter;
+  onPhraseSelected?: (phraseId: string, requestId: string) => void;
   log?: ReturnType<typeof createLogger>;
 }
 
@@ -113,6 +114,10 @@ export async function registerLiveTokenRoutes(
               ),
             }
           : parsed.data;
+
+      if (hydratedReq.targetPhrase && hydratedReq.mission.id === "m1") {
+        opts.onPhraseSelected?.(hydratedReq.targetPhrase.id, request.id);
+      }
 
       const result = await minter(hydratedReq, request.id);
       if (!result.ok) {

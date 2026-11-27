@@ -26,9 +26,13 @@ import { loadVerifiedWorldData, registerPlacesRoutes, type LoadedWorldData } fro
 import { registerWorldRoutes } from "./routes/world.js";
 import { registerLiveTokenRoutes } from "./routes/liveToken.js";
 import { registerScoreRoutes } from "./routes/score.js";
+import { registerKitRoutes } from "./routes/kit.js";
 import type { ModelInteractionRunner } from "./world/director.js";
 import type { LiveTokenMinter } from "./live/token.js";
 import type { DecisionModelRunner } from "./score/decide.js";
+import type { RouteMatrixFetcher } from "./kit/commute.js";
+import type { KitSummaryRunner } from "./kit/summary.js";
+import type { TtsModelRunner } from "./kit/tts.js";
 
 export interface ServerOptions {
   version?: string;
@@ -44,6 +48,9 @@ export interface ServerOptions {
   worldRunner?: ModelInteractionRunner;
   liveTokenMinter?: LiveTokenMinter;
   decisionRunner?: DecisionModelRunner;
+  routeMatrixFetcher?: RouteMatrixFetcher;
+  kitSummaryRunner?: KitSummaryRunner;
+  ttsRunner?: TtsModelRunner;
   fallbackPlans?: Readonly<Record<string, WeekPlan>>;
   rateLimitMax?: number;
   webDistPath?: string;
@@ -177,11 +184,25 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
 
   await registerPlacesRoutes(app, world);
 
+  const kitHooks = await registerKitRoutes(app, {
+    worldData: world,
+    geminiApiKey: options.geminiApiKey,
+    mapsServerKey: options.mapsServerKey,
+    mapsBrowserKey: options.mapsBrowserKey,
+    routeMatrixFetcher: options.routeMatrixFetcher,
+    summaryRunner: options.kitSummaryRunner,
+    ttsRunner: options.ttsRunner,
+    log,
+  });
+
   await registerWorldRoutes(app, {
     worldData: world,
     geminiApiKey: options.geminiApiKey,
     runner: options.worldRunner,
     fallbackPlans: options.fallbackPlans,
+    onPlanReady: (plan, reqId) => {
+      kitHooks.prewarmOfficeCommutes(plan.officePlaceId, plan.recommendedNeighbourhoods, reqId);
+    },
     log,
   });
 
@@ -189,6 +210,9 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     worldData: world,
     geminiApiKey: options.geminiApiKey,
     minter: options.liveTokenMinter,
+    onPhraseSelected: (phraseId, reqId) => {
+      kitHooks.prewarmPhraseAudio(phraseId, reqId);
+    },
     log,
   });
 

@@ -55,6 +55,8 @@ export const SAFETY_LIMITS = {
   apiRequestsPerMinutePerIp: 60,
   liveTokensPerMinutePerIp: 30,
   scoreRequestsPerMinutePerIp: 30,
+  kitRequestsPerMinutePerIp: 30,
+  ttsRequestsPerMinutePerIp: 30,
   maxLiveSessionSeconds: 90,
   ephemeralTokenUses: 3,
   ephemeralTokenExpireMinutes: 15,
@@ -80,8 +82,22 @@ export const DEFAULT_FEATURE_FLAGS = {
   enableDirector: true,
   enableVoiceNpcs: true,
   enableAdaptiveScoring: true,
-  enableSurvivalKit: false,
-  enableAmbientMusic: false,
+  enableSurvivalKit: true,
+  enableAmbientMusic: true,
+} as const;
+
+/** Tunables for Phase 5 Survival Kit commutes, summaries, TTS cache, and Lyria ambience. */
+export const KIT_CONFIG = {
+  commuteCacheTtlMs: 6 * 60 * 60 * 1_000,
+  commuteCacheMaxEntries: 40,
+  ttsCacheMaxEntries: 30,
+  ttsVoiceName: "Sulafat",
+  ttsApiVersion: "v1beta",
+  summaryThinkingLevel: "minimal",
+  defaultNeighbourhoodCount: 3,
+  ambientDefaultVolume: 0.18,
+  ambientVoiceDuckedVolume: 0.04,
+  ambientCrossfadeMs: 600,
 } as const;
 
 /** Audio and ephemeral token tunables for Gemini 3.8 Live voice NPCs. */
