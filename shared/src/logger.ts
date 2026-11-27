@@ -52,19 +52,36 @@ export interface GeminiCallLogInput {
   };
 }
 
-const REDACTED_KEYS = new Set([
+const SENSITIVE_KEY_STEMS = [
   "transcript",
   "audio",
-  "audiowavbase64",
+  "pcm",
   "inlinedata",
   "apikey",
-  "x-goog-api-key",
-  "authorization",
+  "secret",
   "token",
-  "geminiapikey",
+  "authorization",
   "mapsserverkey",
   "mapsbrowserkey",
+];
+
+const SAFE_TOKEN_METRIC_KEYS = new Set([
+  "inputtokens",
+  "outputtokens",
+  "totaltokens",
+  "thoughttokens",
+  "prompttokencount",
+  "candidatestokencount",
+  "totaltokencount",
 ]);
+
+function isSensitiveKey(key: string): boolean {
+  const normalised = key.toLowerCase().replace(/[-_]/g, "");
+  if (SAFE_TOKEN_METRIC_KEYS.has(normalised)) {
+    return false;
+  }
+  return SENSITIVE_KEY_STEMS.some((stem) => normalised.includes(stem));
+}
 
 const API_KEY_PATTERN = /AIza[0-9A-Za-z_-]{20,}/g;
 
@@ -94,7 +111,7 @@ export function sanitiseLogValue(value: unknown, depth = 0): unknown {
   const record = value as Record<string, unknown>;
   const cleaned: Record<string, unknown> = {};
   for (const [key, raw] of Object.entries(record)) {
-    if (REDACTED_KEYS.has(key.toLowerCase())) {
+    if (isSensitiveKey(key)) {
       cleaned[key] = "[REDACTED]";
     } else {
       cleaned[key] = sanitiseLogValue(raw, depth + 1);
@@ -154,7 +171,7 @@ export function createLogger(sink: LogSink = defaultStdoutSink) {
     error: (event: string, options?: { requestId?: string; durationMs?: number; meta?: Record<string, unknown> }) =>
       emit("ERROR", event, options),
     /**
-     * Logs a Gemini SDK call with SHA-256 prompt hash, truncated prompt/output previews, token counts, and latency.
+     * Logs a Gemini SDK call with a 16-char FNV-1a prompt fingerprint, truncated prompt/output previews, token counts, and latency.
      */
     logGeminiCall: (input: GeminiCallLogInput) => {
       const safePrompt = sanitiseLogValue(input.prompt) as string;

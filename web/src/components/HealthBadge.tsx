@@ -1,11 +1,11 @@
 /**
  * Feature: Live Server Health Status Badge
- * Purpose: Polls GET /api/health once on load, displays an accessible status dot, and reveals live commit metadata on hover or focus.
+ * Purpose: Polls GET /api/health once on load, displays an accessible status dot, and reveals live commit metadata on hover, focus, or tap.
  * Inputs: None (reads /api/health relative to same origin).
  * Outputs: Accessible button + build metadata popover with data-testid="health-dot".
  * Deliberately excludes: Continuous background polling loops that waste server requests.
  */
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState, type JSX, type KeyboardEvent } from "react";
 import { HealthDataSchema, TIMEOUTS_MS, type HealthData } from "@apna-area/shared";
 
 type ConnectionState = "loading" | "ok" | "error";
@@ -27,35 +27,44 @@ export function HealthBadge(): JSX.Element {
     data: null,
     errorMessage: null,
   });
-  const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    let unmounted = false;
+    let timedOut = false;
     const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), TIMEOUTS_MS.healthCheck);
+    const timer = window.setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, TIMEOUTS_MS.healthCheck);
 
     fetch("/api/health", { signal: controller.signal })
       .then(async (res) => {
         if (!res.ok) {
-          throw new Error(`Server returned HTTP ${res.status}`);
+          throw new Error("bad_status");
         }
         const json = (await res.json()) as { ok?: boolean; data?: unknown };
         const parsed = HealthDataSchema.safeParse(json.data);
         if (!json.ok || !parsed.success) {
-          throw new Error("Health payload did not match schema");
+          throw new Error("invalid_schema");
         }
-        setHealth({ status: "ok", data: parsed.data, errorMessage: null });
+        if (!unmounted) {
+          setHealth({ status: "ok", data: parsed.data, errorMessage: null });
+        }
       })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) {
+      .catch(() => {
+        if (unmounted) {
           return;
         }
         setHealth({
           status: "error",
           data: null,
-          errorMessage:
-            err instanceof Error
-              ? err.message
-              : "Could not reach the Apna Area server. Refresh to retry.",
+          errorMessage: timedOut
+            ? "Server health check timed out, so refresh the page to retry."
+            : "Could not reach the Apna Area server, so refresh the page to retry.",
         });
       })
       .finally(() => {
@@ -63,10 +72,20 @@ export function HealthBadge(): JSX.Element {
       });
 
     return () => {
+      unmounted = true;
       window.clearTimeout(timer);
       controller.abort();
     };
   }, []);
+
+  const open = !dismissed && (hovered || focused || pinned);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === "Escape") {
+      setPinned(false);
+      setDismissed(true);
+    }
+  };
 
   const label =
     health.status === "ok"
@@ -78,17 +97,27 @@ export function HealthBadge(): JSX.Element {
   return (
     <div
       className="health-wrapper"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={() => {
+        setDismissed(false);
+        setHovered(true);
+      }}
+      onMouseLeave={() => setHovered(false)}
+      onKeyDown={handleKeyDown}
     >
       <button
         type="button"
         className="health-pill"
         aria-expanded={open}
         aria-label={`Server status: ${health.status}`}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
-        onClick={() => setOpen((prev) => !prev)}
+        onFocus={() => {
+          setDismissed(false);
+          setFocused(true);
+        }}
+        onBlur={() => setFocused(false)}
+        onClick={() => {
+          setDismissed(false);
+          setPinned((prev) => !prev);
+        }}
       >
         <span
           className="health-dot"
@@ -109,9 +138,9 @@ export function HealthBadge(): JSX.Element {
               <span>Version: {health.data.version}</span>
             </>
           ) : health.status === "loading" ? (
-            <span>Checking Outer Ring Road server health...</span>
+            <span>Checking Outer Ring Road server health.</span>
           ) : (
-            <span>{health.errorMessage ?? "Server unreachable. Refresh to retry."}</span>
+            <span>{health.errorMessage ?? "Could not reach the server, so refresh to retry."}</span>
           )}
         </div>
       )}

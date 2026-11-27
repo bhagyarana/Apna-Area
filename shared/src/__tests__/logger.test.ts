@@ -20,6 +20,9 @@ describe("shared/logger", () => {
       meta: {
         missionId: "m1",
         transcript: [{ speaker: "player", text: "private speech" }],
+        input_transcript: "snake case transcript",
+        ephemeral_token: "tok-123",
+        api_key: "secret-val",
         audio: "AAAA_BASE64",
         leak: `Key is ${syntheticKey}`,
       },
@@ -35,6 +38,9 @@ describe("shared/logger", () => {
     const meta = parsed.meta as Record<string, unknown>;
     expect(meta.missionId).toBe("m1");
     expect(meta.transcript).toBe("[REDACTED]");
+    expect(meta.input_transcript).toBe("[REDACTED]");
+    expect(meta.ephemeral_token).toBe("[REDACTED]");
+    expect(meta.api_key).toBe("[REDACTED]");
     expect(meta.audio).toBe("[REDACTED]");
     expect(meta.leak).toBe("Key is [REDACTED_KEY]");
   });
@@ -55,10 +61,16 @@ describe("shared/logger", () => {
     });
 
     const parsed = JSON.parse(lines[0] ?? "{}") as {
-      meta: { promptHash: string; promptPreview: string; outputPreview: string };
+      meta: {
+        promptHash: string;
+        promptPreview: string;
+        outputPreview: string;
+        usage: { totalTokens: number };
+      };
     };
     expect(parsed.meta.promptHash).toHaveLength(16);
     expect(parsed.meta.promptPreview).toHaveLength(500);
     expect(parsed.meta.outputPreview).toHaveLength(2_000);
+    expect(parsed.meta.usage).toEqual({ totalTokens: 640 });
   });
 });

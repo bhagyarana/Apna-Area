@@ -68,11 +68,24 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     global: true,
     max: options.rateLimitMax ?? SAFETY_LIMITS.apiRequestsPerMinutePerIp,
     timeWindow: "1 minute",
+    allowList: (request) => {
+      if (request.method !== "GET" && request.method !== "HEAD") {
+        return false;
+      }
+      const urlPath = request.url.split("?")[0] ?? "/";
+      return (
+        urlPath === "/" ||
+        urlPath === "/favicon.ico" ||
+        urlPath.startsWith("/assets/") ||
+        urlPath.startsWith("/art/") ||
+        urlPath.startsWith("/audio/")
+      );
+    },
     errorResponseBuilder: (request, context) => ({
       statusCode: 429,
       ...createApiError(
         "RATE_LIMITED",
-        `Too many requests. Please wait ${Math.ceil(context.ttl / 1000)} seconds and try again.`,
+        `Rate limit reached, please wait ${Math.ceil(context.ttl / 1000)} seconds before retrying.`,
         true,
         request.id,
       ),
@@ -123,7 +136,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
         .send(
           createApiError(
             "RATE_LIMITED",
-            "Too many requests right now. Wait a moment and retry.",
+            "Too many requests right now, so wait a moment and retry.",
             true,
             request.id,
           ),
@@ -134,7 +147,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
       .send(
         createApiError(
           "INTERNAL_ERROR",
-          "Something went wrong on the server. Please retry in a few seconds.",
+          "Something went wrong on the server, so please retry in a few seconds.",
           statusCode >= 500,
           request.id,
         ),
@@ -178,7 +191,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
           .send(
             createApiError(
               "NOT_FOUND",
-              "That API endpoint does not exist. Check the request path.",
+              "That API endpoint does not exist, so check the request path.",
               false,
               request.id,
             ),
@@ -192,7 +205,7 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
         .send(
           createApiError(
             "WEB_NOT_BUILT",
-            "Web assets are not built yet. Run npm run build first.",
+            "Web assets are not built yet, so run npm run build first.",
             false,
             request.id,
           ),

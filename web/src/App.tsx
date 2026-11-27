@@ -32,12 +32,12 @@ export function App(): JSX.Element {
         <path
           d="M140 790 Q 510 640, 760 455 T 1290 135"
           fill="none"
-          stroke="#FF4FA0"
+          stroke="var(--accent-pink)"
           strokeWidth="3.5"
           strokeDasharray="8 12"
           strokeLinecap="round"
         />
-        <circle cx="760" cy="455" r="8" fill="#FFD24A" />
+        <circle cx="760" cy="455" r="8" fill="var(--accent-yellow)" />
         <circle cx="760" cy="455" r="22" fill="rgba(255, 210, 74, 0.16)" />
       </svg>
 
