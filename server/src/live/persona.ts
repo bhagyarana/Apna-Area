@@ -110,6 +110,13 @@ export function buildNpcSystemInstruction(
     `Escalating hints available if the player pauses, struggles, or asks for help (call give_hint at hint level <= ${difficulty.hintLevel}): 1) ${mission.hintLadder[0]} | 2) ${mission.hintLadder[1]} | 3) ${mission.hintLadder[2]}`,
   ];
 
+  if (difficulty.localLanguageShare > 0 && enabledLanguages.includes("kn")) {
+    const pct = Math.round(difficulty.localLanguageShare * 100);
+    lines.push(
+      `Adaptive local Kannada blend: Weave roughly ${pct}% simple spoken Bengaluru Kannada into your turns (paired with ${difficulty.localLanguageShare >= 0.5 ? "concise" : "generous"} ${LANGUAGE_NAMES[leadLang]} support) inside the ${difficulty.paceSeconds}-second scene pace.`,
+    );
+  }
+
   if (targetPhrase && enabledLanguages.includes("kn")) {
     lines.push(
       `Kannada welcome & phrase coaching: Open with a short, warm Bengaluru Kannada greeting followed right away by a friendly bridge in ${LANGUAGE_NAMES[leadLang]} so a beginner feels completely welcome.`,

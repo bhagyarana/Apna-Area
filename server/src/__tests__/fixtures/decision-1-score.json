@@ -1,0 +1,76 @@
+{
+  "answers": {
+    "phrase_score": {
+      "confidence": 0.5198440894392868,
+      "score": 2.4027773403653594,
+      "probabilities": {
+        "0": 0.0019228651289045493,
+        "1": 0.03580498740432014,
+        "2": 0.5198440894392868,
+        "3": 0.4424280580274885
+      },
+      "legend": {
+        "0": "No local greeting or target phrase attempted",
+        "1": "Brief local nod or incomplete phrase attempt",
+        "2": "Clear attempt at the target phrase or polite local expressions",
+        "3": "Natural, accurate use of the target local phrase in context"
+      },
+      "type": "score"
+    },
+    "tone_score": {
+      "confidence": 0.605977813147256,
+      "score": 2.292918572981164,
+      "probabilities": {
+        "0": 0.0029538089296891317,
+        "1": 0.046121093541256444,
+        "2": 0.605977813147256,
+        "3": 0.3449472843817985
+      },
+      "legend": {
+        "0": "Abrupt, dismissive, or uncooperative",
+        "1": "Brief or hesitant but civil",
+        "2": "Polite, respectful everyday Bengaluru conversational tone",
+        "3": "Warm, respectful, culturally fluent rapport using polite honorifics"
+      },
+      "type": "score"
+    },
+    "objective_met": {
+      "confidence": 0.9832374428927169,
+      "noul": 0.9832374428927169,
+      "type": "noul"
+    },
+    "objective_score": {
+      "confidence": 0.6003589333440932,
+      "score": 2.5696858261611473,
+      "probabilities": {
+        "0": 0.0030887940491711443,
+        "1": 0.024495519084603675,
+        "2": 0.37205675352213197,
+        "3": 0.6003589333440932
+      },
+      "legend": {
+        "0": "Did not address the mission objective",
+        "1": "Partially addressed the objective only after heavy prompting",
+        "2": "Clearly satisfied the mission objective",
+        "3": "Satisfied the mission objective smoothly, specifically, and concisely"
+      },
+      "type": "score"
+    },
+    "next_route": {
+      "confidence": 0.9237355007885052,
+      "choice": "step_up",
+      "probabilities": {
+        "step_up": 0.9237355007885052,
+        "keep_level": 0.06250303727407255,
+        "other": 0.008055759209348336,
+        "ease_level": 0.0057057027280738104
+      },
+      "type": "choice"
+    }
+  },
+  "usage": {
+    "inputTokens": 733,
+    "outputTokens": 0,
+    "totalTokens": 733
+  }
+}
