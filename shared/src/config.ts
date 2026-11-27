@@ -40,8 +40,8 @@ export const ENABLED_LANGUAGES = ["en", "hi", "kn"] as const;
 /** Network and upstream call timeouts in milliseconds. */
 export const TIMEOUTS_MS = {
   healthCheck: 2_000,
-  worldDirector: 24_000,
-  worldDirectorFallback: 16_000,
+  worldDirector: 32_000,
+  worldDirectorFallback: 20_000,
   liveToken: 6_000,
   decisionsScore: 4_000,
   routesMatrix: 7_000,
@@ -115,6 +115,7 @@ export const LIVE_VOICE_CONFIG = {
 /** Tunables for the Phase 2 Week One Director and candidate selector. */
 export const DIRECTOR_CONFIG = {
   thinkingLevel: "medium",
+  fallbackThinkingLevel: "low",
   minPrimaryCandidates: 8,
   maxPromptCandidates: 15,
   lruMaxEntries: 50,
