@@ -1,0 +1,22 @@
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.vite/
+
+# Environment and secrets (never commit secrets)
+.env*
+!.env.example
+
+# Logs, test artifacts and coverage
+*.log
+npm-debug.log*
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
