@@ -1,226 +1,173 @@
-# Apna Area · build guide and prompt pack
+# Apna Area
 
-Everything you need to build Apna Area end to end in Google Antigravity with a swarm of Gemini 4 agents, ship every phase to Cloud Run, and submit. Start here, then follow the run order.
+**Apna Area turns Bengaluru's Outer Ring Road into a playable city for someone about to move there: pick the office you are joining and Gemini builds your first week as a voice-first game with verified places, characters in Kannada, Hindi or English, adaptive difficulty, and a Survival Kit you keep.**
 
-## The product in one breath
+Ananya is 24 and moving from Lucknow in two weeks to join a Bellandur tech park, knowing Hindi and English, zero Kannada, and nothing about where to live or how bad the Silk Board commute really is. Instead of reading static relocation threads, she plays her first Monday to Friday out loud in under 3 minutes and leaves with real peak-hour commute comparisons, survival phrases she has actually spoken, and a move-in plan under her control.
 
-Apna Area turns Bengaluru's Outer Ring Road into a playable city for someone about to move there. Pick the office you are joining, and Gemini builds your first week as a game: missions at real, verified places, characters you talk to out loud in Kannada, Hindi or English, difficulty that adapts to you, and a Survival Kit you keep.
+- **Live Cloud Run App:** https://apna-area-481049877093.asia-south1.run.app (`?demo=1` adds a subtle resettable `03:00` presenter clock without preselecting any state)
+- **One-Page Judge Overview:** [`docs/ARCHITECTURE_OVERVIEW.md`](docs/ARCHITECTURE_OVERVIEW.md)
+- **Full System Spec & Demo Script:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/MODELS.md`](docs/MODELS.md) · [`docs/DEMO.md`](docs/DEMO.md) · [`docs/VIDEO_COVERAGE.md`](docs/VIDEO_COVERAGE.md)
 
-**Hero user:** Ananya, 24, joining a Bellandur tech park in two weeks, no Kannada, no idea where to live. Full brief in `01-copy-into-repo/PROJECT_BRIEF.md`.
+![Apna Area Outer Ring Road Week One Hub](docs/assets/week-hub-desktop.png)
+![Apna Area Survival Kit Peak Screen](docs/assets/survival-kit-desktop.png)
 
-| Judge test | How we prove it live |
+---
+
+## Try It in 3 Steps (Under 3 Minutes)
+
+1. **Pick any ORR office:** Open https://apna-area-481049877093.asia-south1.run.app, watch or press `Esc` to skip the 8.8-second dusk corridor flight, and choose any verified tech park via `Ctrl/Cmd+K` or the 6 campus quick-pick chips (`RMZ Ecoworld`, `RMZ Ecospace`, `Embassy TechVillage`, `Prestige Tech Park`, `Cessna Business Park`, `Vaishnavi Tech Park`). Click `Build my first week` to watch `gemini-4-neon` stream a verified 5-stop plan.
+2. **Talk out loud in English, Hindi, or Kannada:** Click `Talk with <NPC>` on Stop 1 to open a live `gemini-3.8-live` voice scene (click the mic orb or press `Space` while it is focused to toggle mute, or click `Type instead` in a noisy hall). Speak the displayed polite Kannada survival phrase out loud to trigger the teal mastery pulse, ascending chime, and flying phrasebook card, then inspect the `Why did this change?` rubric scored by `gemini-decision-1`.
+3. **Keep your Survival Kit:** Click `Survival Kit` on the score card (or `Phrases · 1` in the topbar anytime) to open `"YOU'RE READY FOR MONDAY."` and compare real Monday `09:00` and `18:30` IST Google Routes API commutes across 3 nearby residential pockets, replay `gemini-3.8-flash-tts` Kannada audio, check off move-in tasks, and test the focus-trapped Confirm Sheet before opening Google Maps or downloading your `1200x675` PNG summary card.
+
+---
+
+## How Apna Area Passes the Four Judge Tests
+
+| Judge Test | How Apna Area Proves It Live |
 |---|---|
-| Concrete person | Ananya's first week on ORR |
-| Needs Gemini 4 reasoning, routing, verification | Neon plans missions from verified place IDs only, Decision 1 scores and routes difficulty, Live runs multilingual NPCs |
-| People in control | Confirm sheet before anything leaves the app; no bookings, payments or stored audio |
-| Live, real input, under 3 minutes | A judge picks any office and plays one mission |
+| **1. Concrete problem for a named person** | Designed end-to-end around **Ananya** (24, moving from Lucknow to a Bellandur tech park in 14 days). Every screen answers one of her real first-week anxieties: auto meter negotiation, darshini counter ordering, PG backup power/water checks, BMTC feeder stops, and weekday ORR commutes. |
+| **2. Needs Gemini 4 reasoning, routing, and verification** | `gemini-4-neon` plans a coherent 5-day mission graph constrained to a dynamic JSON Schema `enum` of verified `place_id`s within 3 km, backed by a deterministic server verifier (`verifyWeekPlan`). `gemini-decision-1` scores transcripts in ~450 ms (`0` output tokens) with calibrated probabilities and `< 0.75` confidence clamping. `gemini-3.8-live` runs real-time trilingual NPCs with `NON_BLOCKING` tools. |
+| **3. People stay in control** | Every external link (`Google Maps` directions) and local export (`apna-area-survival-kit.png`) is gated behind a focus-trapped `@ui-sdk/react` `ConfirmSheet` with `Esc`/`Cancel` focus restoration. Players can override AI difficulty routing in one click (`Switch to gentler pace` / `Step up Kannada`). No geolocation, no bookings, no payments, and zero stored voice or transcripts. |
+| **4. Live, real input, under 3 minutes** | Judges pick any of the 12 verified eastern ORR tech parks live. World generation, bidirectional voice dialogue, calibrated scoring, pre-warmed Routes API commute bars, and phrase TTS replay finish comfortably inside 2 minutes 35 seconds. |
 
 ---
 
-## What is in this folder
+## Architecture & Multi-Model Routing
 
-```
-apna-area-prompt-pack/
-├── README.md                         you are here: the guide
-├── 01-copy-into-repo/                copy into the repo root, as is
-│   ├── AGENTS.md                     always-on project identity for Antigravity
-│   ├── PROJECT_BRIEF.md              single source of truth
-│   ├── AI_STUDIO_SYSTEM_INSTRUCTIONS.md   only if you prototype in AI Studio
-│   └── .agents/
-│       ├── rules/                    engineering, design, gemini-models, security-and-control, context-hygiene
-│       └── skills/                   ship-phase, handoff
-└── 02-prompts/                       paste these, in order
-    ├── 00-setup.md                   tools, skills, secrets, repo
-    ├── 01-kickoff-architect.md       slow down, 95% clarity, phased plan
-    ├── 02-generate-docs.md           the prompt that writes all project docs, one by one
-    ├── 03-adversarial-review.md      stress-test the plan (and later the product)
-    ├── 04-design-discover.md         go broad, react with your taste, seeded variations
-    ├── 05-stitch-design.md           first screens in Stitch, fed with that direction
-    ├── 10 to 16 phase prompts        P0 skeleton to P6 harden and demo
-    ├── 20-orchestrator.md            lead agent splits a phase into parallel tickets
-    ├── 21-worker-ticket.md           single-goal ticket template for workers
-    ├── 22-review-gate.md             stronger model checks every worker diff
-    ├── 23-self-check.md              "assume you are wrong" check
-    ├── 24-debug.md                   reproduce, isolate, fix, prove
-    ├── 25-handoff.md                 fresh session, zero lost context
-    ├── 26-vibe-check-raise-the-bar.md   score out of 100, cheapest wins
-    ├── 27-recover-rollback.md        when the agent goes off the rails
-    ├── 28-design-critic-loop.md      screenshot-only critic until 9/10
-    ├── 30-ship-cloud-run.md          first deploy and deploy fixes
-    ├── 31-submission-pack.md         README, architecture overview, final checks
-    └── 32-demo-video.md              feature-complete launch-style demo video
-```
+```mermaid
+flowchart LR
+  subgraph Browser["Browser (React 19 + Vite + @vis.gl/react-google-maps + @ui-sdk/react)"]
+    MapUI["2D Vector ORR Map + Skippable Tour"]
+    HUD["Office Picker, Week Bar & Mission HUD"]
+    LiveClient["AudioWorklet 16kHz In / 24kHz Out + WSS"]
+    KitUI["Survival Kit + Focus-Trapped ConfirmSheet"]
+  end
 
----
+  subgraph CloudRun["Cloud Run Service (asia-south1, Node 22 + Fastify)"]
+    Static["SPA Static Bundle (< 190 KB gzip initial JS)"]
+    WorldAPI["POST /api/world (SSE + Verifier + Cache)"]
+    TokenAPI["POST /api/live-token (v1alpha AuthToken)"]
+    ScoreAPI["POST /api/score (Decisions Rubric)"]
+    KitAPI["POST /api/kit & /api/tts (Routes + Summary + WAV)"]
+    Data["Verified Data (121 Places, 30 Kannada Phrases)"]
+  end
 
-## How the AI agents build it
+  subgraph GoogleAPIs["Gemini & Google Maps Platform"]
+    Secrets["Secret Manager (GEMINI_API_KEY, MAPS_*_KEY)"]
+    Neon["gemini-4-neon -> gemini-4-hydrogen (v1)"]
+    Live["gemini-3.8-live (WSS v1alpha)"]
+    Decision["gemini-decision-1 (v1beta)"]
+    Flash["gemini-3.5-flash-lite (v1) & gemini-3.8-flash-tts (v1beta)"]
+    Maps["Maps JS, Places API (New) & Routes API v2"]
+  end
 
-```
-                 YOU  (approve plans, answer questions, final say on merges)
-                  │
-   ┌──────────────┴──────────────┐
-   │  Lead agent · Gemini 4 Neon  │  plans the phase, writes interfaces and tickets,
-   │  (Carbon for P3 and kickoff) │  integrates results, never skips verification
-   └──────────────┬──────────────┘
-        ┌─────────┼─────────┐
-        ▼         ▼         ▼
-    Worker A   Worker B   Worker C      Gemini 4 Hydrogen, one ticket each,
-    (own chat) (own chat) (own chat)    only their own files, tests before "done"
-        └─────────┼─────────┘
-                  ▼
-   ┌─────────────────────────────┐
-   │ Review gate · Neon / Carbon │  fresh conversation, PASS or a FIX list
-   └──────────────┬──────────────┘
-                  ▼
-   ship-phase skill: check → preview on Cloud Run (no traffic) → merge to main → tag → go live → handoff
-                  ▼
-             next phase
+  Browser -->|"HTTPS + SSE"| CloudRun
+  MapUI -->|"Referrer-Restricted Browser Key"| Maps
+  LiveClient <-->|"Direct WSS (Server-Locked Token)"| Live
+  CloudRun -->|"Startup Env"| Secrets
+  WorldAPI -->|"Enum Schema JSON"| Neon
+  WorldAPI -->|"verifyWeekPlan"| Data
+  TokenAPI -->|"authTokens.create"| Live
+  ScoreAPI -->|"decisions.create"| Decision
+  KitAPI -->|"computeRouteMatrix"| Maps
+  KitAPI -->|"Spatial Notes + WAV"| Flash
 ```
 
-**Why this shape:** the guide recommends combining models in one loop, with Neon or Carbon for complex reasoning and Hydrogen for parallel subagent work. Workers never share files and interfaces are written first, so parallel work stays deterministic. Every step lives on its own branch, lands on main as one merge commit and ships to Cloud Run, so a broken change is always one `git revert` or one traffic switch away from undone.
+### Runtime & Build-Time Model Routing (`shared/src/config.ts`)
 
-**Memory between sessions** lives in files, not chats: `PROJECT_BRIEF.md` (what), `docs/TASKS.md` (board), `docs/DECISIONS.md` (why), `docs/HANDOFF.md` (where we stopped). Antigravity loads `AGENTS.md` and `.agents/rules/*.md` automatically.
+All model identifiers live exclusively in [`shared/src/config.ts`](shared/src/config.ts):
 
----
-
-## Run order
-
-| # | Prompt | Where | Model | You are done when |
-|---|---|---|---|---|
-| 1 | `00-setup` | Terminal + Antigravity | Hydrogen | Skills installed, secrets stored, `.gitignore` committed first |
-| 2 | `01-kickoff-architect` | New chat, Planning mode | Carbon | You approved a phased plan with a cut line |
-| 3 | `02-generate-docs` | Same chat | Neon high | 11 docs written and committed one by one |
-| 4 | `03-adversarial-review` | New chat | Carbon | Accepted fixes applied to docs |
-| 5 | `04-design-discover` | New chat + your taste | Carbon, then Neon | A game-layer direction only you would pick, saved in Design.md |
-| 6 | `05-stitch-design` | Stitch (parallel with P0) | n/a | 3 screens saved in `design/stitch/` |
-| 7 | `10` P0 skeleton | Lead chat + workers | Neon + Hydrogen | Themed shell live on Cloud Run, tag `p0-skeleton` |
-| 8 | `11` P1 map | Lead + workers | Neon + Hydrogen | Verified ORR map and office picker live |
-| 9 | `12` P2 director | Lead + workers | Neon + Hydrogen | Verified 5-mission week in under 12 s |
-| 10 | `13` P3a English | Lead + workers | Carbon plans, Neon leads | Five NPCs talk in English with captions |
-| 11 | `13` P3b Hindi | Fresh lead chat | Neon | NPCs understand Hindi and code-switch |
-| 12 | `13` P3c Kannada | Fresh lead chat | Neon, Carbon reviews phrases | Kannada-first NPCs teach a phrase per mission |
-| 13 | `14` P4 adaptive | Lead + workers | Neon + Hydrogen | Mission 2 visibly adapts to mission 1 |
-| 14 | `15` P5 kit | Lead + workers | Neon + Hydrogen | Real commute times, confirm sheets, music |
-| 15 | `03` again, then `16` P6 | New chat, then lead | Carbon, then Neon | Three clean rehearsals under 3 minutes |
-| 16 | `31-submission-pack` | Antigravity | Neon, Carbon review | README, overview, write-up, checks all pass |
-| 17 | `32-demo-video` | Your recorder | n/a | Video exported and uploaded |
-
-**Inside every phase:** branch from main → phase prompt → `20-orchestrator` → `21-worker-ticket` per worker → `22-review-gate` per result → integrate → subtraction pass + `28-design-critic-loop` (UI phases) → `ship-phase` skill → `26-vibe-check` (5 minutes) → `25-handoff`.
+| Job | Model ID | API Surface | Why This Model Was Chosen |
+|---|---|---|---|
+| **Week One Director & NPC Briefs** | `gemini-4-neon` (`thinking_level: "medium"`) | `interactions.create` (`v1`) | Plans 5 spatially grounded, non-repeating missions across verified candidate `place_id`s while the player watches honest SSE steps. |
+| **Director Verification / 503 Fallback** | `gemini-4-hydrogen` (`thinking_level: "low"`) | `interactions.create` (`v1`) | Fast low-thinking workhorse fallback before serving a labelled real earlier run (`Replayed from an earlier run`). |
+| **Real-Time Multilingual Voice NPCs** | `gemini-3.8-live` | `authTokens.create` + `live.connect` (`v1alpha`) | Sub-second two-way spoken English, Hindi, Hinglish, and Kannada coaching with barge-in interruption and `NON_BLOCKING` tool calls. |
+| **Rubric Scoring & Adaptive Routing** | `gemini-decision-1` | `decisions.create` (`v1beta`) | Evaluates 5 parallel `noul`, `score`, and `choice` questions in ~450 ms with `0` output tokens and calibrated confidence. |
+| **Spatial Corridor One-Liners** | `gemini-3.5-flash-lite` (`thinking_level: "minimal"`) | `interactions.create` (`v1`) | Fast, low-cost spatial neighbourhood notes verified free of price claims and chart-number repetition. |
+| **Kannada Phrasebook Audio Replay** | `gemini-3.8-flash-tts` (`Sulafat`) | `interactions.create` (`v1beta`) | Clear, learner-paced `24 kHz` WAV pronunciation cached in memory by curated `phraseId`. |
+| **Ambient Mood Soundtrack (Build-Time)** | `lyria-3-clip-preview` | `interactions.create` (`v1beta`) | Generates 4 seamless 30-second instrumental MP3 loops (`calm`, `morning`, `rush`, `evening`) once at build time (`$0` per visitor). |
+| **Fictional NPC Portraits (Build-Time)** | `gemini-nano-banana-2.1` | `interactions.create` (`v1`) | Generates 10 gender-matched `256x256` WebP portraits (`<role>_<gender>.webp`) once at build time (`$0` per visitor). |
 
 ---
 
-## Design process: Discover, Define, Deliver
+## Sequential Language Rollout (`ENABLED_LANGUAGES`)
 
-Adapted from "How to turn your AI into a world-class designer" (Anshu Chimala, Lenny's Newsletter). Models pick the most predictable option at every step, so the variety and the taste have to come from outside the model.
-
-| Stage | What we do | Where |
-|---|---|---|
-| **Discover** | Go broad with 20+ directions, react with your own taste, sharpen, then make seeded variations (a random string drives the layout choices) | `04-design-discover` |
-| **Define** | A fresh Carbon critic sees only screenshots next to 4 pro references, ranks them, scores out of 10; the builder fixes; stop at 9/10, max 3 rounds | `28-design-critic-loop` |
-| **Define** | Real imagery instead of gradients: Nano Banana NPC portraits and art generated at build time; optional looping hero clip in P6 | `13` (T3.5b), `16` |
-| **Deliver** | Subtraction pass: list every element, remove what adds nothing | `.agents/rules/design.md`, `16` (T6.5) |
-
-Prompts that work or fail go in `docs/PROMPT_LOG.md`; critic scores per round go in `docs/DESIGN_SCORES.md`.
+Voice languages shipped one at a time on dedicated branches and git tags behind `ENABLED_LANGUAGES` in [`shared/src/config.ts`](shared/src/config.ts):
+1. **English (`p3a-english`):** Full `16 kHz` AudioWorklet capture, `24 kHz` gapless PCM playback, captions, and docked keyboard fallback across all 5 ORR NPC roles (`632-823 ms` first-audio latency).
+2. **Hindi & Hinglish (`p3b-hindi`):** `Noto Sans Devanagari` rendering, `Tune · EN / HI / HI+EN` comfort selector, and natural mid-turn Hindi/English code-switching (`529-765 ms` turn latency).
+3. **Kannada Survival Phrases (`p3c-kannada`):** `30` linguistically audited, polite-plural (`ಕೊಡಿ` *koḍi*, `ಬನ್ನಿ` *banni*, `ಹೇಳಿ` *hēḷi*), gender-honorific-matched (`ಅಣ್ಣ` *aṇṇa* / `ಅಕ್ಕ` *akka*) survival phrases in [`data/phrases.json`](data/phrases.json) with `Noto Sans Kannada` captions and mastery card flight.
 
 ---
 
-## Time plan
+## Truth, Safety, and Privacy Guarantees
 
-| Block | 12-hour plan | 8-hour plan (cut line applied) |
-|---|---|---|
-| Setup, kickoff, docs, review | 1 h 40 | 1 h |
-| Design discover (parallel with P0) | 30 min | skip, use the deck direction |
-| Critic loops (inside UI phases) | about 20 min per phase | one round on landing and kit only |
-| P0 skeleton + first deploy | 1 h 15 | 45 min |
-| P1 map + verified data | 1 h 30 | 1 h |
-| P2 director | 1 h 30 | 1 h |
-| P3a English / P3b Hindi / P3c Kannada | 1 h 30 / 30 min / 45 min | 1 h 15 / 20 min / 30 min (3 NPCs, not 5) |
-| P4 adaptive | 1 h 15 | 45 min (no HUD polish) |
-| P5 survival kit | 1 h 30 | 45 min (commute + confirm sheets, no music) |
-| P6 harden + rehearse | 1 h 30 | 45 min |
-| Submission + video | 1 h 30 | 45 min |
-
-**Only one afternoon left?** Do P0, P1, P2, P3a with one NPC (the auto driver), the scoring call from P4 without HUD polish, then submit. Add P3b and P3c only if time remains. That still passes all four tests.
+1. **Zero hallucinated places:** Every place in [`data/orr/places.json`](data/orr/places.json) (`121` operational records inside `ORR_BBOX`, excluding under-construction ORR Blue Line metro stations) was verified via Google Places API (New). Mission `placeId`s are double-locked by JSON Schema `enum` and `verifyWeekPlan`.
+2. **Zero invented money facts:** `verifyWeekPlan` and `verifyAreaSummaryLine` deterministically reject rupee symbols, `k` shorthand, rents, deposits, and auto fares.
+3. **Fictional characters only:** NPCs use given names tied to place categories (`auto_driver`, `darshini_owner`, `pg_owner`, `transit_helper`, `office_buddy`), never claim to be real employees, and never disparage real businesses.
+4. **Human in control:** Every action leaving the app or saving a file opens `@ui-sdk/react/alert-dialog` `ConfirmSheet`.
+5. **Strict privacy & secret isolation:** Location is never requested. Voice audio is never stored; raw transcripts are redacted from structured Cloud Logging (`shared/src/logger.ts`). `GEMINI_API_KEY` and `MAPS_SERVER_KEY` stay strictly on the server via Secret Manager; live WebSockets use short-lived server-locked ephemeral tokens.
 
 ---
 
-## Model routing
+## Run Locally & Deploy
 
-**While building (Antigravity):**
+### Prerequisites
+- Node.js `>= 22.0.0` and npm `>= 10`
+- A Gemini API key (`GEMINI_API_KEY`) and Google Maps Platform keys (`MAPS_BROWSER_KEY` for Maps JS API, `MAPS_SERVER_KEY` for Places API (New) and Routes API v2)
 
-| Job | Model | Thinking |
-|---|---|---|
-| Kickoff, architecture, adversarial review, P3 planning, hard root causes | Gemini 4 Carbon | high |
-| Design ideas and the screenshot-only design critic | Gemini 4 Carbon | high |
-| Lead agent per phase, docs, review gate, debugging | Gemini 4 Neon | high |
-| Worker tickets, routine edits, tests | Gemini 4 Hydrogen | high, medium for trivial edits |
+### Local Setup
+```bash
+cp .env.example .env.local
+# Populate GEMINI_API_KEY, MAPS_BROWSER_KEY, and MAPS_SERVER_KEY in .env.local
 
-**Inside the app (runtime):** Director on `gemini-4-neon`, voice on `gemini-3.8-live`, scoring and routing on `gemini-decision-1`, summaries on `gemini-3.5-flash-lite`, music on `lyria-3-clip-preview`, fallback on `gemini-4-hydrogen`. All IDs live in `shared/config.ts`.
-
----
-
-## When something goes wrong
-
-| Symptom | Use |
-|---|---|
-| A test or the live site fails | `24-debug` |
-| The agent repeats itself or the chat is long | `25-handoff`, then continue fresh |
-| The agent touched files it should not, or two fixes failed | `27-recover-rollback` |
-| An answer feels too confident | `23-self-check` |
-| The product feels "fine" | `26-vibe-check-raise-the-bar` |
-| Deploy fails | `30-ship-cloud-run` |
-| 429 errors | Raise the cap at aistudio.google.com/spend (not too high) |
-| 503 "model overwhelmed" | Retry once, then the fallback model from config |
-
----
-
-## Hard rules (also enforced by the rules files)
-
-1. Never commit or expose `GEMINI_API_KEY`. If it leaks, delete it in AI Studio and create a new one; a new commit does not clean history.
-2. Never show a place that is not in the verified dataset, and never state prices or fares as facts.
-3. Nothing leaves the app without a confirm sheet.
-4. No mocked responses in the shipped flow; a labelled replay of a real earlier run is the only allowed fallback.
-5. Gemini 4 calls never send temperature, top-p, top-k, legacy thinking budgets or `minimal` thinking, and never call manual caching.
-6. Every step ends merged to main, tagged and deployed. Never start the next step on a red build, and never commit to main directly.
-7. The temporary account is deleted the day after the event. Push the repo, download assets and save the video before you leave.
-
----
-
-## Decisions confirmed
-
-| Topic | Decision |
-|---|---|
-| Submission | Live Cloud Run URL, public GitHub repo, architecture overview, demo video. |
-| Video | No length limit. It must cover every feature with a compelling story and an intuitive flow (`32`). |
-| Languages | English first, then Hindi, then Kannada, each its own branch, tag and flag value. Any one can be switched off or reverted on its own. |
-| Map | 2D vector map first. Photorealistic 3D is a Later item once the core loop ships. |
-| UI SDK | github.com/vercel-labs/ui (ui-sdk.dev), confirmed. Install it and its agent skill as the repo README says. |
-| Git | Phase branches, worktrees for parallel workers, `--no-ff` merges, Cloud Run previews before merge, revert instead of rewrite. |
-
----
-
-## Git workflow (why branches, and the two refinements)
-
-Working on branches and merging to main only when a step is good is the right call: main stays deployable, every step is reviewable, and every step is revertable as one unit. Two refinements make it work with an agent swarm:
-
-1. **Worktrees for parallel agents.** Branches alone are not enough when two agents work at once: one folder has one checkout, so agents switching branches overwrite each other. `git worktree add` gives each worker its own folder on its own branch, sharing one repository.
-2. **Preview before merge.** Cloud Run can deploy a branch with `--no-traffic --tag` and give it its own preview URL. You test the real deployment, then merge, and promote that exact revision to live with no rebuild.
-
-```
-main ──●──────────────●──────────────●──────▶   always equals the live site
-        \            / p1-map         \
-         phase/p1-map ●──●──●──●           phase/p2-director ...
-              \        /  \    /
-               ticket/t1    ticket/t3       each ticket in its own worktree
+npm install
+npm run dev          # Starts shared build + Fastify API (:8080) + Vite dev server (:5173)
 ```
 
-**Undo options, fastest first:** switch Cloud Run traffic to the previous revision (seconds) · turn a feature flag off (one small ship) · `git revert -m 1 <merge>` on main (clean history) · abandon a phase branch and restart it from main.
+### Verification Suite
+```bash
+npm run check        # Strict TypeScript across all 3 workspaces + ESLint (0 warnings) + 57 Vitest unit/contract tests
+npm run build        # Production build (initial JS < 190 KB gzipped)
+npm run test:smoke   # Runs all 7 Playwright E2E specs against the production server
+```
 
-## Sources
+### Deploy to Google Cloud Run (`asia-south1`)
+```bash
+gcloud run deploy apna-area \
+  --source . \
+  --region asia-south1 \
+  --set-secrets GEMINI_API_KEY=gemini-api-key:latest,MAPS_BROWSER_KEY=maps-browser-key:latest,MAPS_SERVER_KEY=maps-server-key:latest \
+  --set-env-vars GIT_COMMIT=$(git rev-parse --short HEAD),BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ) \
+  --memory 1Gi --cpu 1 --min-instances 1 --max-instances 3 \
+  --timeout 3600
+```
 
-- Build with Gemini 4: hackathon builder guide (November 2026 PDF): model IDs, roles, thinking levels, Decisions API, boundaries, setup commands.
-- How to use a temporary account for a hackathon (goo.gle/hackathon-account): Antigravity login, spend cap, key safety, coding guidelines.
-- Antigravity rules docs (antigravity.google/docs/rules): rule locations, frontmatter triggers, size limits.
-- Firebase AI Logic Live API specs: Kannada support and audio formats.
-- google/skills, googlemaps/agent-skills, ui-sdk.dev, levels.fyi/atlas/bengaluru (reference idea).
-- "How to turn your AI into a world-class designer", Anshu Chimala, Lenny's Newsletter (Sep 2026): design process techniques 1 to 6 (technique 7 was paywalled in the copy provided).
+---
+
+## How It Was Built: Phased Branches, Tags & Agent Swarm
+
+Every milestone shipped on an isolated `phase/<step>` branch, passed automated tests, independent code review, and Cloud Run `--no-traffic` preview smoke tests, then landed on `main` via `--no-ff` merge and git tag:
+
+- [`v0.1-docs`](https://github.com/bhagyarana/Apna-Area/releases/tag/v0.1-docs) · Living specs, Carbon adversarial review, and seeded `ORR Neon Dusk` design discovery
+- [`p0-skeleton`](https://github.com/bhagyarana/Apna-Area/releases/tag/p0-skeleton) · Monorepo workspaces, structured logger, `/api/health`, Docker image, and first Cloud Run deploy
+- [`p1-map`](https://github.com/bhagyarana/Apna-Area/releases/tag/p1-map) · Verified `121`-place ORR dataset, `545`-point corridor spline, skippable tour, and `@ui-sdk/react` picker
+- [`p2-director`](https://github.com/bhagyarana/Apna-Area/releases/tag/p2-director) · `gemini-4-neon` SSE Week One Director, `verifyWeekPlan`, Hydrogen/replay fallback ladder, and provenance HUD
+- [`p3a-english`](https://github.com/bhagyarana/Apna-Area/releases/tag/p3a-english) · `gemini-3.8-live` `v1alpha` ephemeral voice pipeline, AudioWorklet PCM resampler, and Nano Banana portraits
+- [`p3b-hindi`](https://github.com/bhagyarana/Apna-Area/releases/tag/p3b-hindi) · Hindi and Hinglish code-switching behind `ENABLED_LANGUAGES`
+- [`p3c-kannada`](https://github.com/bhagyarana/Apna-Area/releases/tag/p3c-kannada) · `30` polite Kannada survival phrases, WebAudio mastery chime, and `PhraseFlyCard` animation
+- [`p4-adaptive`](https://github.com/bhagyarana/Apna-Area/releases/tag/p4-adaptive) · `gemini-decision-1` `v1beta` rubric scoring, rolling XP odometer, and 1-click player pace overrides
+- [`p5-kit`](https://github.com/bhagyarana/Apna-Area/releases/tag/p5-kit) · Pre-warmed Google Routes API `computeRouteMatrix`, `gemini-3.8-flash-tts` replay, Lyria 3 mood loops, and `ConfirmSheet`
+- [`p6-demo-ready`](https://github.com/bhagyarana/Apna-Area/releases/tag/p6-demo-ready) · 2nd Carbon adversarial audit fixes, `< 190 KB` gzip initial JS, subtraction/a11y polish (`9.4/10` independent critic score), `?demo=1` timer, and 3 sub-3-minute live rehearsals
+- [`p7-submission`](https://github.com/bhagyarana/Apna-Area/releases/tag/p7-submission) · Judge submission pack, architecture overview, video coverage checklist, and full-history secret scan
+
+**Agent orchestration:** Built in Google Antigravity combining **Gemini 4 Carbon** (architecture, linguistic phrase review, fresh-context adversarial audits, code review gates, and blind screenshot-only design critiques across 3 rounds per UI phase), **Gemini 4 Neon** (phase orchestration and multi-model integration), and **Gemini 4 Hydrogen** (focused parallel implementation tickets).
+
+---
+
+## Credits & Licences
+
+- **Map & Routing Data:** Google Maps Platform (Maps JavaScript API via `@vis.gl/react-google-maps`, MIT Licence; Places API (New); and Routes API v2). Map data © Google.
+- **Ambient Music:** 4 original 30-second instrumental loops generated at build time with Google **Lyria 3 Clip Preview** (`lyria-3-clip-preview`); metadata in [`web/public/audio/credits.json`](web/public/audio/credits.json).
+- **Character Portraits:** 10 original fictional character illustrations generated at build time with **Gemini Nano Banana 2.1** (`gemini-nano-banana-2.1`) in `web/public/art/npcs/`.
+- **UI Behaviour Primitives & Icons:** [`@ui-sdk/react`](https://ui-sdk.dev) (Apache-2.0 Licence) for accessible combobox, toolbar, popover, and alert-dialog focus management; [`@hugeicons/react`](https://hugeicons.com) (`@hugeicons/core-free-icons`, MIT Licence).
+- **Typography:** `Anton`, `Hanken Grotesk`, `Noto Sans Kannada`, and `Noto Sans Devanagari` via Google Fonts (SIL Open Font Licence 1.1).

@@ -99,7 +99,7 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 |---|---|---|---|---|---|
 | `T6.1` | Parallel A | Neon | 30m | `server/src/**`, `web/src/**` | [x] Applied 2nd Carbon adversarial review fixes: Zombie-Mic `onClose` recovery, zero-flicker `SurvivalKit` checklist/mute state + server `SummaryCache`, `StageSuspenseBoundary`, single-sentence offline/error `Retry` paths, `"Replayed from an earlier run"` banner, `180/min` NAT-safe read rate limits, and `188.1 KB` gzipped initial JS (`< 250 KB`). |
 | `T6.2` | Parallel B | Carbon / Neon | 30m | `web/src/**`, `Design.md`, `docs/DESIGN_SCORES.md`, `docs/DEMO.md` | [x] Full subtraction pass, keyboard focus/Escape sweep (`e2e/demo-loop.spec.ts`), `?demo=1` subtle presenter timer, Code Review Gate `PASS` (`99/100`), 3-round Screenshot Design Critic `PASS` (`9.4/10`: `9.4` Desktop / `9.3` Mobile), and 3 consecutive sub-3-minute live Cloud Run rehearsals (`0:41`, `0:40`, `0:48`) -> `p6-demo-ready`. |
-| `T6.3` | Final | Neon + Carbon | 30m | `README.md`, `docs/ARCHITECTURE_OVERVIEW.md`, `docs/VIDEO_COVERAGE.md` | `31-submission-pack` + `gitleaks` full-history check + `32-demo-video` coverage script -> tag `p7-submission` -> **Check-in #6 (Final Sign-Off)**. |
+| `T6.3` | Final | Neon + Carbon | 30m | `README.md`, `docs/ARCHITECTURE_OVERVIEW.md`, `docs/VIDEO_COVERAGE.md` | [x] Shipped `31-submission-pack` (`README.md`, `< 400`-word `docs/ARCHITECTURE_OVERVIEW.md`, 13-feature `docs/VIDEO_COVERAGE.md`), Carbon `23-self-check` audit, and clean full-history `gitleaks` scan -> tag `p7-submission` -> **Check-in #6 (Final Sign-Off)**. |
 
 ---
 
