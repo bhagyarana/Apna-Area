@@ -30,7 +30,7 @@ export const MODEL_IDS = {
 
 | Job | Model ID | API Surface | Thinking | Latency Budget | Est. Cost / Demo Run | Fallback Path |
 |---|---|---|---|---|---|---|
-| **1. Director (`POST /api/world`)** | `gemini-4-neon` | `interactions.create` (`v1`) | `"medium"` | `< 12 s` (`24 s` Neon cap, `16 s` Hydrogen cap) | ~$0.018 (1 call, cached per office) | 1 verifier retry -> `gemini-4-hydrogen` (`"medium"`) -> labelled real replay (`Replayed from an earlier run`) |
+| **1. Director (`POST /api/world`)** | `gemini-4-neon` | `interactions.create` (`v1`) | `"medium"` | `< 30 s` (`32 s` Neon cap, `20 s` Hydrogen `"low"` cap) | ~$0.018 (1 call, cached per office) | 1 verifier retry -> `gemini-4-hydrogen` (`"low"`) -> labelled real replay (`Replayed from an earlier run`) |
 | **2. Voice NPC (`POST /api/live-token` + WSS)** | `gemini-3.8-live` | `authTokens.create` + `live.connect` (`v1alpha`) | omitted (not supported on `3.8-live`) | `< 1.0 s` turn response, `90 s` cap | ~$0.035 per 60 s voice mission | `uses: 3` session resumption + `Retry`; text input fallback via `sendRealtimeInput({ text })` |
 | **3. Mission Scorer (`POST /api/score`)** | `gemini-decision-1` | `decisions.create` (`v1beta`) | prefill pass (`0` output tokens) | `< 600 ms` (`p50 ~450 ms`, timeout `4 s`) | ~$0.0008 per mission | Retry once on 429/503 -> labelled deterministic fallback (`fallbackUsed: true`) |
 | **4. Kit Neighbourhood Blurbs (`POST /api/kit`)** | `gemini-3.5-flash-lite` | `interactions.create` (`v1`) | `"minimal"` | `< 1.8 s` (timeout `5 s`, cached) | ~$0.0004 per kit | Deterministic corridor note verified free of price claims and repeated bar numbers |

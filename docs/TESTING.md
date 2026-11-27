@@ -52,3 +52,8 @@ A phase step never merges to `main` until `npm run check` (`tsc -b`, `eslint`, `
 - **Live `gemini-3.5-flash-lite` spatial notes:** `874 ms`, verified price-free and em-dash-free by `verifyAreaSummaryLine`.
 - **Live `gemini-3.8-flash-tts` (`v1beta`, `Sulafat`):** `24 kHz` `RIFF` `audio/wav` (`147 KB`), cached in memory by `phraseId` (`0 ms` on repeat).
 - **Human-in-Control Playwright E2E (`e2e/confirm-sheet.spec.ts`):** Proves `Escape` and `Cancel` abort with `0` `window.open` calls and restore trigger focus, while explicit `ConfirmSheet` confirmation opens `https://www.google.com/maps/dir/?api=1` or downloads `apna-area-survival-kit.png`.
+
+## 6. Phase 6 Bundle Budget, Full-Loop E2E & Live Cloud Run Rehearsals (`p6-demo-ready`)
+- **Initial JS Bundle (`web/dist`):** `188.1 KB` gzipped (`152.1 KB` app + `16.8 KB` `vendor-maps` + `12.7 KB` `vendor-zod` + `6.6 KB` `vendor-icons`, safely under `< 250 KB`), with `MissionDialog`, `SurvivalKit`, `sheet-presentation`, and `@google/genai` (`87.6 KB` gzip) lazy-loaded behind `StageSuspenseBoundary`.
+- **Automated Suite:** `16/16` Vitest suites (`57/57` tests) and `7/7` Playwright E2E specs (`smoke`, `picker`, `director`, `live`, `score`, `confirm-sheet`, `demo-loop`) green with zero warnings.
+- **3 Consecutive Live Cloud Run Rehearsals (`apna-area-00017-dis`):** `0:41` (`RMZ Ecoworld`, `HI+EN`), `0:40` (`Embassy TechVillage`, `HI`), and `0:48` (`Prestige Tech Park`, `EN`), all under `3:00` with `0` console or Cloud Logging errors (`268 ms` `gemini-decision-1`, `188 ms` Routes matrix, `663 ms` Flash-Lite, `3 ms` cached TTS).

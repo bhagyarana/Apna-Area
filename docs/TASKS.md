@@ -97,8 +97,8 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 ## Phase 6 · Harden, Polish & Demo (`phase/p6-demo-ready` -> tag `p6-demo-ready`, then `p7-submission`)
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
-| `T6.1` | Parallel A | Neon | 30m | `server/src/**`, `web/src/**` | Apply 2nd Carbon adversarial review fixes; complete empty/loading/error/offline states, labelled real replay banner, lazy-load `live` and `kit` chunks (`< 250 KB` initial JS gzipped). |
-| `T6.2` | Parallel B | Carbon / Neon | 30m | `web/src/**`, `Design.md`, `docs/DESIGN_SCORES.md`, `docs/DEMO.md` | Full subtraction pass, accessibility keyboard sweep, `?demo=1` subtle presenter timer, final critic round (`>= 9/10`), 3 clean sub-3-minute live rehearsals -> `ship-phase` -> tag `p6-demo-ready`. |
+| `T6.1` | Parallel A | Neon | 30m | `server/src/**`, `web/src/**` | [x] Applied 2nd Carbon adversarial review fixes: Zombie-Mic `onClose` recovery, zero-flicker `SurvivalKit` checklist/mute state + server `SummaryCache`, `StageSuspenseBoundary`, single-sentence offline/error `Retry` paths, `"Replayed from an earlier run"` banner, `180/min` NAT-safe read rate limits, and `188.1 KB` gzipped initial JS (`< 250 KB`). |
+| `T6.2` | Parallel B | Carbon / Neon | 30m | `web/src/**`, `Design.md`, `docs/DESIGN_SCORES.md`, `docs/DEMO.md` | [x] Full subtraction pass, keyboard focus/Escape sweep (`e2e/demo-loop.spec.ts`), `?demo=1` subtle presenter timer, Code Review Gate `PASS` (`99/100`), 3-round Screenshot Design Critic `PASS` (`9.4/10`: `9.4` Desktop / `9.3` Mobile), and 3 consecutive sub-3-minute live Cloud Run rehearsals (`0:41`, `0:40`, `0:48`) -> `p6-demo-ready`. |
 | `T6.3` | Final | Neon + Carbon | 30m | `README.md`, `docs/ARCHITECTURE_OVERVIEW.md`, `docs/VIDEO_COVERAGE.md` | `31-submission-pack` + `gitleaks` full-history check + `32-demo-video` coverage script -> tag `p7-submission` -> **Check-in #6 (Final Sign-Off)**. |
 
 ---

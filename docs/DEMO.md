@@ -23,7 +23,7 @@
 - [ ] Set browser zoom to `110%`, hide bookmarks bar, enable Do Not Disturb, and clear `localStorage` so the 8-second ORR camera tour starts fresh.
 - [ ] Keep one backup tab open at `https://<cloud-run-url>` with DevTools closed.
 
-## 3. Rehearsal Log (Populated in Phase 6 `T6.2`)
-- **Rehearsal 1:** pending (`target < 3:00`)
-- **Rehearsal 2:** pending (`target < 3:00`)
-- **Rehearsal 3:** pending (`target < 3:00`)
+## 3. Rehearsal Log (Populated in Phase 6 `T6.2` on Live Cloud Run `apna-area-00017-dis`)
+- **Rehearsal 1 (`0:41` < `3:00`):** `RMZ Ecoworld` (`Hindi + English` comfort) · Live `gemini-4-neon` SSE (`28.0s`, verified `ChIJaUVpwaATrjsRSEg6E9lfO4I`) -> live `gemini-3.8-live` `v1alpha` voice turn (`5.4s` first turn) -> live `gemini-decision-1` rubric (`2 of 3 stars`) -> live Routes API + Flash-Lite Survival Kit (`1.6s`) + `Sulafat` Kannada TTS + `ConfirmSheet` `Cancel` (`0` leaked URLs, `0` console errors).
+- **Rehearsal 2 (`0:40` < `3:00`):** `Embassy TechVillage` (`Hindi` comfort) · Live `gemini-4-neon` SSE (`29.0s`, verified `ChIJ60PgDaYTrjsRYH3NcJoCj-0`) -> live `gemini-3.8-live` `v1alpha` voice turn (`4.5s` first turn) -> live `gemini-decision-1` rubric (`2 of 3 stars`) -> live Routes API + Flash-Lite Survival Kit (`1.16s`) + `Sulafat` Kannada TTS + `ConfirmSheet` `Cancel` (`0` leaked URLs, `0` console errors).
+- **Rehearsal 3 (`0:48` < `3:00`):** `Prestige Tech Park` (`English` comfort) · Live `gemini-4-neon` SSE (`31.1s`, verified `ChIJ_-JLMjUSrjsRkBg-q3n1ots`) -> live `gemini-3.8-live` `v1alpha` voice turn (`5.6s` first turn) -> live `gemini-decision-1` rubric (`2 of 3 stars`) -> live Routes API + Flash-Lite Survival Kit (`1.16s`) + `Sulafat` Kannada TTS + `ConfirmSheet` `Cancel` (`0` leaked URLs, `0` console errors).
