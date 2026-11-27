@@ -11,18 +11,50 @@ import type { SurvivalPhrase } from "@apna-area/shared";
 export interface PhrasebookPillProps {
   count: number;
   pulse: boolean;
+  kitActive?: boolean;
+  onOpenKit?: () => void;
 }
 
 /**
- * Renders the top-right Phrasebook counter pill that catches mastered Kannada survival phrases.
+ * Renders the top-right Phrasebook counter pill (and Survival Kit trigger once a week or office is active).
  *
- * @param props - Count of mastered phrases and active teal pulse flag.
- * @returns Smoked-acrylic Phrasebook badge.
+ * @param props - Count of mastered phrases, active teal pulse flag, and optional Survival Kit toggle.
+ * @returns Smoked-acrylic Phrasebook badge or interactive button.
  */
-export function PhrasebookPill({ count, pulse }: PhrasebookPillProps): JSX.Element {
+export function PhrasebookPill({
+  count,
+  pulse,
+  kitActive = false,
+  onOpenKit,
+}: PhrasebookPillProps): JSX.Element {
+  const cls = [
+    "phrasebook-pill",
+    pulse ? "phrasebook-pill-pulse" : "",
+    onOpenKit ? "phrasebook-pill-interactive" : "",
+    kitActive ? "phrasebook-pill-open" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  if (onOpenKit) {
+    return (
+      <button
+        type="button"
+        className={cls}
+        data-testid="phrasebook-pill"
+        aria-pressed={kitActive}
+        aria-label={`Open Survival Kit, ${count} Kannada survival phrases learned`}
+        onClick={onOpenKit}
+      >
+        <span className="phrasebook-dot" aria-hidden="true" />
+        <span>Phrases · {count}</span>
+      </button>
+    );
+  }
+
   return (
     <div
-      className={pulse ? "phrasebook-pill phrasebook-pill-pulse" : "phrasebook-pill"}
+      className={cls}
       data-testid="phrasebook-pill"
       aria-label={`${count} Kannada survival phrases learned`}
     >

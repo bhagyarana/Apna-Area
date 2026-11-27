@@ -36,6 +36,7 @@ export interface MissionResultCardProps {
   onSelectOverride: (mode: DifficultyOverrideMode) => void;
   onReplayMission: () => void;
   onContinueNextStop: () => void;
+  onOpenKit?: () => void;
 }
 
 const HINT_LABEL: Record<1 | 2 | 3, string> = {
@@ -66,6 +67,7 @@ export function MissionResultCard({
   onSelectOverride,
   onReplayMission,
   onContinueNextStop,
+  onOpenKit,
 }: MissionResultCardProps): JSX.Element {
   const animatedEarnedXp = useRollingNumber(scoreData?.xpEarned ?? 0, 280);
   const stars = scoreData?.stars ?? 0;
@@ -185,14 +187,31 @@ export function MissionResultCard({
         >
           Replay stop
         </button>
+        {!isLastStop && onOpenKit && (
+          <button
+            type="button"
+            className="mission-secondary-btn"
+            disabled={scoringLoading}
+            onClick={onOpenKit}
+            data-testid="result-open-kit-btn"
+          >
+            Survival Kit
+          </button>
+        )}
         <button
           type="button"
           className="primary-cta-btn mission-primary-cta"
           disabled={scoringLoading}
-          onClick={onContinueNextStop}
+          onClick={isLastStop && onOpenKit ? onOpenKit : onContinueNextStop}
           data-testid="complete-continue-btn"
         >
-          <span>{isLastStop ? "Review Monday" : `Next stop · ${nextMissionDay}`}</span>
+          <span>
+            {isLastStop
+              ? onOpenKit
+                ? "Open Survival Kit"
+                : "Review Monday"
+              : `Next stop · ${nextMissionDay}`}
+          </span>
           <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
         </button>
       </div>
