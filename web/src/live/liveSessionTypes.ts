@@ -10,6 +10,7 @@ import {
   LiveTokenDataSchema,
   SAFETY_LIMITS,
   TIMEOUTS_MS,
+  toUserErrorMessage,
   type LiveTokenData,
   type LiveTokenRequest,
   type LiveToolSignals,
@@ -212,10 +213,11 @@ export async function fetchEphemeralToken(
   } catch (err: unknown) {
     return {
       ok: false,
-      error:
-        err instanceof Error && err.message.length > 0
-          ? err.message
-          : "Voice connection dropped. Tap Retry to reconnect to this mission.",
+      error: toUserErrorMessage(
+        err,
+        "Voice connection timed out, so tap Retry to reconnect to this mission.",
+        "You appear to be offline, so reconnect and tap Retry to start this voice mission.",
+      ),
     };
   }
 }

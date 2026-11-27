@@ -165,6 +165,7 @@ export function MissionResultCard({
         {scoreData && (
           <WhyChangedDisclosure
             rubric={scoreData.rubric}
+            effectiveRoute={scoreData.effectiveRoute}
             durationMs={scoreData.durationMs}
             fallbackUsed={scoreData.fallbackUsed}
             lowConfidenceFallback={scoreData.lowConfidenceFallback}

@@ -121,13 +121,15 @@ export async function generateWeekPlan(
     const prompt = buildDirectorPrompt(office, candidates, req, verifierErrors);
     const callStart = performance.now();
     try {
+      const isFallbackModel = model === MODEL_IDS.fastWorkhorse;
       const out = await deps.runner({
         model,
         systemInstruction: DIRECTOR_SYSTEM_INSTRUCTION,
         prompt,
         schema,
         thinkingLevel: DIRECTOR_CONFIG.thinkingLevel,
-        timeoutMs: TIMEOUTS_MS.worldDirector,
+        timeoutMs: isFallbackModel ? TIMEOUTS_MS.worldDirectorFallback : TIMEOUTS_MS.worldDirector,
+        maxAttempts: isFallbackModel ? 1 : 2,
       });
       const callMs = performance.now() - callStart;
       log.logGeminiCall({

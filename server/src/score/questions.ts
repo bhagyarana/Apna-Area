@@ -77,7 +77,7 @@ export const MISSION_DECISION_QUESTIONS = {
 export function buildDecisionInputText(req: ScoreRequest): string {
   const turns = req.transcript.map((t) => `${t.speaker.toUpperCase()}: ${t.text}`).join("\n");
   const phraseSpec = req.targetPhrase
-    ? `${req.targetPhrase.transliteration} (${req.targetPhrase.english})`
+    ? `${req.targetPhrase.kannada} / ${req.targetPhrase.transliteration} (${req.targetPhrase.english})`
     : "None";
   return [
     `Mission: ${req.mission.title}`,

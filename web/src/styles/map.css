@@ -31,7 +31,7 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(14, 10, 28, 0.72) 0%, rgba(20, 13, 42, 0.18) 22%, rgba(20, 13, 42, 0.22) 100%),
+    linear-gradient(180deg, rgba(14, 10, 28, 0.84) 0%, rgba(20, 13, 42, 0.22) 20%, rgba(20, 13, 42, 0.24) 100%),
     radial-gradient(circle at 14% 28%, rgba(14, 10, 28, 0.42), transparent 45%);
 }
 
@@ -209,8 +209,10 @@
   cursor: pointer;
 }
 
-/* Step back unselected tech park labels once an office is chosen; reveal capsule on hover/focus */
-.orr-map-container[data-has-selection="true"] .map-pin:not(.map-pin-selected):not(:hover):not(:focus-visible) {
+/* Step back crowded corridor labels to luminous ground pins; reveal capsule on hover/focus/selection */
+.orr-map-container .map-pin:not(.map-pin-selected):not(.map-pin-spotlight):not(.map-pin-featured):not(:hover):not(:focus-visible),
+.orr-map-container[data-has-selection="true"] .map-pin:not(.map-pin-selected):not(:hover):not(:focus-visible),
+.orr-map-container[data-voice-mission="true"] .map-pin:not(:hover):not(:focus-visible) {
   min-width: 40px;
   min-height: 40px;
   padding: 0;
@@ -219,17 +221,26 @@
   box-shadow: none;
 }
 
+.orr-map-container .map-pin:not(.map-pin-selected):not(.map-pin-spotlight):not(.map-pin-featured):not(:hover):not(:focus-visible) .map-pin-label,
+.orr-map-container .map-pin:not(.map-pin-selected):not(.map-pin-spotlight):not(.map-pin-featured):not(:hover):not(:focus-visible) + .map-pin-stem,
 .orr-map-container[data-has-selection="true"] .map-pin:not(.map-pin-selected):not(:hover):not(:focus-visible) .map-pin-label,
-.orr-map-container[data-has-selection="true"] .map-pin:not(.map-pin-selected):not(:hover):not(:focus-visible) + .map-pin-stem {
+.orr-map-container[data-has-selection="true"] .map-pin:not(.map-pin-selected):not(:hover):not(:focus-visible) + .map-pin-stem,
+.orr-map-container[data-voice-mission="true"] .map-pin:not(:hover):not(:focus-visible) .map-pin-label,
+.orr-map-container[data-voice-mission="true"] .map-pin:not(:hover):not(:focus-visible) + .map-pin-stem {
   display: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tour-pill {
-    animation: fade-only var(--dur-fast) linear both;
+@media (max-width: 768px) {
+  .orr-map-container[data-has-selection="false"] .map-pin:not(.map-pin-spotlight):not(:hover):not(:focus-visible) {
+    min-width: 40px; min-height: 40px; padding: 0; background: transparent; backdrop-filter: none; box-shadow: none;
   }
+  .orr-map-container[data-has-selection="false"] .map-pin:not(.map-pin-spotlight):not(:hover):not(:focus-visible) .map-pin-label,
+  .orr-map-container[data-has-selection="false"] .map-pin:not(.map-pin-spotlight):not(:hover):not(:focus-visible) + .map-pin-stem {
+    display: none;
+  }
+}
 
-  .map-pin:active {
-    transform: none;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .tour-pill { animation: fade-only var(--dur-fast) linear both; }
+  .map-pin:active { transform: none; }
 }

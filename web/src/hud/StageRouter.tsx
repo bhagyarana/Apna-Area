@@ -23,6 +23,9 @@ import type { ProgressChipItem } from "./useDirectorStream";
 
 export interface StageRouterProps {
   bannerMessage: string | null;
+  onRetryBanner?: () => void;
+  savedOfficeId?: string | null;
+  hasBootstrapError?: boolean;
   directorStatus: "idle" | "generating" | "week_ready" | "error";
   directorChips: readonly ProgressChipItem[];
   directorReplayed: boolean;
@@ -64,6 +67,9 @@ export interface StageRouterProps {
  */
 export function StageRouter({
   bannerMessage,
+  onRetryBanner,
+  savedOfficeId = null,
+  hasBootstrapError = false,
   directorStatus,
   directorChips,
   directorReplayed,
@@ -95,8 +101,18 @@ export function StageRouter({
   return (
     <main className="shell-main">
       {bannerMessage && (
-        <div className="error-banner" role="alert">
-          {bannerMessage}
+        <div className="error-banner" role="alert" data-testid="stage-error-banner">
+          <span>{bannerMessage}</span>
+          {onRetryBanner && (
+            <button
+              type="button"
+              className="change-office-btn error-retry-btn"
+              onClick={onRetryBanner}
+              data-testid="banner-retry-btn"
+            >
+              Retry
+            </button>
+          )}
         </div>
       )}
       {directorStatus === "generating" && selectedOffice ? (
@@ -140,6 +156,8 @@ export function StageRouter({
         <OfficePicker
           techParks={techParks}
           selectedOffice={selectedOffice}
+          savedOfficeId={savedOfficeId}
+          hasError={hasBootstrapError}
           onSelectOffice={onSelectOffice}
           onClearOffice={onClearOffice}
           onBuildWeek={onBuildWeek}

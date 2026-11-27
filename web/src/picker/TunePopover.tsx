@@ -58,7 +58,9 @@ export function TunePopover({
     <Popover>
       <PopoverTrigger className="tune-trigger" data-testid="tune-trigger">
         <HugeiconsIcon icon={SlidersHorizontalIcon} size={16} aria-hidden="true" />
-        <span>Tune{comfortShort}</span>
+        <span>
+          Tune<span className="tune-lang-suffix">{comfortShort}</span>
+        </span>
       </PopoverTrigger>
 
       <PopoverContent side="bottom" align="end" sideOffset={10} className="tune-popover">

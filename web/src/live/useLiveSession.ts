@@ -6,7 +6,7 @@
  * Deliberately excludes: Persisting transcripts or audio to server or disk.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LIVE_VOICE_CONFIG, SAFETY_LIMITS, type LiveTokenRequest, type TranscriptTurn } from "@apna-area/shared";
+import { LIVE_VOICE_CONFIG, SAFETY_LIMITS, toUserErrorMessage, type LiveTokenRequest, type TranscriptTurn } from "@apna-area/shared";
 import { primeUserGestureAudioContext, releaseUserGestureAudioContext } from "./audioUnlock";
 import {
   appendDraftTurns,
@@ -24,11 +24,7 @@ import { startMicPcmCapture, type MicCaptureHandle } from "./pcmWorklet";
 
 export type { LiveSessionState, LiveSessionStatus };
 
-/**
- * Manages a bounded 90-second Gemini 3.8 Live voice conversation with text fallback.
- *
- * @returns LiveSessionState and imperative session controls.
- */
+/** Manages a bounded 90-second Gemini 3.8 Live voice conversation with text fallback. */
 export function useLiveSession() {
   const [state, setState] = useState<LiveSessionState>(INITIAL_LIVE_STATE);
   const sessionSeqRef = useRef(0);
@@ -56,10 +52,7 @@ export function useLiveSession() {
     transportRef.current = null;
   }, []);
 
-  useEffect(() => () => {
-    cleanupSessionNodes();
-    releaseUserGestureAudioContext();
-  }, [cleanupSessionNodes]);
+  useEffect(() => () => { cleanupSessionNodes(); releaseUserGestureAudioContext(); }, [cleanupSessionNodes]);
 
   const stopSession = useCallback(() => {
     cleanupSessionNodes();
@@ -173,27 +166,30 @@ export function useLiveSession() {
             setState((prev) => ({ ...prev, status: "error", errorMessage: msg, rmsLevel: 0 }));
           },
           onClose: () => {
-            if (sessionSeqRef.current === mySeq) setState((prev) => ({ ...prev, rmsLevel: 0 }));
+            if (sessionSeqRef.current !== mySeq) return;
+            if (objectiveDoneRef.current) {
+              completeWithFlushedDrafts();
+              return;
+            }
+            cleanupSessionNodes();
+            setState((prev) => ({
+              ...prev,
+              status: "error",
+              errorMessage: "Voice connection dropped, so tap Retry to reconnect to this mission.",
+              rmsLevel: 0,
+            }));
           },
         });
 
-        if (sessionSeqRef.current !== mySeq) {
-          transport.close();
-          return;
-        }
+        if (sessionSeqRef.current !== mySeq) { transport.close(); return; }
         transportRef.current = transport;
-        if (socketOpened && !greeted) {
-          greeted = true;
-          transport.sendText(openingCue);
-        }
+        if (socketOpened && !greeted) { greeted = true; transport.sendText(openingCue); }
 
         countdownRef.current = window.setInterval(() => {
           secondsLeftRef.current = Math.max(0, secondsLeftRef.current - 1);
           const nextSec = secondsLeftRef.current;
-          if (nextSec <= 0) {
-            secondsLeftRef.current = 0;
-            completeWithFlushedDrafts();
-          } else setState((prev) => ({ ...prev, secondsRemaining: nextSec }));
+          if (nextSec <= 0) { secondsLeftRef.current = 0; completeWithFlushedDrafts(); }
+          else setState((prev) => ({ ...prev, secondsRemaining: nextSec }));
         }, 1_000);
 
         try {
@@ -203,10 +199,7 @@ export function useLiveSession() {
               setState((prev) => (prev.status === "npc_speaking" ? prev : { ...prev, rmsLevel: rms }));
             }
           });
-          if (sessionSeqRef.current !== mySeq) {
-            micHandle.stop();
-            return;
-          }
+          if (sessionSeqRef.current !== mySeq) { micHandle.stop(); return; }
           micRef.current = micHandle;
           setState((prev) => (prev.status === "npc_speaking" ? prev : { ...prev, status: "listening" }));
         } catch {
@@ -215,8 +208,8 @@ export function useLiveSession() {
       } catch (err: unknown) {
         if (sessionSeqRef.current !== mySeq) return;
         cleanupSessionNodes();
-        const errorMessage = err instanceof Error ? err.message : "Voice connection dropped. Tap Retry to reconnect.";
-        setState((prev) => ({ ...prev, status: "error", errorMessage }));
+        const msg = toUserErrorMessage(err, "Voice connection dropped, so tap Retry to reconnect to this mission.", "You appear to be offline, so reconnect and tap Retry to reconnect.");
+        setState((prev) => ({ ...prev, status: "error", errorMessage: msg }));
       }
     },
     [cleanupSessionNodes],

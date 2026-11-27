@@ -87,7 +87,7 @@ export function MissionCard({
     >
       {replayed && (
         <div className="replay-banner" role="status" data-testid="replayed-banner">
-          Replayed from an earlier verified run
+          Replayed from an earlier run
         </div>
       )}
 
@@ -145,6 +145,12 @@ export function MissionCard({
               onMouseLeave={() => setHovered(false)}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
+              onKeyDown={(ev) => {
+                if (ev.key === "Escape") {
+                  setPinned(false);
+                  setFocused(false);
+                }
+              }}
               onClick={() => setPinned((prev) => !prev)}
             >
               <HugeiconsIcon icon={CheckmarkBadge01Icon} size={13} aria-hidden="true" />

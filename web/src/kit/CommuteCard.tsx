@@ -75,6 +75,11 @@ export function CommuteCard({
             .map((b) => b.minutes)
             .filter((v): v is number => typeof v === "number" && v > 0);
           const fastestMin = areaValid.length > 0 ? Math.min(...areaValid) : null;
+          const slowestMin = areaValid.length > 0 ? Math.max(...areaValid) : null;
+          const fastestKey =
+            fastestMin !== null && slowestMin !== null && slowestMin > fastestMin
+              ? (bars.find((b) => b.minutes === fastestMin)?.key ?? null)
+              : null;
 
           return (
             <article
@@ -105,7 +110,7 @@ export function CommuteCard({
                 aria-label={`${area.areaName} weekday travel times`}
               >
                 {bars.map((bar) => {
-                  const isFastest = fastestMin !== null && bar.minutes === fastestMin;
+                  const isFastest = fastestKey !== null && bar.key === fastestKey;
                   return (
                     <div key={bar.key} className="commute-bar-row" role="listitem">
                       <span className="commute-bar-label">{bar.label}</span>

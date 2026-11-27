@@ -17,30 +17,30 @@ flowchart LR
     ConfigAPI["GET /api/health & /api/config"]
     PlacesAPI["GET /api/places & /api/corridor"]
     WorldAPI["POST /api/world (SSE + Verifier + Cache)"]
-    TokenAPI["POST /api/live-token (v1beta AuthToken)"]
+    TokenAPI["POST /api/live-token (v1alpha AuthToken)"]
     ScoreAPI["POST /api/score (Decisions Rubric)"]
-    KitAPI["POST /api/kit (Commutes + Summary + TTS)"]
+    KitAPI["POST /api/kit & /api/tts (Routes + Summary + TTS)"]
     DataFiles["Verified Static Data (data/orr/*.json, data/phrases.json)"]
   end
 
   subgraph GoogleAPIs["Google Cloud & Gemini APIs"]
     SecretMgr["Secret Manager (GEMINI_API_KEY, MAPS_BROWSER_KEY)"]
     Neon["Gemini 4 Neon / Hydrogen (Interactions API v1)"]
-    Live["Gemini 3.8 Live (WebSocket v1beta)"]
+    Live["Gemini 3.8 Live (WebSocket v1alpha)"]
     Decision["Gemini Decision 1 (Decisions API v1beta)"]
-    FlashLite["Gemini 3.5 Flash-Lite & 3.8 Flash TTS"]
+    FlashLite["Gemini 3.5 Flash-Lite (v1) & 3.8 Flash TTS (v1beta)"]
     MapsPlatform["Google Maps JS, Places (New) & Routes v2"]
   end
 
   Browser -->|"HTTPS + SSE"| CloudRun
   MapUI -->|"Maps JS SDK (Referrer-Restricted Key)"| MapsPlatform
-  LiveClient <-->|"WSS v1beta (Ephemeral Token)"| Live
+  LiveClient <-->|"WSS v1alpha (Ephemeral Token)"| Live
   CloudRun -->|"Reads at Startup"| SecretMgr
   WorldAPI -->|"Structured JSON"| Neon
   WorldAPI -->|"Validates IDs"| DataFiles
   TokenAPI -->|"authTokens.create"| Live
   ScoreAPI -->|"decisions.create"| Decision
-  KitAPI -->|"computeRoutes"| MapsPlatform
+  KitAPI -->|"computeRouteMatrix"| MapsPlatform
   KitAPI -->|"Summary + WAV TTS"| FlashLite
 ```
 
@@ -58,30 +58,32 @@ Apna-Area/
 ├── .agents/
 │   ├── rules/                    # engineering, design, gemini-models, security-and-control, context-hygiene
 │   └── skills/                   # ship-phase, handoff
-├── shared/
-│   ├── package.json
+├── shared/src/
 │   ├── config.ts                 # MODEL_IDS, ORR_BBOX, ENABLED_LANGUAGES, timeouts, rate limits
 │   ├── types.ts                  # Zod schemas + inferred TypeScript types shared by server & web
+│   ├── world.ts / live.ts / kit.ts
+│   ├── http.ts                   # fetchWithRetry + toUserErrorMessage normaliser
 │   ├── logger.ts                 # Cloud Logging structured JSON logger
-│   └── game/                     # Pure functions: xpFor, starsFor, nextDifficulty
+│   └── game/scoring.ts           # Pure functions: xpFor, starsFor, nextDifficulty
 ├── data/
 │   ├── phrases.json              # 30 Kannada survival phrases keyed by PhraseSituation (P3c)
 │   └── orr/
 │       ├── places.json           # Verified Places API (New) dataset with place_id & verifiedAt
-│       └── corridor.geojson      # Decoded ORR route LineString (Marathahalli to Silk Board)
+│       ├── corridor.geojson      # Decoded ORR route LineString (Marathahalli to Silk Board)
+│       └── fallback-plans.json   # Recorded verified real Gemini 4 Neon fallback runs
 ├── scripts/
 │   ├── verify-places.ts          # Build-time Places API (New) Text Search + bbox filter
 │   ├── build-corridor.ts         # Build-time Routes API corridor GeoJSON builder
 │   ├── generate-portraits.ts     # Build-time Nano Banana 2.1 NPC portraits -> web/public/art/npcs/
 │   └── generate-music.ts         # Build-time Lyria 30s mood loops -> web/public/audio/
-├── server/
-│   ├── package.json
-│   ├── index.ts                  # Fastify bootstrap, rate-limit, requestId logging, SPA static serve
-│   ├── routes/                   # health.ts, config.ts, world.ts, liveToken.ts, score.ts, kit.ts
-│   ├── world/                    # candidates.ts, director.ts, schema.ts, verify.ts, cache.ts
-│   ├── live/                     # persona.ts, token.ts, tools.ts
-│   ├── score/                    # decide.ts
-│   └── kit/                      # commute.ts, summary.ts, tts.ts
+├── server/src/
+│   ├── main.ts                   # Process entrypoint, Secret Manager env wiring, graceful shutdown
+│   ├── app.ts                    # Fastify factory, rate-limit, requestId logging, SPA static serve
+│   ├── routes/                   # health.ts, config.ts, places.ts, world.ts, liveToken.ts, score.ts, kit.ts, tts.ts
+│   ├── world/                    # candidates.ts, director.ts, prompt.ts, runner.ts, schema.ts, verify.ts, cache.ts
+│   ├── live/                     # persona.ts, phrases.ts, token.ts, tools.ts
+│   ├── score/                    # decide.ts, questions.ts
+│   └── kit/                      # pockets.ts, commute.ts, summary.ts, tts.ts
 ├── web/
 │   ├── package.json
 │   ├── index.html
@@ -104,18 +106,18 @@ Apna-Area/
 
 ## 3. HTTP & SSE API Contracts
 
-All API endpoints return JSON matching `ApiResult<T> = { ok: true; data: T; requestId: string } | { ok: false; error: { code: string; message: string; retryable: boolean }; requestId: string }`, except `POST /api/world` when `Accept: text/event-stream` is sent (with standard JSON fallback if `Accept: application/json` is requested after a transient SSE drop). Fastify boots with `trustProxy: true` so Cloud Run load-balancer headers resolve each visitor IP accurately. Rate limit: 60 requests per minute per IP across `/api/*` (`POST /api/live-token` capped at 30 per minute per IP to accommodate shared conference NAT Wi-Fi).
+All API endpoints return JSON matching `ApiResult<T> = { ok: true; data: T; requestId: string } | { ok: false; error: { code: string; message: string; retryable: boolean }; requestId: string }`, except `POST /api/world` when `Accept: text/event-stream` is sent (with standard JSON fallback if `Accept: application/json` is requested after a transient SSE drop). Fastify boots with `trustProxy: true` so Cloud Run load-balancer headers resolve each visitor IP accurately. Rate limit: 180 requests per minute per IP across `/api/*` reads (`POST /api/world`, `/api/live-token`, `/api/score`, `/api/kit`, and `/api/tts` capped at 30 per minute per IP to protect budget while accommodating shared conference NAT Wi-Fi).
 
 | Method & Path | Request Schema (Zod) | Response Payload (`data`) | Timeout & Cache |
 |---|---|---|---|
-| `GET /api/health` | none | `{ status: "ok", version: string, commit: string, builtAt: string, upstreams: { placesLoaded: number, geminiConfigured: boolean, mapsConfigured: boolean } }` | 2 s, no cache |
+| `GET /api/health` | none | `{ status: "ok", version: string, commit: string, builtAt: string, upstreams: { placesLoaded: number, geminiConfigured: boolean, mapsConfigured: boolean, mapsServerConfigured?: boolean, phrasesLoaded?: number, fallbackPlansLoaded?: number } }` | 2 s, pre-validated at boot |
 | `GET /api/config` | none | `{ mapsBrowserKey: string, mapId: string, enabledLanguages: LanguageCode[], orrBbox: BoundingBox, featureFlags: FeatureFlags }` | 2 s, 60 s memory |
 | `GET /api/places` | `?category=` optional | `{ places: VerifiedPlace[], corridor: GeoJSONLineString, verifiedAt: string }` | 2 s, immutable in-process |
-| `POST /api/world` | `{ officePlaceId: string, languageComfort: "en" \| "hi" \| "en_hi", budgetBand: "15_20k" \| "20_30k" \| "30k_plus" }` | SSE events: `progress` (`{ step, detail, count? }`), `complete` (`{ plan: WeekPlan, replayed: boolean }`), `error` (`{ code, message }`) | 20 s total, cached in LRU + pre-warms `/api/kit` commutes in background |
-| `POST /api/live-token` | `{ mission: Mission, officeName: string, placeName: string, difficulty: DifficultyState, activeLanguage: LanguageCode }` | `{ token: string, expireTime: string, model: string, maxDurationSeconds: 90, phrase?: SurvivalPhrase }` | 6 s, never cached (`uses: 3` for reconnect safety, 2 min new-session window) |
-| `POST /api/score` | `{ missionId: string, objective: string, transcript: TranscriptTurn[], toolSignals?: { phraseQuality?: "partial" \| "clear"; objectiveCompleted?: boolean }, activePhrase?: SurvivalPhrase, currentDifficulty: DifficultyState }` | `{ answers: RubricAnswers, xpEarned: number, stars: 1 \| 2 \| 3, nextDifficulty: DifficultyState, usedSafeDefault: boolean, summaryLine: string }` | 5 s, idempotent per `missionId + transcriptHash` |
-| `POST /api/kit` | `{ officePlaceId: string, budgetBand: "15_20k" \| "20_30k" \| "30k_plus", recommendedAreas: string[], completedMissionIds: string[], learnedPhraseIds: string[] }` | `{ office: VerifiedPlace, neighbourhoods: NeighbourhoodCommute[], phrases: SurvivalPhrase[], checklist: ChecklistItem[] }` | 8 s, uses `computeRouteMatrix` (4 batched calls) pre-warmed on office pick |
-| `POST /api/tts` | `{ phraseId: string }` | `{ audioWavBase64: string, mimeType: "audio/wav" }` | 8 s, cached in-memory by `phraseId` |
+| `POST /api/world` | `{ officePlaceId: string, languageComfort: "en" \| "hi" \| "en_hi", budgetBand: "15_20k" \| "20_30k" \| "30k_plus" }` | SSE events: `progress` (`{ step, detail, count? }`), `complete` (`{ plan: WeekPlan, replayed: boolean, modelUsed: string, durationMs: number }`), `error` (`{ code, message, retryable }`) | 24 s Neon / 16 s Hydrogen, cached in LRU + pre-warms `/api/kit` commutes |
+| `POST /api/live-token` | `{ mission: Mission, officeName: string, placeName: string, placeCategory: PlaceCategory, difficulty: DifficultyState, activeLanguage: LanguageCode, languageComfort?: LanguageComfort }` | `{ token: string, expireTime: string, model: string, apiVersion: "v1alpha", maxDurationSeconds: number, voiceName: string, includePhraseTool: boolean, phrase?: SurvivalPhrase }` | 6 s, never cached (`uses: 3` for reconnect safety, 2 min new-session window) |
+| `POST /api/score` | `{ mission: Mission, difficulty: DifficultyState, activeLanguage: LanguageCode, transcript: TranscriptTurn[], toolSignals: LiveToolSignals, targetPhrase?: SurvivalPhrase, usedTextFallback: boolean }` | `{ missionId: MissionId, xpEarned: number, stars: 1 \| 2 \| 3, objectiveMet: boolean, effectiveRoute: RouteChoice, lowConfidenceFallback: boolean, rubric: RubricScores, nextDifficulty: DifficultyState, adaptationSummary: string, modelUsed: string, fallbackUsed: boolean, durationMs: number }` | 4 s, stateless (`Cache-Control: no-store`, transcripts redacted from logs) |
+| `POST /api/kit` | `{ officePlaceId: string, budgetBand: BudgetBand, recommendedNeighbourhoods?: RecommendedNeighbourhood[], completedMissionIds: MissionId[], learnedPhraseIds: string[] }` | `{ office: VerifiedPlace, mondayMorningIso: string, mondayEveningIso: string, neighbourhoods: NeighbourhoodCommute[], phrases: SurvivalPhrase[], starterPhraseIds: string[], checklist: ChecklistItem[], summaryFallbackUsed: boolean }` | 7 s Routes + 5 s Flash-Lite, both cached in memory + pre-warmed |
+| `POST /api/tts` | `{ phraseId: string }` | `{ phraseId: string, audioWavBase64: string, mimeType: "audio/wav", cached: boolean }` | 8 s, cached in-memory by `phraseId` |
 
 ## 4. Core Sequence Diagrams
 

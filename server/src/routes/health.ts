@@ -15,6 +15,9 @@ export interface BuildMetadata {
   placesLoaded: number;
   geminiConfigured: boolean;
   mapsConfigured: boolean;
+  mapsServerConfigured?: boolean;
+  phrasesLoaded?: number;
+  fallbackPlansLoaded?: number;
 }
 
 /**
@@ -27,18 +30,26 @@ export async function registerHealthRoutes(
   app: FastifyInstance,
   meta: BuildMetadata,
 ): Promise<void> {
+  const payload: HealthData = HealthDataSchema.parse({
+    status: "ok",
+    version: meta.version,
+    commit: meta.commit,
+    builtAt: meta.builtAt,
+    upstreams: {
+      placesLoaded: meta.placesLoaded,
+      geminiConfigured: meta.geminiConfigured,
+      mapsConfigured: meta.mapsConfigured,
+      ...(meta.mapsServerConfigured !== undefined
+        ? { mapsServerConfigured: meta.mapsServerConfigured }
+        : {}),
+      ...(meta.phrasesLoaded !== undefined ? { phrasesLoaded: meta.phrasesLoaded } : {}),
+      ...(meta.fallbackPlansLoaded !== undefined
+        ? { fallbackPlansLoaded: meta.fallbackPlansLoaded }
+        : {}),
+    },
+  });
+
   app.get("/api/health", async (request) => {
-    const payload: HealthData = HealthDataSchema.parse({
-      status: "ok",
-      version: meta.version,
-      commit: meta.commit,
-      builtAt: meta.builtAt,
-      upstreams: {
-        placesLoaded: meta.placesLoaded,
-        geminiConfigured: meta.geminiConfigured,
-        mapsConfigured: meta.mapsConfigured,
-      },
-    });
     return createApiSuccess(payload, request.id);
   });
 }

@@ -12,11 +12,13 @@ import {
   DECISION_THRESHOLDS,
   type DifficultyOverrideMode,
   type LanguageCode,
+  type RouteChoice,
   type RubricScores,
 } from "@apna-area/shared";
 
 export interface WhyChangedDisclosureProps {
   rubric: RubricScores;
+  effectiveRoute: RouteChoice;
   durationMs: number;
   fallbackUsed: boolean;
   lowConfidenceFallback: boolean;
@@ -41,6 +43,7 @@ interface BarMetric {
  */
 export function WhyChangedDisclosure({
   rubric,
+  effectiveRoute,
   durationMs,
   fallbackUsed,
   lowConfidenceFallback,
@@ -51,8 +54,9 @@ export function WhyChangedDisclosure({
   const [open, setOpen] = useState(false);
   const maxScore = DECISION_THRESHOLDS.rubricMaxScore;
   const hasKannada = enabledLanguages.includes("kn");
-  const provenanceNote =
-    !fallbackUsed && durationMs >= 20
+  const provenanceNote = fallbackUsed
+    ? "Estimated rubric (fallback)"
+    : durationMs >= 20
       ? `Calibrated rubric · ${durationMs} ms`
       : "Calibrated rubric";
 
@@ -140,7 +144,7 @@ export function WhyChangedDisclosure({
               <button
                 type="button"
                 className={
-                  overrideMode === "gentle"
+                  overrideMode === "gentle" || (overrideMode === null && effectiveRoute === "ease_level")
                     ? "override-pill-btn override-pill-active"
                     : "override-pill-btn"
                 }
@@ -148,12 +152,12 @@ export function WhyChangedDisclosure({
                 onClick={() => onSelectOverride("gentle")}
                 data-testid="override-gentle-btn"
               >
-                {overrideMode === "gentle" ? "✓ Keep gentler pace" : "Keep gentler pace"}
+                {overrideMode === "gentle" ? "✓ Gentler pace locked" : "Switch to gentler pace"}
               </button>
               <button
                 type="button"
                 className={
-                  overrideMode === "step_up"
+                  overrideMode === "step_up" || (overrideMode === null && effectiveRoute === "step_up")
                     ? "override-pill-btn override-pill-active"
                     : "override-pill-btn"
                 }
@@ -161,8 +165,16 @@ export function WhyChangedDisclosure({
                 onClick={() => onSelectOverride("step_up")}
                 data-testid="override-step-up-btn"
               >
-                {overrideMode === "step_up" ? "✓ " : ""}
-                {hasKannada ? "Step up Kannada anyway" : "Step up pace anyway"}
+                {overrideMode === "step_up" || (overrideMode === null && effectiveRoute === "step_up")
+                  ? "✓ "
+                  : ""}
+                {effectiveRoute === "step_up"
+                  ? hasKannada
+                    ? "Higher Kannada active"
+                    : "Faster pace active"
+                  : hasKannada
+                    ? "Step up Kannada"
+                    : "Step up pace"}
               </button>
             </div>
           </div>

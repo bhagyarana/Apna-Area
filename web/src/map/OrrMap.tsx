@@ -38,10 +38,18 @@ export interface OrrMapProps {
   weekPlan?: WeekPlan | null;
   activeMissionIndex?: number;
   inVoiceMission?: boolean;
+  hidePins?: boolean;
   onSelectMission?: (index: number) => void;
   tourActive: boolean;
   onFinishTour: () => void;
 }
+
+const CORRIDOR_ANCHOR_PARK_IDS = new Set([
+  "ChIJ10E9RAQRrjsRJxXRmkKBqcw", // Bagmane IT park (Marathahalli north)
+  "ChIJ7-Cgk7MTrjsRpYr_lkVDiM8", // Prestige Tech Park (Kadubeesanahalli)
+  "ChIJ4VFw06gTrjsRBi6R59JUG0Q", // Embassy TechVillage (Devarabisanahalli)
+  "ChIJh9_I9A0TrjsRj_uXAthQcWg", // Vaishnavi Tech Park (Sarjapur Junction south)
+]);
 
 function MapStageInner({
   mapId,
@@ -53,6 +61,7 @@ function MapStageInner({
   weekPlan = null,
   activeMissionIndex = 0,
   inVoiceMission = false,
+  hidePins = false,
   onSelectMission,
   tourActive,
   onFinishTour,
@@ -106,6 +115,7 @@ function MapStageInner({
       className="orr-map-container"
       data-testid="orr-map-stage"
       data-has-selection={selectedOffice ? "true" : "false"}
+      data-voice-mission={inVoiceMission ? "true" : "false"}
     >
       <div className="orr-map-canvas-grade">
         <GoogleMap
@@ -137,20 +147,23 @@ function MapStageInner({
             inVoiceMission={inVoiceMission}
           />
 
-          {visibleTechParks.map((park) => {
+          {!hidePins && visibleTechParks.map((park) => {
             const isSelected = selectedOffice?.id === park.id;
             const isTourSpotlight = Boolean(tourActive && tourHoods.includes(park.neighbourhood));
+            const isFeatured = CORRIDOR_ANCHOR_PARK_IDS.has(park.id);
             const pinClass = isSelected
               ? "map-pin map-pin-selected"
               : isTourSpotlight
                 ? "map-pin map-pin-spotlight"
-                : "map-pin";
+                : isFeatured
+                  ? "map-pin map-pin-featured"
+                  : "map-pin";
 
             return (
               <AdvancedMarker
                 key={park.id}
                 position={{ lat: park.lat, lng: park.lng }}
-                zIndex={isSelected ? 30 : isTourSpotlight ? 20 : 5}
+                zIndex={isSelected ? 30 : isTourSpotlight ? 20 : isFeatured ? 15 : 4}
               >
                 <div className="map-pin-anchor">
                   <button
@@ -178,7 +191,7 @@ function MapStageInner({
             );
           })}
 
-          {weekPlan && onSelectMission && (
+          {!hidePins && weekPlan && onSelectMission && (
             <MissionMarkers
               weekPlan={weekPlan}
               placesById={placesById}

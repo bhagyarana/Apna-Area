@@ -139,7 +139,12 @@
   justify-content: center;
 }
 
-.npc-portrait-img { width: 100%; height: 100%; object-fit: cover; }
+.npc-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.84) contrast(1.04) brightness(0.95);
+}
 
 .npc-portrait-fallback {
   font-family: var(--font-display);
@@ -230,4 +235,8 @@
   .npc-portrait-frame { width: 52px; height: 52px; border-radius: 10px; }
   .caption-npc-line { font-size: 0.96rem; line-height: 1.34; }
   .caption-player-line { font-size: var(--text-xs); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter-flag-tilted, .live-chip-btn { transition: none; }
 }

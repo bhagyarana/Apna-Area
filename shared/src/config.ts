@@ -40,7 +40,8 @@ export const ENABLED_LANGUAGES = ["en", "hi", "kn"] as const;
 /** Network and upstream call timeouts in milliseconds. */
 export const TIMEOUTS_MS = {
   healthCheck: 2_000,
-  worldDirector: 32_000,
+  worldDirector: 24_000,
+  worldDirectorFallback: 16_000,
   liveToken: 6_000,
   decisionsScore: 4_000,
   routesMatrix: 7_000,
@@ -52,7 +53,8 @@ export const TIMEOUTS_MS = {
 
 /** Per-IP API rate limits and Live session duration caps for budget protection. */
 export const SAFETY_LIMITS = {
-  apiRequestsPerMinutePerIp: 60,
+  apiRequestsPerMinutePerIp: 180,
+  worldRequestsPerMinutePerIp: 30,
   liveTokensPerMinutePerIp: 30,
   scoreRequestsPerMinutePerIp: 30,
   kitRequestsPerMinutePerIp: 30,

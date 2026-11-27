@@ -14,6 +14,7 @@ import {
   createApiSuccess,
   createLogger,
   FallbackPlansMapSchema,
+  SAFETY_LIMITS,
   WorldRequestSchema,
   type WeekPlan,
   type WorldProgressEvent,
@@ -81,7 +82,17 @@ export async function registerWorldRoutes(
       ? createGenAiInteractionRunner(opts.geminiApiKey)
       : null);
 
-  app.post("/api/world", async (request, reply) => {
+  app.post(
+    "/api/world",
+    {
+      config: {
+        rateLimit: {
+          max: SAFETY_LIMITS.worldRequestsPerMinutePerIp,
+          timeWindow: "1 minute",
+        },
+      },
+    },
+    async (request, reply) => {
     const parsedReq = WorldRequestSchema.safeParse(request.body);
     if (!parsedReq.success) {
       return reply
@@ -176,5 +187,6 @@ export async function registerWorldRoutes(
 
     opts.onPlanReady?.(result.data.plan, request.id);
     return createApiSuccess(result.data, request.id);
-  });
+    },
+  );
 }

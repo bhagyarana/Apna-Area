@@ -85,30 +85,36 @@ export async function registerPlacesRoutes(
   app: FastifyInstance,
   world: LoadedWorldData,
 ): Promise<void> {
+  const defaultAllPayload = PlacesPayloadSchema.parse({
+    places: world.dataset.places,
+    corridor: world.corridor,
+    verifiedAt: world.dataset.verifiedAt,
+  });
+
   app.get<{ Querystring: { category?: string } }>("/api/places", async (request, reply) => {
     const rawCategory = request.query.category;
-    let filtered = world.dataset.places;
+    reply.header("Cache-Control", "public, max-age=300");
 
-    if (rawCategory !== undefined && rawCategory.length > 0) {
-      const parsedCat = PlaceCategorySchema.safeParse(rawCategory);
-      if (!parsedCat.success) {
-        return reply
-          .status(400)
-          .send(
-            createApiError(
-              "INVALID_CATEGORY",
-              "Unknown place category filter, so choose a supported ORR category.",
-              false,
-              request.id,
-            ),
-          );
-      }
-      filtered = filtered.filter((p) => p.category === parsedCat.data);
+    if (rawCategory === undefined || rawCategory.length === 0) {
+      return createApiSuccess(defaultAllPayload, request.id);
     }
 
-    reply.header("Cache-Control", "public, max-age=300");
+    const parsedCat = PlaceCategorySchema.safeParse(rawCategory);
+    if (!parsedCat.success) {
+      return reply
+        .status(400)
+        .send(
+          createApiError(
+            "INVALID_CATEGORY",
+            "Unknown place category filter, so choose a supported ORR category.",
+            false,
+            request.id,
+          ),
+        );
+    }
+
     const payload = PlacesPayloadSchema.parse({
-      places: filtered,
+      places: world.dataset.places.filter((p) => p.category === parsedCat.data),
       corridor: world.corridor,
       verifiedAt: world.dataset.verifiedAt,
     });

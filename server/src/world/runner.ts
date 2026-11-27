@@ -15,6 +15,7 @@ export interface DirectorModelCallParams {
   schema: Record<string, unknown>;
   thinkingLevel: "low" | "medium" | "high" | "xhigh";
   timeoutMs: number;
+  maxAttempts?: 1 | 2;
 }
 
 export interface DirectorModelCallOutput {
@@ -32,7 +33,7 @@ export type ModelInteractionRunner = (
 
 function isTransientUpstreamError(err: unknown): boolean {
   const msg = err instanceof Error ? err.message : String(err);
-  return /\b(429|503|UNAVAILABLE|RESOURCE_EXHAUSTED|timeout|aborted|ECONNRESET)\b/i.test(msg);
+  return /\b(429|503|UNAVAILABLE|RESOURCE_EXHAUSTED|ECONNRESET)\b/i.test(msg);
 }
 
 function sleep(ms: number): Promise<void> {
@@ -49,7 +50,8 @@ export function createGenAiInteractionRunner(apiKey: string): ModelInteractionRu
   const client = new GoogleGenAI({ apiKey });
 
   return async (params: DirectorModelCallParams): Promise<DirectorModelCallOutput> => {
-    for (let attempt = 0; attempt < 2; attempt += 1) {
+    const maxAttempts = params.maxAttempts ?? 2;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
       let timer: ReturnType<typeof setTimeout> | undefined;
       try {
         const timeoutPromise = new Promise<never>((_, reject) => {
@@ -83,7 +85,7 @@ export function createGenAiInteractionRunner(apiKey: string): ModelInteractionRu
           },
         };
       } catch (err: unknown) {
-        if (attempt === 0 && isTransientUpstreamError(err)) {
+        if (attempt + 1 < maxAttempts && isTransientUpstreamError(err)) {
           const jitter = Math.floor(Math.random() * TIMEOUTS_MS.retryMaxJitter);
           await sleep(TIMEOUTS_MS.retryBaseBackoff + jitter);
           continue;
