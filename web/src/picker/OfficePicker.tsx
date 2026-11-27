@@ -5,7 +5,7 @@
  * Outputs: Smoked-acrylic instrument card supporting mouse, touch, Arrow keys, Enter, and Cmd/Ctrl+K.
  * Deliberately excludes: Duplicate echoed labels or unverified free-text locations outside data/orr/places.json.
  */
-import { useEffect, useMemo, useState, type JSX } from "react";
+import { useEffect, useMemo, type JSX } from "react";
 import {
   Combobox,
   ComboboxContent,
@@ -18,7 +18,7 @@ import {
 } from "@ui-sdk/react/combobox";
 import { Toolbar, ToolbarButton } from "@ui-sdk/react/toolbar";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Building03Icon, Location01Icon, Search01Icon, SparklesIcon } from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, Building03Icon, Location01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import type { VerifiedPlace } from "@apna-area/shared";
 
 export interface OfficePickerProps {
@@ -26,7 +26,12 @@ export interface OfficePickerProps {
   selectedOffice: VerifiedPlace | null;
   onSelectOffice: (placeId: string) => void;
   onClearOffice: () => void;
+  onBuildWeek: () => void;
   placesReady: boolean;
+}
+
+function formatCleanAddress(addr: string): string {
+  return addr.replace(/(^|,\s*)([a-z])/g, (_, sep: string, ch: string) => `${sep}${ch.toUpperCase()}`);
 }
 
 /**
@@ -40,15 +45,11 @@ export function OfficePicker({
   selectedOffice,
   onSelectOffice,
   onClearOffice,
+  onBuildWeek,
   placesReady,
 }: OfficePickerProps): JSX.Element {
   const controller = useMemo(() => createComboboxController<string, false>(), []);
-  const [queuedNotice, setQueuedNotice] = useState(false);
   const suggestedChips = useMemo(() => techParks.slice(0, 6), [techParks]);
-
-  useEffect(() => {
-    setQueuedNotice(false);
-  }, [selectedOffice?.id]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -93,16 +94,16 @@ export function OfficePicker({
         </div>
 
         <h1 className="hero-headline">{selectedOffice.name}</h1>
-        <p className="selected-office-address">{selectedOffice.shortAddress}</p>
+        <p className="selected-office-address">{formatCleanAddress(selectedOffice.shortAddress)}</p>
 
         <button
           type="button"
           className="primary-cta-btn"
-          onClick={() => setQueuedNotice(true)}
+          onClick={onBuildWeek}
           data-testid="build-week-cta"
         >
-          <HugeiconsIcon icon={SparklesIcon} size={16} aria-hidden="true" />
-          <span>{queuedNotice ? "Office locked for Week One" : "Build my first week"}</span>
+          <span>Build my first week</span>
+          <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
         </button>
 
         <span className="sr-only" data-testid="tagline">

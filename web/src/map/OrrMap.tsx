@@ -1,30 +1,31 @@
 /**
  * Feature: ORR 2D Vector Map Canvas & Asymmetric Camera Glide Controller
- * Purpose: Renders the dark @vis.gl/react-google-maps vector map restricted to ORR_BBOX, coordinate-anchored pins, and viewport-aware camera glides.
- * Inputs: Public Maps config, verified places, corridor GeoJSON, selected office, and tour state.
+ * Purpose: Renders the dark @vis.gl/react-google-maps vector map restricted to ORR_BBOX, coordinate-anchored office/mission pins, and viewport-aware camera glides.
+ * Inputs: Public Maps config, verified places, corridor GeoJSON, selected office, optional WeekPlan, and tour state.
  * Outputs: Full-bleed interactive map stage with resilient fallback canvas.
  * Deliberately excludes: Legacy google.maps.Marker, nested interactive controls, or geolocation prompts.
  */
-import { useEffect, useState, type JSX } from "react";
+import { useMemo, useState, type JSX } from "react";
 import {
   AdvancedMarker,
   APILoadingStatus,
   APIProvider,
   ColorScheme,
-  Map,
+  Map as GoogleMap,
   useApiLoadingStatus,
-  useMap,
 } from "@vis.gl/react-google-maps";
 import {
   DEFAULT_MAP_ID,
-  ORR_DEFAULT_CENTER,
   type BoundingBox,
   type GeoJSONLineStringFeature,
   type VerifiedPlace,
+  type WeekPlan,
 } from "@apna-area/shared";
+import { CameraGlideController, OVERVIEW_CAMERA } from "./CameraGlideController";
 import { CorridorLayer } from "./CorridorLayer";
 import { CameraTour } from "./CameraTour";
 import { FallbackCorridorCanvas } from "./FallbackCorridorCanvas";
+import { MissionMarkers } from "./MissionMarkers";
 
 export interface OrrMapProps {
   mapsBrowserKey: string;
@@ -34,80 +35,11 @@ export interface OrrMapProps {
   corridor: GeoJSONLineStringFeature;
   selectedOffice: VerifiedPlace | null;
   onSelectOffice: (placeId: string) => void;
+  weekPlan?: WeekPlan | null;
+  activeMissionIndex?: number;
+  onSelectMission?: (index: number) => void;
   tourActive: boolean;
   onFinishTour: () => void;
-}
-
-const OVERVIEW_CAMERA = { lat: 12.942, lng: 77.653, zoom: 12.45 };
-
-function computeFramedCenter(target: VerifiedPlace): { lat: number; lng: number; zoom: number } {
-  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
-  if (isMobile) {
-    return { lat: target.lat - 0.0055, lng: target.lng, zoom: 14.6 };
-  }
-  return { lat: target.lat, lng: target.lng - 0.0085, zoom: 14.9 };
-}
-
-function CameraGlideController({
-  target,
-  tourActive,
-}: {
-  target: VerifiedPlace | null;
-  tourActive: boolean;
-}): null {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!map || tourActive) {
-      return;
-    }
-
-    if (!target) {
-      map.moveCamera({
-        center: { lat: OVERVIEW_CAMERA.lat, lng: OVERVIEW_CAMERA.lng },
-        zoom: OVERVIEW_CAMERA.zoom,
-      });
-      return;
-    }
-
-    const framed = computeFramedCenter(target);
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) {
-      map.moveCamera({
-        center: { lat: framed.lat, lng: framed.lng },
-        zoom: framed.zoom,
-      });
-      return;
-    }
-
-    const startCenter = map.getCenter();
-    const fromLat = startCenter?.lat() ?? ORR_DEFAULT_CENTER.lat;
-    const fromLng = startCenter?.lng() ?? ORR_DEFAULT_CENTER.lng;
-    const fromZoom = map.getZoom() ?? OVERVIEW_CAMERA.zoom;
-    const durationMs = 900;
-    const t0 = performance.now();
-    let rafId = 0;
-
-    const step = (now: number) => {
-      const p = Math.min(1, (now - t0) / durationMs);
-      const eased = 1 - Math.pow(1 - p, 5);
-      map.moveCamera({
-        center: {
-          lat: fromLat + (framed.lat - fromLat) * eased,
-          lng: fromLng + (framed.lng - fromLng) * eased,
-        },
-        zoom: fromZoom + (framed.zoom - fromZoom) * eased,
-      });
-      if (p < 1) {
-        rafId = window.requestAnimationFrame(step);
-      }
-    };
-
-    rafId = window.requestAnimationFrame(step);
-    return () => window.cancelAnimationFrame(rafId);
-  }, [map, target, tourActive]);
-
-  return null;
 }
 
 function MapStageInner({
@@ -117,17 +49,49 @@ function MapStageInner({
   corridor,
   selectedOffice,
   onSelectOffice,
+  weekPlan = null,
+  activeMissionIndex = 0,
+  onSelectMission,
   tourActive,
   onFinishTour,
 }: Omit<OrrMapProps, "mapsBrowserKey">): JSX.Element {
   const status = useApiLoadingStatus();
   const [tourHoods, setTourHoods] = useState<readonly string[]>([]);
-  const techParks = places.filter((p) => p.category === "tech_park");
+  const placesById = useMemo(() => new globalThis.Map(places.map((p) => [p.id, p])), [places]);
+
+  const activeMissionPlace = useMemo(() => {
+    if (!weekPlan) return null;
+    const mission = weekPlan.missions[activeMissionIndex] ?? weekPlan.missions[0];
+    return mission ? (placesById.get(mission.placeId) ?? null) : null;
+  }, [weekPlan, activeMissionIndex, placesById]);
+
+  const weekClusterPlaces = useMemo(() => {
+    if (!weekPlan) return undefined;
+    const list: VerifiedPlace[] = [];
+    if (selectedOffice) list.push(selectedOffice);
+    for (const m of weekPlan.missions) {
+      const p = placesById.get(m.placeId);
+      if (p) list.push(p);
+    }
+    return list;
+  }, [weekPlan, selectedOffice, placesById]);
+
+  const visibleTechParks = useMemo(() => {
+    const allParks = places.filter((p) => p.category === "tech_park");
+    if (weekPlan && selectedOffice) {
+      return [selectedOffice];
+    }
+    return allParks;
+  }, [places, weekPlan, selectedOffice]);
 
   if (status === APILoadingStatus.AUTH_FAILURE || status === APILoadingStatus.FAILED) {
     return (
       <FallbackCorridorCanvas
         selectedOffice={selectedOffice}
+        weekPlan={weekPlan}
+        placesById={placesById}
+        activeMissionIndex={activeMissionIndex}
+        onSelectMission={onSelectMission}
         tourActive={tourActive}
         onTourNeighbourhoodsChange={setTourHoods}
         onFinishTour={onFinishTour}
@@ -142,13 +106,18 @@ function MapStageInner({
       data-has-selection={selectedOffice ? "true" : "false"}
     >
       <div className="orr-map-canvas-grade">
-        <Map
+        <GoogleMap
           mapId={mapId || DEFAULT_MAP_ID}
           colorScheme={ColorScheme.DARK}
           defaultCenter={{ lat: OVERVIEW_CAMERA.lat, lng: OVERVIEW_CAMERA.lng }}
           defaultZoom={OVERVIEW_CAMERA.zoom}
           restriction={{
-            latLngBounds: orrBbox,
+            latLngBounds: {
+              south: orrBbox.south - 0.035,
+              west: orrBbox.west - 0.02,
+              north: orrBbox.north + 0.015,
+              east: orrBbox.east + 0.02,
+            },
             strictBounds: false,
           }}
           clickableIcons={false}
@@ -157,9 +126,15 @@ function MapStageInner({
           internalUsageAttributionIds={["gmp_git_agentskills_v1"]}
         >
           <CorridorLayer corridor={corridor} />
-          <CameraGlideController target={selectedOffice} tourActive={tourActive} />
+          <CameraGlideController
+            target={activeMissionPlace ?? selectedOffice}
+            boundsPlaces={weekClusterPlaces}
+            fitCluster={Boolean(weekPlan && activeMissionIndex === 0)}
+            tourActive={tourActive}
+            isMissionStop={Boolean(activeMissionPlace && activeMissionIndex > 0)}
+          />
 
-          {techParks.map((park) => {
+          {visibleTechParks.map((park) => {
             const isSelected = selectedOffice?.id === park.id;
             const isTourSpotlight = Boolean(tourActive && tourHoods.includes(park.neighbourhood));
             const pinClass = isSelected
@@ -199,7 +174,16 @@ function MapStageInner({
               </AdvancedMarker>
             );
           })}
-        </Map>
+
+          {weekPlan && onSelectMission && (
+            <MissionMarkers
+              weekPlan={weekPlan}
+              placesById={placesById}
+              activeMissionIndex={activeMissionIndex}
+              onSelectMission={onSelectMission}
+            />
+          )}
+        </GoogleMap>
       </div>
 
       <div className="orr-map-scrim" aria-hidden="true" />
@@ -217,14 +201,19 @@ function MapStageInner({
 /**
  * Root map wrapper mounting @vis.gl/react-google-maps APIProvider when a browser key is configured.
  *
- * @param props - Map configuration, verified world dataset, selection state, and tour callbacks.
+ * @param props - Map configuration, verified places, corridor feature, selection state, and callbacks.
  * @returns Full-bleed ORR map component.
  */
 export function OrrMap(props: OrrMapProps): JSX.Element {
+  const placesById = useMemo(() => new globalThis.Map(props.places.map((p) => [p.id, p])), [props.places]);
   if (!props.mapsBrowserKey) {
     return (
       <FallbackCorridorCanvas
         selectedOffice={props.selectedOffice}
+        weekPlan={props.weekPlan}
+        placesById={placesById}
+        activeMissionIndex={props.activeMissionIndex}
+        onSelectMission={props.onSelectMission}
         tourActive={props.tourActive}
         onFinishTour={props.onFinishTour}
       />

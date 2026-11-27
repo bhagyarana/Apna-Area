@@ -7,5 +7,6 @@
  */
 export * from "./config.js";
 export * from "./types.js";
+export * from "./world.js";
 export * from "./logger.js";
 export * from "./http.js";
