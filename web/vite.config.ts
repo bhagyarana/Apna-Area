@@ -25,14 +25,8 @@ export default defineConfig({
     target: "es2022",
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes("@vis.gl/react-google-maps")) {
-            return "vendor-maps";
-          }
-          if (id.includes("@ui-sdk") || id.includes("@hugeicons")) {
-            return "vendor-ui";
-          }
-          return undefined;
+        manualChunks: {
+          "vendor-maps": ["@vis.gl/react-google-maps"],
         },
       },
     },

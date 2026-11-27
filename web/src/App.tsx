@@ -5,7 +5,7 @@
  * Outputs: Interactive ORR Neon Dusk map stage with OfficePicker, ProgressChips, WeekProgressBar, MissionCard, and MissionDialog.
  * Deliberately excludes: Client-side API keys or unverified fallback places.
  */
-import { useCallback, useMemo, useState, type JSX } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState, type JSX } from "react";
 import { resolveComfortLanguage, type DifficultyState, type SurvivalPhrase } from "@apna-area/shared";
 import { HealthBadge } from "./components/HealthBadge";
 import { MissionCard } from "./hud/MissionCard";
@@ -13,7 +13,6 @@ import { PhrasebookPill } from "./hud/PhraseFlyCard";
 import { ProgressChips } from "./hud/ProgressChips";
 import { useDirectorStream } from "./hud/useDirectorStream";
 import { WeekProgressBar } from "./hud/WeekProgressBar";
-import { MissionDialog } from "./live/MissionDialog";
 import { OrrMap } from "./map/OrrMap";
 import { OfficePicker } from "./picker/OfficePicker";
 import { TunePopover } from "./picker/TunePopover";
@@ -26,6 +25,10 @@ import {
   type PlayerPreferences,
 } from "./state/sessionStore";
 import { useWorldBootstrap } from "./state/useWorldBootstrap";
+
+const LazyMissionDialog = lazy(() =>
+  import("./live/MissionDialog").then((m) => ({ default: m.MissionDialog })),
+);
 
 const INITIAL_DIFFICULTY: DifficultyState = {
   localLanguageShare: 0,
@@ -171,21 +174,23 @@ export function App(): JSX.Element {
           Play your first week before it happens.
         </div>
       ) : inVoiceMission && director.weekPlan && selectedOffice && activeMissionPlace ? (
-        <MissionDialog
-          mission={director.weekPlan.missions[activeMissionIndex] ?? director.weekPlan.missions[0]!}
-          missionIndex={activeMissionIndex}
-          office={selectedOffice}
-          missionPlace={activeMissionPlace}
-          difficulty={INITIAL_DIFFICULTY}
-          activeLanguage={resolveComfortLanguage(prefs.languageComfort, config.enabledLanguages)}
-          languageComfort={prefs.languageComfort}
-          onPhraseMastered={handlePhraseMastered}
-          onExitMission={() => setInVoiceMission(false)}
-          onAdvanceNextMission={() => {
-            setInVoiceMission(false);
-            setActiveMissionIndex((prev) => (prev + 1) % director.weekPlan!.missions.length);
-          }}
-        />
+        <Suspense fallback={null}>
+          <LazyMissionDialog
+            mission={director.weekPlan.missions[activeMissionIndex] ?? director.weekPlan.missions[0]!}
+            missionIndex={activeMissionIndex}
+            office={selectedOffice}
+            missionPlace={activeMissionPlace}
+            difficulty={INITIAL_DIFFICULTY}
+            activeLanguage={resolveComfortLanguage(prefs.languageComfort, config.enabledLanguages)}
+            languageComfort={prefs.languageComfort}
+            onPhraseMastered={handlePhraseMastered}
+            onExitMission={() => setInVoiceMission(false)}
+            onAdvanceNextMission={() => {
+              setInVoiceMission(false);
+              setActiveMissionIndex((prev) => (prev + 1) % director.weekPlan!.missions.length);
+            }}
+          />
+        </Suspense>
       ) : (
         <main className="shell-main">
           {bannerMessage && (

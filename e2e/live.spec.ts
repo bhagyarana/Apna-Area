@@ -108,6 +108,7 @@ test("live: launches voice mission, renders portrait + captions, handles text re
   try {
     await page.goto(address);
     await page.keyboard.press("Escape");
+    await expect(page.getByTestId("office-combobox-input")).toBeVisible();
 
     const targetOffice = worldData.dataset.places.find((p) => p.id === recordedPlan.officePlaceId)!;
     await page.keyboard.press("Control+k");
