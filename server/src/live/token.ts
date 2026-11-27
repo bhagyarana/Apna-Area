@@ -130,7 +130,7 @@ export function createGenAiLiveTokenMinter(
             expireTime,
             model: MODEL_IDS.liveVoice,
             apiVersion: LIVE_VOICE_CONFIG.ephemeralApiVersion,
-            maxDurationSeconds: SAFETY_LIMITS.maxLiveSessionSeconds,
+            maxDurationSeconds: Math.min(SAFETY_LIMITS.maxLiveSessionSeconds, req.difficulty.paceSeconds),
             voiceName,
             includePhraseTool,
             ...(req.targetPhrase && includePhraseTool ? { phrase: req.targetPhrase } : {}),

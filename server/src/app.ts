@@ -25,8 +25,10 @@ import { registerConfigRoutes } from "./routes/config.js";
 import { loadVerifiedWorldData, registerPlacesRoutes, type LoadedWorldData } from "./routes/places.js";
 import { registerWorldRoutes } from "./routes/world.js";
 import { registerLiveTokenRoutes } from "./routes/liveToken.js";
+import { registerScoreRoutes } from "./routes/score.js";
 import type { ModelInteractionRunner } from "./world/director.js";
 import type { LiveTokenMinter } from "./live/token.js";
+import type { DecisionModelRunner } from "./score/decide.js";
 
 export interface ServerOptions {
   version?: string;
@@ -41,6 +43,7 @@ export interface ServerOptions {
   featureFlags?: Partial<FeatureFlags>;
   worldRunner?: ModelInteractionRunner;
   liveTokenMinter?: LiveTokenMinter;
+  decisionRunner?: DecisionModelRunner;
   fallbackPlans?: Readonly<Record<string, WeekPlan>>;
   rateLimitMax?: number;
   webDistPath?: string;
@@ -141,27 +144,18 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
       },
     });
     if (statusCode === 429) {
-      return reply
-        .status(429)
-        .send(
-          createApiError(
-            "RATE_LIMITED",
-            "Too many requests right now, so wait a moment and retry.",
-            true,
-            request.id,
-          ),
-        );
-    }
-    return reply
-      .status(statusCode)
-      .send(
-        createApiError(
-          "INTERNAL_ERROR",
-          "Something went wrong on the server, so please retry in a few seconds.",
-          statusCode >= 500,
-          request.id,
-        ),
+      return reply.status(429).send(
+        createApiError("RATE_LIMITED", "Too many requests right now, so wait a moment and retry.", true, request.id),
       );
+    }
+    return reply.status(statusCode).send(
+      createApiError(
+        "INTERNAL_ERROR",
+        "Something went wrong on the server, so please retry in a few seconds.",
+        statusCode >= 500,
+        request.id,
+      ),
+    );
   });
 
   const world = options.worldData ?? loadVerifiedWorldData();
@@ -198,49 +192,33 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     log,
   });
 
+  await registerScoreRoutes(app, {
+    worldData: world,
+    geminiApiKey: options.geminiApiKey,
+    runner: options.decisionRunner,
+    log,
+  });
+
   const webDist = options.webDistPath ?? defaultWebDist;
   const hasBuiltWeb = existsSync(path.join(webDist, "index.html"));
 
   if (hasBuiltWeb) {
-    await app.register(fastifyStatic, {
-      root: webDist,
-      prefix: "/",
-      wildcard: false,
-    });
+    await app.register(fastifyStatic, { root: webDist, prefix: "/", wildcard: false });
   }
 
-  app.setNotFoundHandler(
-    {
-      preHandler: app.rateLimit(),
-    },
-    async (request, reply) => {
-      if (request.url.startsWith("/api/")) {
-        return reply
-          .status(404)
-          .send(
-            createApiError(
-              "NOT_FOUND",
-              "That API endpoint does not exist, so check the request path.",
-              false,
-              request.id,
-            ),
-          );
-      }
-      if (hasBuiltWeb && (request.method === "GET" || request.method === "HEAD")) {
-        return reply.sendFile("index.html");
-      }
-      return reply
-        .status(404)
-        .send(
-          createApiError(
-            "WEB_NOT_BUILT",
-            "Web assets are not built yet, so run npm run build first.",
-            false,
-            request.id,
-          ),
-        );
-    },
-  );
+  app.setNotFoundHandler({ preHandler: app.rateLimit() }, async (request, reply) => {
+    if (request.url.startsWith("/api/")) {
+      return reply.status(404).send(
+        createApiError("NOT_FOUND", "That API endpoint does not exist, so check the request path.", false, request.id),
+      );
+    }
+    if (hasBuiltWeb && (request.method === "GET" || request.method === "HEAD")) {
+      return reply.sendFile("index.html");
+    }
+    return reply.status(404).send(
+      createApiError("WEB_NOT_BUILT", "Web assets are not built yet, so run npm run build first.", false, request.id),
+    );
+  });
 
   return app;
 }

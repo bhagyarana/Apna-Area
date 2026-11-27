@@ -162,7 +162,7 @@
 }
 
 .mission-secondary-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.mission-primary-cta { flex: 1; margin-top: 0; min-height: 44px; }
+.mission-primary-cta { flex: 1; margin-top: 0; min-height: 44px; white-space: nowrap; }
 
 /* Staggered 1..5 Mission Pins: compact numbered circles when inactive, full label on active/hover/focus */
 @keyframes mission-pin-drop {
@@ -231,6 +231,7 @@
   .mission-card { padding: 14px 16px; gap: 8px; }
   .mission-title { font-size: 1.15rem; }
   .provenance-pill { min-height: 40px; padding: 0 8px; }
+  .mission-secondary-btn { padding: 0 9px; font-size: var(--text-xs); gap: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

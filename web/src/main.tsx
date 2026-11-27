@@ -17,6 +17,8 @@ import "./styles/mission.css";
 import "./styles/live.css";
 import "./styles/mic.css";
 import "./styles/phrase.css";
+import "./styles/score.css";
+import "./styles/rubric.css";
 import { App } from "./App";
 
 const rootEl = document.getElementById("root");

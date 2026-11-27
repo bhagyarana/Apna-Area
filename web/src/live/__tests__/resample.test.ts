@@ -12,6 +12,8 @@ import {
   downsampleFloat32ToInt16Pcm,
   int16PcmToBase64,
 } from "../resample";
+import { appendDraftTurns, INITIAL_LIVE_STATE } from "../liveSessionTypes";
+import { splitOdometerXp } from "../../hud/XpCounter";
 
 describe("web/live/resample", () => {
   it("downsamples 48 kHz Float32 audio to 16 kHz Int16 PCM at exact 3:1 ratio and clamps clipping", () => {
@@ -51,5 +53,15 @@ describe("web/live/resample", () => {
     expect(computeRmsLevel(loud)).toBe(1);
     const moderate = new Float32Array(256).fill(0.1);
     expect(computeRmsLevel(moderate)).toBeCloseTo(0.36, 2);
+  });
+
+  it("flushes buffered voice drafts on completion and splits zero-padded XP odometer digits", () => {
+    const flushed = appendDraftTurns(INITIAL_LIVE_STATE, " Anna, mitar haki ", " Sure, hop in! ", true);
+    expect(flushed.status).toBe("completed");
+    expect(flushed.transcript).toHaveLength(2);
+    expect(flushed.transcript[0]?.text).toBe("Anna, mitar haki");
+    expect(splitOdometerXp(0)).toEqual({ leading: "00,00", active: "0" });
+    expect(splitOdometerXp(300)).toEqual({ leading: "00,", active: "300" });
+    expect(splitOdometerXp(1240)).toEqual({ leading: "0", active: "1,240" });
   });
 });

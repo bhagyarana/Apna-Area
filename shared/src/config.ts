@@ -54,6 +54,7 @@ export const TIMEOUTS_MS = {
 export const SAFETY_LIMITS = {
   apiRequestsPerMinutePerIp: 60,
   liveTokensPerMinutePerIp: 30,
+  scoreRequestsPerMinutePerIp: 30,
   maxLiveSessionSeconds: 90,
   ephemeralTokenUses: 3,
   ephemeralTokenExpireMinutes: 15,
@@ -62,11 +63,15 @@ export const SAFETY_LIMITS = {
   candidateFallbackRadiusKm: 5.0,
 } as const;
 
-/** Thresholds for Gemini Decision 1 rubric routing. */
+/** Thresholds and step deltas for Gemini Decision 1 rubric routing. */
 export const DECISION_THRESHOLDS = {
   minConfidence: 0.75,
   objectiveMetProbability: 0.6,
   safeDefaultRoute: "keep_level",
+  rubricMaxScore: 3,
+  stepUpShareDelta: 0.25,
+  easeShareDelta: 0.2,
+  maxLocalLanguageShare: 0.8,
 } as const;
 
 /** Default runtime feature flags exposed on GET /api/config. */
@@ -74,7 +79,7 @@ export const DEFAULT_FEATURE_FLAGS = {
   enableMapPicker: true,
   enableDirector: true,
   enableVoiceNpcs: true,
-  enableAdaptiveScoring: false,
+  enableAdaptiveScoring: true,
   enableSurvivalKit: false,
   enableAmbientMusic: false,
 } as const;

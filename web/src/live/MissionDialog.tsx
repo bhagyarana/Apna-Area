@@ -1,7 +1,7 @@
 /**
  * Feature: Live Voice Mission Stage & Cinema Ribbon HUD (web/src/live/MissionDialog.tsx)
- * Purpose: Renders the active 90s voice mission HUD: Objective header, NPC portrait, Cinema Captions, Kannada phrase mastery flight, and 72px mic orb.
- * Inputs: Active Mission, verified office + stop places, difficulty, active language, and close/advance/phrase callbacks.
+ * Purpose: Renders the active voice mission HUD: Objective header, NPC portrait, Cinema Captions, Kannada phrase mastery flight, and 72px mic orb.
+ * Inputs: Active Mission, verified office + stop places, difficulty, active language, and completion/close callbacks.
  * Outputs: Smoked-acrylic top objective card and bottom Cinema Voice Ribbon over the zoomed ORR map.
  * Deliberately excludes: Blocking full-screen modals that hide the Bengaluru corridor map.
  */
@@ -18,6 +18,7 @@ import type {
   VerifiedPlace,
 } from "@apna-area/shared";
 import { PhraseFlyCard } from "../hud/PhraseFlyCard";
+import type { CompletedMissionTurn } from "../score/useAdaptiveProgress";
 import { primeUserGestureAudioContext } from "./audioUnlock";
 import { Captions } from "./Captions";
 import { playPhraseMasteryChime } from "./chime";
@@ -34,6 +35,7 @@ export interface MissionDialogProps {
   activeLanguage: LanguageCode;
   languageComfort?: LanguageComfort;
   onPhraseMastered?: (phrase: SurvivalPhrase) => void;
+  onMissionCompleted?: (turn: CompletedMissionTurn) => void;
   onExitMission: () => void;
   onAdvanceNextMission: () => void;
 }
@@ -61,23 +63,27 @@ export function MissionDialog({
   activeLanguage,
   languageComfort,
   onPhraseMastered,
+  onMissionCompleted,
   onExitMission,
   onAdvanceNextMission,
 }: MissionDialogProps): JSX.Element {
-  const { live, startSession, toggleMute, sendTextReply, requestLocalHint, stopSession } =
-    useLiveSession();
+  const { live, startSession, toggleMute, sendTextReply, requestLocalHint, stopSession } = useLiveSession();
   const [imgFailed, setImgFailed] = useState(false);
   const [showTextBox, setShowTextBox] = useState(false);
   const [typedText, setTypedText] = useState("");
   const [masteryFlash, setMasteryFlash] = useState(false);
   const [flyingPhrase, setFlyingPhrase] = useState<SurvivalPhrase | null>(null);
   const celebratedMissionRef = useRef<string | null>(null);
+  const submittedScoreRef = useRef<string | null>(null);
+  const usedTextRef = useRef(false);
   const { localLanguageShare, hintLevel, paceSeconds } = difficulty;
 
   useEffect(() => {
     setImgFailed(false);
     setFlyingPhrase(null);
     celebratedMissionRef.current = null;
+    submittedScoreRef.current = null;
+    usedTextRef.current = false;
     void startSession({
       mission,
       officeName: office.name,
@@ -91,11 +97,7 @@ export function MissionDialog({
   }, [mission, office.name, missionPlace.name, missionPlace.category, localLanguageShare, hintLevel, paceSeconds, activeLanguage, languageComfort, startSession, stopSession]);
 
   useEffect(() => {
-    if (
-      live.toolSignals.phraseQuality === "clear" &&
-      live.targetPhrase &&
-      celebratedMissionRef.current !== mission.id
-    ) {
+    if (live.toolSignals.phraseQuality === "clear" && live.targetPhrase && celebratedMissionRef.current !== mission.id) {
       celebratedMissionRef.current = mission.id;
       playPhraseMasteryChime();
       setMasteryFlash(true);
@@ -106,6 +108,21 @@ export function MissionDialog({
     }
     return undefined;
   }, [live.toolSignals.phraseQuality, live.targetPhrase, mission.id, onPhraseMastered]);
+
+  useEffect(() => {
+    if (live.status === "completed" && onMissionCompleted && submittedScoreRef.current !== mission.id) {
+      submittedScoreRef.current = mission.id;
+      onMissionCompleted({
+        mission,
+        difficulty: { localLanguageShare, hintLevel, paceSeconds },
+        activeLanguage,
+        transcript: live.transcript,
+        toolSignals: live.toolSignals,
+        targetPhrase: live.targetPhrase,
+        usedTextFallback: usedTextRef.current,
+      });
+    }
+  }, [live.status, live.transcript, live.toolSignals, live.targetPhrase, onMissionCompleted, mission, localLanguageShare, hintLevel, paceSeconds, activeLanguage]);
 
   const handleRetry = () => {
     primeUserGestureAudioContext();
@@ -123,6 +140,7 @@ export function MissionDialog({
   const handleSubmitText = (e: FormEvent) => {
     e.preventDefault();
     if (!typedText.trim()) return;
+    usedTextRef.current = true;
     sendTextReply(typedText);
     setTypedText("");
   };
@@ -145,10 +163,7 @@ export function MissionDialog({
         showTextBox={showTextBox}
         onRequestHint={() => requestLocalHint(mission.hintLadder)}
         onToggleTextBox={() => setShowTextBox((prev) => !prev)}
-        onEndScene={() => {
-          stopSession();
-          onExitMission();
-        }}
+        onEndScene={() => { stopSession(); onExitMission(); }}
       />
 
       <section className="cinema-voice-dock" aria-label="Voice conversation controls">
@@ -161,13 +176,11 @@ export function MissionDialog({
         {live.status === "error" && (
           <div className="live-warning-banner" role="alert" data-testid="live-error-banner">
             <span>{live.errorMessage ?? "Voice connection dropped. Tap Retry to reconnect to this mission."}</span>
-            <button type="button" className="change-office-btn" onClick={handleRetry} data-testid="retry-live-btn">
-              Retry
-            </button>
+            <button type="button" className="change-office-btn" onClick={handleRetry} data-testid="retry-live-btn">Retry</button>
           </div>
         )}
 
-        {isCompleted && (
+        {isCompleted && !onMissionCompleted && (
           <div className="live-completed-card" role="status" data-testid="live-completed-banner">
             <div className="live-completed-copy">
               <span className="live-completed-badge">Objective complete</span>
@@ -176,10 +189,7 @@ export function MissionDialog({
             <button
               type="button"
               className="primary-cta-btn live-next-btn"
-              onClick={() => {
-                stopSession();
-                onAdvanceNextMission();
-              }}
+              onClick={() => { stopSession(); onAdvanceNextMission(); }}
               data-testid="complete-continue-btn"
             >
               <span>Next stop</span>
@@ -199,12 +209,9 @@ export function MissionDialog({
                   onError={() => setImgFailed(true)}
                 />
               ) : (
-                <span className="npc-portrait-fallback" aria-hidden="true">
-                  {mission.npcFirstName.slice(0, 1).toUpperCase()}
-                </span>
+                <span className="npc-portrait-fallback" aria-hidden="true">{mission.npcFirstName.slice(0, 1).toUpperCase()}</span>
               )}
             </div>
-
             <Captions
               npcFirstName={mission.npcFirstName}
               roleLabel={roleLabel}
@@ -228,20 +235,13 @@ export function MissionDialog({
                 placeholder={`Type a reply to ${mission.npcFirstName}...`}
                 aria-label={`Type your reply to ${mission.npcFirstName}`}
               />
-              <button type="submit" className="live-send-btn" data-testid="live-text-send">
-                Send
-              </button>
+              <button type="submit" className="live-send-btn" data-testid="live-text-send">Send</button>
             </form>
           )}
         </div>
 
         {!isCompleted && (
-          <MicOrbControl
-            status={live.status}
-            muted={live.muted}
-            rmsLevel={live.rmsLevel}
-            onToggleMute={toggleMute}
-          />
+          <MicOrbControl status={live.status} muted={live.muted} rmsLevel={live.rmsLevel} onToggleMute={toggleMute} />
         )}
       </section>
     </div>
