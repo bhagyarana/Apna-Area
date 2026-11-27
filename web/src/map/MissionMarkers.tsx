@@ -13,6 +13,7 @@ export interface MissionMarkersProps {
   weekPlan: WeekPlan;
   placesById: ReadonlyMap<string, VerifiedPlace>;
   activeMissionIndex: number;
+  onlyActive?: boolean;
   onSelectMission: (index: number) => void;
 }
 
@@ -26,11 +27,15 @@ export function MissionMarkers({
   weekPlan,
   placesById,
   activeMissionIndex,
+  onlyActive = false,
   onSelectMission,
 }: MissionMarkersProps): JSX.Element {
   return (
     <>
       {weekPlan.missions.map((mission, index) => {
+        if (onlyActive && index !== activeMissionIndex) {
+          return null;
+        }
         const place = placesById.get(mission.placeId);
         if (!place) {
           return null;

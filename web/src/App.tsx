@@ -1,28 +1,18 @@
 /**
- * Feature: Phase 2 ORR World, Office Picker & Director HUD Root Shell (web/src/App.tsx)
- * Purpose: Coordinates runtime config, verified ORR places, skippable camera tour, office selection, and SSE Week One generation.
- * Inputs: /api/config, /api/places, POST /api/world SSE stream, and persisted localStorage preferences.
- * Outputs: Interactive ORR Neon Dusk map stage with OfficePicker, ProgressChips, WeekProgressBar, and MissionCard.
+ * Feature: Phase 3a ORR World, Director & Live Voice Mission Root Shell (web/src/App.tsx)
+ * Purpose: Coordinates world bootstrap, skippable camera tour, office picker, SSE Week One generation, and Live Voice NPC missions.
+ * Inputs: useWorldBootstrap state, useDirectorStream SSE state, and persisted localStorage preferences.
+ * Outputs: Interactive ORR Neon Dusk map stage with OfficePicker, ProgressChips, WeekProgressBar, MissionCard, and MissionDialog.
  * Deliberately excludes: Client-side API keys or unverified fallback places.
  */
-import { useCallback, useEffect, useMemo, useState, type JSX } from "react";
-import {
-  DEFAULT_FEATURE_FLAGS,
-  DEFAULT_MAP_ID,
-  ENABLED_LANGUAGES,
-  fetchWithRetry,
-  ORR_BBOX,
-  PlacesPayloadSchema,
-  PublicConfigDataSchema,
-  TIMEOUTS_MS,
-  type PlacesPayload,
-  type PublicConfigData,
-} from "@apna-area/shared";
+import { useCallback, useMemo, useState, type JSX } from "react";
+import type { DifficultyState } from "@apna-area/shared";
 import { HealthBadge } from "./components/HealthBadge";
 import { MissionCard } from "./hud/MissionCard";
 import { ProgressChips } from "./hud/ProgressChips";
 import { useDirectorStream } from "./hud/useDirectorStream";
 import { WeekProgressBar } from "./hud/WeekProgressBar";
+import { MissionDialog } from "./live/MissionDialog";
 import { OrrMap } from "./map/OrrMap";
 import { OfficePicker } from "./picker/OfficePicker";
 import { TunePopover } from "./picker/TunePopover";
@@ -33,85 +23,33 @@ import {
   type LanguageComfort,
   type PlayerPreferences,
 } from "./state/sessionStore";
+import { useWorldBootstrap } from "./state/useWorldBootstrap";
 
-const FALLBACK_CONFIG: PublicConfigData = {
-  mapsBrowserKey: "",
-  mapId: DEFAULT_MAP_ID,
-  enabledLanguages: [...ENABLED_LANGUAGES],
-  orrBbox: ORR_BBOX,
-  featureFlags: { ...DEFAULT_FEATURE_FLAGS },
-};
-
-const EMPTY_WORLD: PlacesPayload = {
-  verifiedAt: "",
-  places: [],
-  corridor: {
-    type: "Feature",
-    properties: { generatedAt: "", distanceMeters: 0, source: "loading" },
-    geometry: { type: "LineString", coordinates: [[77.7011, 12.9569], [77.6238, 12.9177]] },
-  },
+const INITIAL_DIFFICULTY: DifficultyState = {
+  localLanguageShare: 0,
+  hintLevel: 2,
+  paceSeconds: 90,
 };
 
 /**
- * Root Apna Area application shell for Phase 2.
+ * Root Apna Area application shell.
  *
- * @returns Full-viewport interactive map, office picker, and Week One HUD.
+ * @returns Full-viewport interactive map, office picker, Week One HUD, and Live Voice Mission stage.
  */
 export function App(): JSX.Element {
   const [prefs, setPrefs] = useState<PlayerPreferences>(() => loadPlayerPreferences());
-  const [config, setConfig] = useState<PublicConfigData>(FALLBACK_CONFIG);
-  const [world, setWorld] = useState<PlacesPayload>(EMPTY_WORLD);
-  const [worldReady, setWorldReady] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const { config, world, worldReady, loadError } = useWorldBootstrap();
   const [activeMissionIndex, setActiveMissionIndex] = useState(0);
+  const [inVoiceMission, setInVoiceMission] = useState(false);
   const { director, buildWeek, cancelGeneration, clearWeek } = useDirectorStream();
 
   const [tourActive, setTourActive] = useState<boolean>(() => {
-    const reduced = typeof window !== "undefined" && Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches);
+    const reduced =
+      typeof window !== "undefined" &&
+      Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches);
     const initial = loadPlayerPreferences();
     return !reduced && !initial.tourCompleted && initial.selectedOfficeId === null;
   });
-
-  useEffect(() => {
-    let unmounted = false;
-    const controller = new AbortController();
-
-    Promise.all([
-      fetchWithRetry("/api/config", { signal: controller.signal, timeoutMs: TIMEOUTS_MS.healthCheck }).then((r) =>
-        r.json(),
-      ),
-      fetchWithRetry("/api/places", { signal: controller.signal, timeoutMs: TIMEOUTS_MS.healthCheck }).then((r) =>
-        r.json(),
-      ),
-    ])
-      .then(([cfgJson, placesJson]: [unknown, unknown]) => {
-        if (unmounted) return;
-        const cfgEnv = cfgJson as { ok?: boolean; data?: unknown };
-        const parsedCfg = PublicConfigDataSchema.safeParse(cfgEnv.data);
-        if (cfgEnv.ok && parsedCfg.success) {
-          setConfig(parsedCfg.data);
-        }
-
-        const plEnv = placesJson as { ok?: boolean; data?: unknown };
-        const parsedPlaces = PlacesPayloadSchema.safeParse(plEnv.data);
-        if (plEnv.ok && parsedPlaces.success) {
-          setWorld(parsedPlaces.data);
-          setWorldReady(true);
-        } else {
-          setLoadError("Could not load verified Outer Ring Road places, so refresh to retry.");
-        }
-      })
-      .catch(() => {
-        if (!unmounted && !controller.signal.aborted) {
-          setLoadError("You appear to be offline, so reconnect and refresh to load the map.");
-        }
-      });
-
-    return () => {
-      unmounted = true;
-      controller.abort();
-    };
-  }, []);
 
   const placesById = useMemo(() => new Map(world.places.map((p) => [p.id, p])), [world.places]);
   const techParks = useMemo(() => world.places.filter((p) => p.category === "tech_park"), [world.places]);
@@ -119,6 +57,7 @@ export function App(): JSX.Element {
     () => techParks.find((p) => p.id === prefs.selectedOfficeId) ?? null,
     [techParks, prefs.selectedOfficeId],
   );
+
   const handleFinishTour = useCallback(() => {
     setTourActive(false);
     setPrefs(savePlayerPreferences({ tourCompleted: true }));
@@ -127,6 +66,7 @@ export function App(): JSX.Element {
   const handleSelectOffice = useCallback(
     (placeId: string) => {
       setTourActive(false);
+      setInVoiceMission(false);
       clearWeek();
       setActiveMissionIndex(0);
       setPrefs(savePlayerPreferences({ selectedOfficeId: placeId, tourCompleted: true }));
@@ -135,6 +75,7 @@ export function App(): JSX.Element {
   );
 
   const handleClearOffice = useCallback(() => {
+    setInVoiceMission(false);
     clearWeek();
     setActiveMissionIndex(0);
     setPrefs(savePlayerPreferences({ selectedOfficeId: null }));
@@ -143,13 +84,20 @@ export function App(): JSX.Element {
   const handleBuildWeek = useCallback(() => {
     if (!selectedOffice) return;
     setActiveMissionIndex(0);
-    void buildWeek({ officePlaceId: selectedOffice.id, languageComfort: prefs.languageComfort, budgetBand: prefs.budgetBand });
+    setInVoiceMission(false);
+    void buildWeek({
+      officePlaceId: selectedOffice.id,
+      languageComfort: prefs.languageComfort,
+      budgetBand: prefs.budgetBand,
+    });
   }, [selectedOffice, prefs.languageComfort, prefs.budgetBand, buildWeek]);
+
   const activeMissionPlace = useMemo(() => {
     if (!director.weekPlan) return undefined;
     const m = director.weekPlan.missions[activeMissionIndex] ?? director.weekPlan.missions[0];
     return m ? placesById.get(m.placeId) : undefined;
   }, [director.weekPlan, activeMissionIndex, placesById]);
+
   const bannerMessage = loadError ?? director.errorMessage;
 
   return (
@@ -164,7 +112,11 @@ export function App(): JSX.Element {
         onSelectOffice={handleSelectOffice}
         weekPlan={director.weekPlan}
         activeMissionIndex={activeMissionIndex}
-        onSelectMission={setActiveMissionIndex}
+        inVoiceMission={inVoiceMission}
+        onSelectMission={(idx) => {
+          setInVoiceMission(false);
+          setActiveMissionIndex(idx);
+        }}
         tourActive={tourActive}
         onFinishTour={handleFinishTour}
       />
@@ -178,7 +130,11 @@ export function App(): JSX.Element {
           <WeekProgressBar
             weekPlan={director.weekPlan}
             activeMissionIndex={activeMissionIndex}
-            onSelectMission={setActiveMissionIndex}
+            inVoiceMission={inVoiceMission}
+            onSelectMission={(idx) => {
+              setInVoiceMission(false);
+              setActiveMissionIndex(idx);
+            }}
           />
         )}
 
@@ -202,6 +158,20 @@ export function App(): JSX.Element {
         <div className="sr-only" data-testid="tagline">
           Play your first week before it happens.
         </div>
+      ) : inVoiceMission && director.weekPlan && selectedOffice && activeMissionPlace ? (
+        <MissionDialog
+          mission={director.weekPlan.missions[activeMissionIndex] ?? director.weekPlan.missions[0]!}
+          missionIndex={activeMissionIndex}
+          office={selectedOffice}
+          missionPlace={activeMissionPlace}
+          difficulty={INITIAL_DIFFICULTY}
+          activeLanguage={config.enabledLanguages[0] ?? "en"}
+          onExitMission={() => setInVoiceMission(false)}
+          onAdvanceNextMission={() => {
+            setInVoiceMission(false);
+            setActiveMissionIndex((prev) => (prev + 1) % director.weekPlan!.missions.length);
+          }}
+        />
       ) : (
         <main className="shell-main">
           {bannerMessage && (
@@ -226,6 +196,7 @@ export function App(): JSX.Element {
               enableVoiceNpcs={config.featureFlags.enableVoiceNpcs}
               onSelectMission={setActiveMissionIndex}
               onSwitchOffice={handleClearOffice}
+              onStartVoiceMission={() => setInVoiceMission(true)}
             />
           ) : (
             <OfficePicker
