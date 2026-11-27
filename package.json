@@ -1,0 +1,38 @@
+{
+  "name": "apna-area",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "workspaces": [
+    "shared",
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "npm run build --workspace=shared && concurrently -k -n srv,web -c magenta,cyan \"npm run dev --workspace=server\" \"npm run dev --workspace=web\"",
+    "build": "npm run build --workspace=shared && npm run build --workspace=web && npm run build --workspace=server",
+    "typecheck": "npm run build --workspace=shared && tsc --noEmit -p shared/tsconfig.json && tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p web/tsconfig.json",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run --reporter=dot",
+    "test:smoke": "playwright test --config=playwright.live.config.ts",
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "start": "node server/dist/main.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.1",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.23.0",
+    "vitest": "^3.0.5"
+  }
+}
