@@ -34,8 +34,8 @@ export const ORR_DEFAULT_CENTER = {
   lng: 77.6848,
 } as const;
 
-/** Languages enabled in the current phase step (P0..P3a: English only; P3b adds hi; P3c adds kn). */
-export const ENABLED_LANGUAGES = ["en"] as const;
+/** Languages enabled in the current phase step (P3b: English + Hindi; P3c adds kn). */
+export const ENABLED_LANGUAGES = ["en", "hi"] as const;
 
 /** Network and upstream call timeouts in milliseconds. */
 export const TIMEOUTS_MS = {

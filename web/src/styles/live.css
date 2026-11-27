@@ -176,11 +176,15 @@
 .caption-npc-line {
   font-size: 1.125rem;
   font-weight: 500;
-  line-height: 1.38;
+  line-height: 1.46;
   color: var(--text-primary);
 }
 
-.caption-player-line { font-size: var(--text-sm); color: var(--text-secondary); }
+.caption-player-line {
+  font-size: var(--text-sm);
+  line-height: 1.44;
+  color: var(--text-secondary);
+}
 
 .live-warning-banner,
 .live-completed-card {

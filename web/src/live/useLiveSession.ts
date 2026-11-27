@@ -13,6 +13,7 @@ import {
   applyLocalHintStep,
   fetchEphemeralToken,
   INITIAL_LIVE_STATE,
+  openingCueForRequest,
   type LiveSessionState,
   type LiveSessionStatus,
 } from "./liveSessionTypes";
@@ -107,12 +108,13 @@ export function useLiveSession() {
 
         let socketOpened = false;
         let greeted = false;
+        const openingCue = openingCueForRequest(req);
         const transport = await connectLiveTransport(tokenData, {
           onOpen: () => {
             socketOpened = true;
             if (!greeted && transportRef.current) {
               greeted = true;
-              transportRef.current.sendText("Hello!");
+              transportRef.current.sendText(openingCue);
             }
           },
           onAudioChunk24k: (b64) => {
@@ -179,7 +181,7 @@ export function useLiveSession() {
         transportRef.current = transport;
         if (socketOpened && !greeted) {
           greeted = true;
-          transport.sendText("Hello!");
+          transport.sendText(openingCue);
         }
 
         countdownRef.current = window.setInterval(() => {

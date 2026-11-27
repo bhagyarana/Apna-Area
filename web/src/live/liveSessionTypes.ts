@@ -133,6 +133,19 @@ export function applyLocalHintStep(
 }
 
 /**
+ * Selects the initial scene greeting text matching the active language and comfort mode.
+ *
+ * @param req - Active LiveTokenRequest.
+ * @returns Short opening greeting sent on WebSocket open.
+ */
+export function openingCueForRequest(req: LiveTokenRequest): string {
+  if (req.activeLanguage === "hi") {
+    return req.languageComfort === "en_hi" ? "Namaste! Hello!" : "नमस्ते!";
+  }
+  return "Hello!";
+}
+
+/**
  * Requests a short-lived server-locked ephemeral token from POST /api/live-token with timeout and retry.
  *
  * @param req - Validated mission, place, difficulty, and language context.

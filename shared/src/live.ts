@@ -9,8 +9,11 @@ import { z } from "zod";
 import {
   DifficultyStateSchema,
   LanguageCodeSchema,
+  LanguageComfortSchema,
   PhraseSituationSchema,
   PlaceCategorySchema,
+  type LanguageCode,
+  type LanguageComfort,
 } from "./types.js";
 import { MissionSchema } from "./world.js";
 
@@ -46,9 +49,27 @@ export const LiveTokenRequestSchema = z.object({
   placeCategory: PlaceCategorySchema,
   difficulty: DifficultyStateSchema,
   activeLanguage: LanguageCodeSchema,
+  languageComfort: LanguageComfortSchema.optional(),
   targetPhrase: SurvivalPhraseSchema.optional(),
 });
 export type LiveTokenRequest = z.infer<typeof LiveTokenRequestSchema>;
+
+/**
+ * Maps a player's languageComfort preference to the primary active LanguageCode within enabledLanguages.
+ *
+ * @param comfort - Player comfort setting ("en" | "hi" | "en_hi").
+ * @param enabled - Enabled languages from shared/config.ts or /api/config.
+ * @returns Effective primary LanguageCode ("hi" when Hindi/Hinglish is chosen and enabled, else "en").
+ */
+export function resolveComfortLanguage(
+  comfort: LanguageComfort,
+  enabled: readonly LanguageCode[],
+): LanguageCode {
+  if ((comfort === "hi" || comfort === "en_hi") && enabled.includes("hi")) {
+    return "hi";
+  }
+  return enabled[0] ?? "en";
+}
 
 export const LiveTokenDataSchema = z.object({
   token: z.string().min(1),

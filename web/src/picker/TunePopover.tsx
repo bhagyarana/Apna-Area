@@ -45,12 +45,20 @@ export function TunePopover({
   onChangeLanguageComfort,
 }: TunePopoverProps): JSX.Element {
   const hindiAvailable = enabledLanguages.includes("hi");
+  const comfortShort =
+    hindiAvailable && languageComfort === "hi"
+      ? " · HI"
+      : hindiAvailable && languageComfort === "en_hi"
+        ? " · HI+EN"
+        : hindiAvailable
+          ? " · EN"
+          : "";
 
   return (
     <Popover>
       <PopoverTrigger className="tune-trigger" data-testid="tune-trigger">
         <HugeiconsIcon icon={SlidersHorizontalIcon} size={16} aria-hidden="true" />
-        <span>Tune</span>
+        <span>Tune{comfortShort}</span>
       </PopoverTrigger>
 
       <PopoverContent side="bottom" align="end" sideOffset={10} className="tune-popover">
