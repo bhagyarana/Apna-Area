@@ -1,35 +1,31 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** `phase/p1-map` (all Phase 1 code, unit/E2E tests, Review Gate `98/100`, and 3-round Design Critic `8.7/10` complete)
-- **Current tag:** `p0-skeleton` on `main` (`ba35719`)
-- **Live URL & revision:** Local production build verified at `http://127.0.0.1:8080`; Cloud Run `asia-south1` deploy pending `gcloud` CLI on Windows `PATH`.
+- **Current phase:** Ready to start `phase/p2-director` (Phase 1 shipped and tagged)
+- **Current tag:** `p1-map` on `main`
+- **Live URL & revision:** `https://apna-area-481049877093.asia-south1.run.app` (alias `https://apna-area-qhtgwpzhpq-el.a.run.app`), revision `apna-area-00002-msn` (`placesLoaded: 121`, `geminiConfigured: true`, `mapsConfigured: true`, Playwright live smoke passing).
 
 ## 2. Done This Session
-- Merged Phase 0 (`ba35719`, tag `p0-skeleton`) to `main`.
-- `98cc376`: Added `shared/src/http.ts`, Zod world schemas in `shared/src/types.ts`, `server/src/places/filter.ts`, `server/src/routes/places.ts` (`GET /api/places`), `scripts/verify-places.ts`, `scripts/build-corridor.ts`, and `server/src/__tests__/places.test.ts`.
-- `f4f896b`: Built `web/src/map/OrrMap.tsx`, `web/src/map/CorridorLayer.tsx`, `web/src/map/CameraTour.tsx`, `web/src/map/FallbackCorridorCanvas.tsx`, and `web/src/styles/map.css`.
-- `06554cb`: Built `web/src/picker/OfficePicker.tsx` (`@ui-sdk/react` combobox, `Ctrl+K`, Selected Destination Card), `web/src/picker/TunePopover.tsx`, `web/src/state/sessionStore.ts`, and `web/src/styles/{picker,tune,shell}.css`.
-- `613b0e8`: Added keyboard-only `e2e/picker.spec.ts` and logged 3-round Design Critic scores (`4.5` -> `6.8` -> `8.7/10`) in `docs/DESIGN_SCORES.md`.
+- Enabled `places.googleapis.com`, `routes.googleapis.com`, `run.googleapis.com`, `secretmanager.googleapis.com`, `cloudbuild.googleapis.com`, and `artifactregistry.googleapis.com` on `geminisprints26blr-3880`.
+- Generated real `data/orr/corridor.geojson` (`545` points, `15,080` m via Routes API v2) and `data/orr/places.json` (`121` verified operational ORR places across 6 categories and 7 neighbourhoods via Places API New), tightened `isNonCampusTechParkSubvenue` in `server/src/places/filter.ts`, and updated `docs/DATA.md`.
+- Added `COPY --chown=node:node data ./data` to `Dockerfile`, provisioned Secret Manager keys (`gemini-api-key`, `maps-browser-key`, `maps-server-key`), deployed `apna-area-00002-msn` to Cloud Run `asia-south1`, verified live `/api/health` + Playwright smoke, and merged `phase/p1-map` (`--no-ff`, tag `p1-map`) to `main`.
 
 ## 3. Decisions Made
 - **ADR-011:** Used isomorphic FNV-1a fingerprinting in `shared/src/logger.ts` for browser + server compatibility.
 - **ADR-012:** Rendered `CorridorLayer` via `google.maps.OverlayView` SVG pane above the CSS-desaturated map `<canvas>`.
-- **ADR-013:** Filtered out under-construction ORR Blue Line metro stations in `server/src/places/filter.ts`.
+- **ADR-013:** Filtered out under-construction ORR Blue Line metro stations and non-campus sub-venues (`isNonCampusTechParkSubvenue`) in `server/src/places/filter.ts`.
 
 ## 4. Open Questions
-- Enable **Places API (New)** (`places.googleapis.com`) and **Routes API** (`routes.googleapis.com`) in Google Cloud Console (`APIs & Services -> Library` & `Credentials`) for `MAPS_SERVER_KEY` in `.env`.
-- Install `gcloud` CLI on Windows `PATH` (`gcloud auth login`, set project, store `gemini-api-key` and `maps-browser-key` in Secret Manager) when ready to run `ship-phase` to Cloud Run.
+- Confirm Phase 2 (`phase/p2-director`) plan before building `T2.1` through `T2.5`.
 
 ## 5. Known Issues
-- **403 on Places/Routes scripts:** Running `npx tsx scripts/verify-places.ts` or `npx tsx scripts/build-corridor.ts` currently returns `HTTP 403 PERMISSION_DENIED` (`reason: "ACCESS_DENIED"`) until both APIs are enabled in GCP Console (`GEMINI_API_KEY` and `MAPS_BROWSER_KEY` Maps JS tiles already return `200 OK`).
-- **Carry-forward UI polish (`P2`/`P6`):** Swap sparkle icon on `Build my first week` CTA (`web/src/picker/OfficePicker.tsx`), soften `Live` pill border (`web/src/components/HealthBadge.tsx`), and optionally attach a Cloud Map Style ID to hide `poi.business`.
+- **Carry-forward UI polish (included in `P2`):** Swap sparkle icon on `Build my first week` CTA (`web/src/picker/OfficePicker.tsx`) to a right-arrow/play glyph, and soften the `Live` status pill hairline (`web/src/components/HealthBadge.tsx` / `web/src/styles/shell.css`) relative to the interactive `Tune` control.
 
 ## 6. File State
-- Working tree clean on `phase/p1-map` (`.env` gitignored locally; `data/orr/places.json` and `data/orr/corridor.geojson` uncommitted until live scripts run).
+- Clean working tree on `main` at tag `p1-map` (pushed to `origin` with tags).
 
 ## 7. The Single Next Task
-- Once Places API (New) and Routes API are enabled, run `npx tsx scripts/verify-places.ts` and `npx tsx scripts/build-corridor.ts` so real `data/orr/places.json` and `data/orr/corridor.geojson` pass `npm run check`, update `docs/DATA.md`, merge `phase/p1-map` (`--no-ff`, tag `p1-map`), and begin Phase 2 (`phase/p2-director`).
+- Execute **Phase 2 (`phase/p2-director`)**: lock `WeekPlan` / `Mission` / `WorldProgressEvent` Zod contracts (`T2.1`), build `candidates.ts` + `verify.ts` (`T2.2`), wire `gemini-4-neon` (`thinking_level: "medium"`) structured output + `POST /api/world` SSE + `fallback-plans.json` (`T2.3`), build `ProgressChips`, `WeekProgressBar`, and `MissionCard` plus the 2 UI polish items (`T2.4`), and run the Critic + `ship-phase` (`T2.5`).
 
 ## 8. Resume Checklist
 1. `AGENTS.md`
