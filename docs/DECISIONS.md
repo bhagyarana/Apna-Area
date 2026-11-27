@@ -73,3 +73,25 @@ Every significant technical, product, or scope decision is recorded here. Update
 - **Why:** Ensures `main` always matches the healthy live site and makes any phase revertable via a single `git revert -m 1` or Cloud Run traffic switch.
 - **Alternatives rejected:** Trunk-based direct commits by multiple agents in a shared working directory.
 - **Revisit if:** Never during hackathon execution.
+
+
+### ADR-011 · Isomorphic Structured Logger in `@apna-area/shared`
+- **Date:** 2026-11-27
+- **Decision:** Use dual 32-bit FNV-1a hex fingerprinting (`fingerprintHex16`) and guarded `process.stdout?.write` in `shared/src/logger.ts` instead of `node:crypto`.
+- **Why:** Allows Vite browser bundles and Node 22+ Fastify routes to share `@apna-area/shared` without Rollup `__vite-browser-external` errors while preserving key/transcript/audio redaction.
+- **Alternatives rejected:** Splitting separate browser and server shared packages.
+- **Revisit if:** Server-only cryptographic SHA-256 hashing is required outside request/prompt fingerprinting.
+
+### ADR-012 · DOM `OverlayView` SVG Corridor Spline Above Desaturated Map Canvas
+- **Date:** 2026-11-27
+- **Decision:** Render `CorridorLayer` via `google.maps.OverlayView` SVG `<path>` inside `overlayLayer` while applying CSS grading (`saturate(0.14) brightness(0.66) contrast(1.12)`) only to `.orr-map-canvas-grade canvas` with `clickableIcons={false}`.
+- **Why:** Quiets background map tile clutter without washing out the `#FF4FA0` ORR corridor glow or ground-anchored `#FFD24A` `<AdvancedMarker>` capsules.
+- **Alternatives rejected:** Native `google.maps.Polyline` drawn inside the WebGL/2D `<canvas>` (gets desaturated to grey by the canvas CSS filter).
+- **Revisit if:** A dedicated Google Cloud Map Style ID is attached to suppress `poi.business` natively in vector tiles.
+
+### ADR-013 · Exclude Under-Construction Namma Metro Phase 2A ORR Blue Line Stations
+- **Date:** 2026-11-27
+- **Decision:** Reject `subway_station` / `"Metro Station"` entries inside the eastern ORR corridor (`isUnderConstructionOrrMetro` in `server/src/places/filter.ts`) when curating `transit_stop` places.
+- **Why:** Bellandur, Kadubeesanahalli, Devarabisanahalli, Marathahalli, and Agara Blue Line stations are still under construction; filtering them ensures missions only direct newcomers to operational BMTC stops.
+- **Alternatives rejected:** Trusting `businessStatus === "OPERATIONAL"` alone (Google Maps marks several under-construction metro pillars/stations as `OPERATIONAL`).
+- **Revisit if:** Namma Metro Phase 2A ORR Blue Line opens for passenger service.
