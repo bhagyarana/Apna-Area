@@ -57,6 +57,48 @@ export const BoundingBoxSchema = z.object({
 });
 export type BoundingBox = z.infer<typeof BoundingBoxSchema>;
 
+export const VerifiedPlaceSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  category: PlaceCategorySchema,
+  neighbourhood: z.string().min(1),
+  lat: z.number(),
+  lng: z.number(),
+  shortAddress: z.string(),
+  googleMapsUri: z.string().url(),
+  primaryType: z.string().optional(),
+});
+export type VerifiedPlace = z.infer<typeof VerifiedPlaceSchema>;
+
+export const VerifiedPlacesDatasetSchema = z.object({
+  verifiedAt: z.string(),
+  bbox: BoundingBoxSchema,
+  totalCount: z.number().int().nonnegative(),
+  places: z.array(VerifiedPlaceSchema),
+});
+export type VerifiedPlacesDataset = z.infer<typeof VerifiedPlacesDatasetSchema>;
+
+export const GeoJSONLineStringFeatureSchema = z.object({
+  type: z.literal("Feature"),
+  properties: z.object({
+    generatedAt: z.string(),
+    distanceMeters: z.number().nonnegative(),
+    source: z.string(),
+  }),
+  geometry: z.object({
+    type: z.literal("LineString"),
+    coordinates: z.array(z.tuple([z.number(), z.number()])).min(2),
+  }),
+});
+export type GeoJSONLineStringFeature = z.infer<typeof GeoJSONLineStringFeatureSchema>;
+
+export const PlacesPayloadSchema = z.object({
+  places: z.array(VerifiedPlaceSchema),
+  corridor: GeoJSONLineStringFeatureSchema,
+  verifiedAt: z.string(),
+});
+export type PlacesPayload = z.infer<typeof PlacesPayloadSchema>;
+
 export const FeatureFlagsSchema = z.object({
   enableMapPicker: z.boolean(),
   enableDirector: z.boolean(),

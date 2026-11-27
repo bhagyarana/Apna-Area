@@ -6,7 +6,12 @@
  * Deliberately excludes: Live external network calls.
  */
 import { describe, expect, it } from "vitest";
-import { HealthDataSchema, PublicConfigDataSchema } from "@apna-area/shared";
+import {
+  HealthDataSchema,
+  ORR_BBOX,
+  PlacesPayloadSchema,
+  PublicConfigDataSchema,
+} from "@apna-area/shared";
 import { buildServer } from "../app.js";
 
 describe("server routes", () => {
@@ -79,6 +84,72 @@ describe("server routes", () => {
       ok: false,
       error: { code: "RATE_LIMITED", retryable: true },
     });
+
+    await app.close();
+  });
+
+  it("GET /api/places filters verified places by category and rejects unknown categories", async () => {
+    const app = await buildServer({
+      worldData: {
+        dataset: {
+          verifiedAt: "2026-11-27T10:00:00Z",
+          bbox: ORR_BBOX,
+          totalCount: 2,
+          places: [
+            {
+              id: "ChIJ_test_ecoworld",
+              name: "RMZ EcoWorld",
+              category: "tech_park",
+              neighbourhood: "Bellandur",
+              lat: 12.9215,
+              lng: 77.6845,
+              shortAddress: "Bellandur, Bengaluru",
+              googleMapsUri: "https://maps.google.com/?cid=101",
+            },
+            {
+              id: "ChIJ_test_darshini",
+              name: "Udupi Upahar",
+              category: "darshini",
+              neighbourhood: "Bellandur",
+              lat: 12.9255,
+              lng: 77.6761,
+              shortAddress: "Bellandur, Bengaluru",
+              googleMapsUri: "https://maps.google.com/?cid=102",
+            },
+          ],
+        },
+        corridor: {
+          type: "Feature",
+          properties: {
+            generatedAt: "2026-11-27T10:00:00Z",
+            distanceMeters: 11200,
+            source: "Google Routes API v2",
+          },
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [77.7011, 12.9569],
+              [77.6238, 12.9177],
+            ],
+          },
+        },
+      },
+      logSink: () => {},
+    });
+
+    const allRes = await app.inject({ method: "GET", url: "/api/places" });
+    expect(allRes.statusCode).toBe(200);
+    const allPayload = PlacesPayloadSchema.parse((allRes.json() as { data: unknown }).data);
+    expect(allPayload.places).toHaveLength(2);
+
+    const parkRes = await app.inject({ method: "GET", url: "/api/places?category=tech_park" });
+    expect(parkRes.statusCode).toBe(200);
+    const parkPayload = PlacesPayloadSchema.parse((parkRes.json() as { data: unknown }).data);
+    expect(parkPayload.places).toHaveLength(1);
+    expect(parkPayload.places[0]?.id).toBe("ChIJ_test_ecoworld");
+
+    const badRes = await app.inject({ method: "GET", url: "/api/places?category=nightclub" });
+    expect(badRes.statusCode).toBe(400);
 
     await app.close();
   });
