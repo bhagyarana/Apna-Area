@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-11-27T19:16:36.901Z",
+  "model": "lyria-3-clip-preview",
+  "note": "Pre-generated once at build time via Google Lyria 3 Clip Preview (lyria-3-clip-preview). Zero per-visitor music generation calls.",
+  "tracks": [
+    {
+      "mood": "calm",
+      "title": "Outer Ring Road Neon Dusk",
+      "file": "/audio/calm.mp3",
+      "mimeType": "audio/mpeg",
+      "bytes": 746250,
+      "durationSeconds": 30,
+      "prompt": "Warm nocturnal ambient synthwave and mellow Rhodes electric piano loop in F major, 84 BPM, soft sub-bass pulse, gentle fingerpicked acoustic guitar harmonics, peaceful late-evening Bengaluru terrace atmosphere. Strictly instrumental only, zero vocals, seamless loop feel."
+    },
+    {
+      "mood": "morning",
+      "title": "Morning Filter Coffee & Darshini",
+      "file": "/audio/morning.mp3",
+      "mimeType": "audio/mpeg",
+      "bytes": 746250,
+      "durationSeconds": 30,
+      "prompt": "Light uplifting acoustic indie game loop in D major, 98 BPM, warm nylon guitar, subtle wooden marimba, gentle shaker groove, soft Rhodes chords, optimistic sunny Bengaluru morning chai vibe. Strictly instrumental only, zero vocals, seamless loop feel."
+    },
+    {
+      "mood": "rush",
+      "title": "Silk Board & Bellandur Commute Pulse",
+      "file": "/audio/rush.mp3",
+      "mimeType": "audio/mpeg",
+      "bytes": 746250,
+      "durationSeconds": 30,
+      "prompt": "Focused modern electronic lo-fi beat in A minor, 112 BPM, crisp muted rimshot groove, warm analog synth arpeggio, nimble bassline, energetic yet unobtrusive city commute momentum. Strictly instrumental only, zero vocals, seamless loop feel."
+    },
+    {
+      "mood": "evening",
+      "title": "Agara Lake Twilight Breeze",
+      "file": "/audio/evening.mp3",
+      "mimeType": "audio/mpeg",
+      "bytes": 686691,
+      "durationSeconds": 30,
+      "prompt": "Dreamy chillhop dusk instrumental in C major, 88 BPM, warm electric guitar chords, airy synth pad, gentle brushed drums, relaxed golden-hour lakeside walk after work. Strictly instrumental only, zero vocals, seamless loop feel."
+    }
+  ]
+}

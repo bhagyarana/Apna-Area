@@ -19,6 +19,9 @@ import "./styles/mic.css";
 import "./styles/phrase.css";
 import "./styles/score.css";
 import "./styles/rubric.css";
+import "./styles/kit.css";
+import "./styles/confirm.css";
+import "./styles/sheet.css";
 import { App } from "./App";
 
 const rootEl = document.getElementById("root");

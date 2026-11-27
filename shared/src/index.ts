@@ -9,6 +9,7 @@ export * from "./config.js";
 export * from "./types.js";
 export * from "./world.js";
 export * from "./live.js";
+export * from "./kit.js";
 export * from "./game/scoring.js";
 export * from "./logger.js";
 export * from "./http.js";

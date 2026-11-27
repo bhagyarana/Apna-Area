@@ -1,0 +1,133 @@
+/*
+ * Feature: Focus-Trapped ConfirmSheet Modal & Flush Mobile Bottom Sheet Styles (web/src/styles/sheet.css)
+ * Purpose: Styles the @ui-sdk/react AlertDialog backdrop, desktop modal with Esc hint, recessed target well, and flush mobile bottom sheet.
+ * Inputs: CSS custom properties from web/src/styles/tokens.css.
+ * Outputs: Transform/opacity-only modal and sheet rules under 125 lines with reduced-motion fallback.
+ * Deliberately excludes: Survival Kit grid rules.
+ */
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(8, 5, 18, 0.68);
+  backdrop-filter: blur(8px);
+  animation: fade-only var(--dur-fast) var(--ease-out-quint) both;
+}
+
+@keyframes confirm-sheet-enter {
+  from { opacity: 0; transform: translate3d(-50%, -46%, 0) scale(0.96); }
+  to { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1); }
+}
+
+@keyframes confirm-mobile-enter {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.confirm-sheet {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  z-index: 61;
+  width: min(444px, calc(100vw - 32px));
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface-solid);
+  box-shadow: var(--shadow-modal);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: confirm-sheet-enter var(--dur-ui) var(--ease-out-quint) both;
+}
+
+.confirm-sheet-grabber { display: none; }
+
+.confirm-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.confirm-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.confirm-esc-hint {
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.confirm-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); line-height: 1.22; }
+
+.confirm-target-chip {
+  padding: 8px 11px;
+  border-radius: var(--radius-md);
+  background: rgba(12, 9, 24, 0.82);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.confirm-body { font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.44; }
+.confirm-actions { margin-top: var(--space-1); display: flex; align-items: center; justify-content: flex-end; gap: var(--space-2); }
+
+.confirm-cancel-btn {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.confirm-primary-btn { margin-top: 0; min-height: 44px; white-space: nowrap; }
+
+@media (max-width: 768px) {
+  .confirm-sheet {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    padding: 12px 18px 24px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: confirm-mobile-enter var(--dur-ui) var(--ease-out-quint) both;
+  }
+  .confirm-sheet-grabber {
+    display: block;
+    width: 36px;
+    height: 4px;
+    margin: 0 auto 2px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .confirm-esc-hint { display: none; }
+  .confirm-title { font-size: 1.15rem; }
+  .confirm-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .confirm-cancel-btn, .confirm-primary-btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-sheet { animation: fade-only var(--dur-fast) linear both; }
+}

@@ -32,6 +32,8 @@ const StoredPrefsSchema = z.object({
   budgetBand: BudgetBandSchema.default("20_30k"),
   tourCompleted: z.boolean().default(false),
   learnedPhraseIds: z.array(z.string()).default([]),
+  checkedChecklistIds: z.array(z.string()).default([]),
+  musicMuted: z.boolean().default(false),
   totalXp: z.number().int().nonnegative().default(0),
   missionStars: z.record(z.string(), StarRatingSchema).default({}),
   difficulty: DifficultyStateSchema.default(DEFAULT_DIFFICULTY),
@@ -45,6 +47,8 @@ const DEFAULT_PREFS: PlayerPreferences = {
   budgetBand: "20_30k",
   tourCompleted: false,
   learnedPhraseIds: [],
+  checkedChecklistIds: [],
+  musicMuted: false,
   totalXp: 0,
   missionStars: {},
   difficulty: DEFAULT_DIFFICULTY,
@@ -99,6 +103,20 @@ export function recordLearnedPhraseId(phraseId: string): PlayerPreferences {
   return savePlayerPreferences({
     learnedPhraseIds: [...current.learnedPhraseIds, phraseId],
   });
+}
+
+/**
+ * Toggles a Survival Kit checklist item ID in persisted player preferences.
+ *
+ * @param itemId - Checklist item identifier.
+ * @returns Updated PlayerPreferences object.
+ */
+export function toggleChecklistItem(itemId: string): PlayerPreferences {
+  const current = loadPlayerPreferences();
+  const nextIds = current.checkedChecklistIds.includes(itemId)
+    ? current.checkedChecklistIds.filter((id) => id !== itemId)
+    : [...current.checkedChecklistIds, itemId];
+  return savePlayerPreferences({ checkedChecklistIds: nextIds });
 }
 
 export type { BudgetBand, LanguageComfort };
