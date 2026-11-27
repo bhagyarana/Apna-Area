@@ -109,6 +109,31 @@ export function nearestNeighbourhood(lat: number, lng: number): string {
   return bestLabel;
 }
 
+const NON_CAMPUS_TECH_PARK_TYPES = new Set([
+  "restaurant", "meal_takeaway", "sandwich_shop", "cafe", "bakery",
+  "beauty_salon", "hair_care", "spa", "bus_stop", "bus_station",
+  "transit_station", "parking", "parking_lot",
+]);
+
+/**
+ * Returns true if a tech_park search hit is actually an in-campus shop, eatery, bus stop, or gate room.
+ *
+ * @param name - Display name of the place.
+ * @param types - Google Places type list.
+ * @param primaryType - Optional primary place type.
+ * @returns True when the hit should not be listed as an office campus.
+ */
+export function isNonCampusTechParkSubvenue(
+  name: string,
+  types: readonly string[] = [],
+  primaryType?: string,
+): boolean {
+  if ((primaryType && NON_CAMPUS_TECH_PARK_TYPES.has(primaryType)) || types.some((t) => NON_CAMPUS_TECH_PARK_TYPES.has(t))) {
+    return true;
+  }
+  return /\b(security\s+room|gate\s+\d+|salon|subway|kitchen|parking)\b/i.test(name);
+}
+
 /**
  * Filters, validates, categorises, and deduplicates raw Places API (New) items.
  *
@@ -121,6 +146,7 @@ export function normaliseAndDedupePlaces(
   bbox: BoundingBox = ORR_BBOX,
 ): VerifiedPlace[] {
   const byId = new Map<string, VerifiedPlace>();
+  const seenTechParkNames = new Set<string>();
 
   for (const batch of batches) {
     for (const raw of batch.items) {
@@ -145,6 +171,16 @@ export function normaliseAndDedupePlaces(
         isUnderConstructionOrrMetro(name, raw.types ?? [], raw.primaryType)
       ) {
         continue;
+      }
+      if (batch.category === "tech_park") {
+        if (isNonCampusTechParkSubvenue(name, raw.types ?? [], raw.primaryType)) {
+          continue;
+        }
+        const canonicalCampus = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (seenTechParkNames.has(canonicalCampus)) {
+          continue;
+        }
+        seenTechParkNames.add(canonicalCampus);
       }
       if (byId.has(id)) {
         continue;

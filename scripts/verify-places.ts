@@ -43,14 +43,14 @@ const PRO_FIELD_MASK = [
 ].join(",");
 
 const TECH_PARK_SEEDS = [
-  "RMZ EcoWorld Bellandur Outer Ring Road Bengaluru",
-  "RMZ Ecospace Bellandur Outer Ring Road Bengaluru",
-  "Embassy TechVillage Devarabisanahalli Outer Ring Road Bengaluru",
-  "Prestige Tech Park Kadubeesanahalli Outer Ring Road Bengaluru",
-  "Cessna Business Park Kadubeesanahalli Outer Ring Road Bengaluru",
-  "Global Technology Park Bellandur Outer Ring Road Bengaluru",
+  "RMZ EcoWorld Bellandur Bengaluru",
+  "RMZ Ecospace Bellandur Bengaluru",
+  "Embassy TechVillage Devarabisanahalli Bengaluru",
+  "Prestige Tech Park Kadubeesanahalli Bengaluru",
+  "Cessna Business Park Kadubeesanahalli Bengaluru",
+  "Global Technology Park Bellandur Bengaluru",
   "Vaishnavi Tech Park Sarjapur Outer Ring Road Bengaluru",
-  "Bagmane Constellation Business Park Marathahalli Outer Ring Road Bengaluru",
+  "Bagmane Constellation Business Park Marathahalli ORR Bengaluru",
 ];
 
 const CATEGORY_TEMPLATES: ReadonlyArray<{ category: PlaceCategory; term: string; maxCount: number }> = [

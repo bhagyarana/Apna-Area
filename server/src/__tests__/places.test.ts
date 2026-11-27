@@ -8,6 +8,7 @@
 import { describe, expect, it } from "vitest";
 import {
   decodeGooglePolyline,
+  isNonCampusTechParkSubvenue,
   isUnderConstructionOrrMetro,
   isWithinBoundingBox,
   normaliseAndDedupePlaces,
@@ -81,6 +82,12 @@ describe("server/places/filter", () => {
     expect(isUnderConstructionOrrMetro("Kadubeesanahalli Metro Station", [])).toBe(true);
     expect(isUnderConstructionOrrMetro("Stop", ["subway_station"])).toBe(true);
     expect(isUnderConstructionOrrMetro("Agara BMTC Bus Depot", ["bus_station"])).toBe(false);
+  });
+
+  it("excludes in-campus salons, eateries, bus stops, and duplicate campus names from tech_park", () => {
+    expect(isNonCampusTechParkSubvenue("Enrich Salon RMZ EcoWorld", [], "beauty_salon")).toBe(true);
+    expect(isNonCampusTechParkSubvenue("Embassy Tech Village", [], "bus_stop")).toBe(true);
+    expect(isNonCampusTechParkSubvenue("RMZ Ecospace", ["premise"], "premise")).toBe(false);
   });
 
   it("decodes canonical Google encoded polyline into [lng, lat] pairs", () => {

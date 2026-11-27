@@ -36,6 +36,7 @@ COPY --from=build --chown=node:node /app/shared/dist ./shared/dist
 COPY --from=build --chown=node:node /app/server/package.json ./server/package.json
 COPY --from=build --chown=node:node /app/server/dist ./server/dist
 COPY --from=build --chown=node:node /app/web/dist ./web/dist
+COPY --chown=node:node data ./data
 
 USER node
 EXPOSE 8080

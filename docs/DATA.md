@@ -118,4 +118,17 @@ export interface VerifiedPlacesDataset {
 - Google Maps content is never used for model training or fine-tuning.
 - `places.json` records `verifiedAt` and must be refreshed within 30 calendar days under Google Maps Platform Service Specific Terms.
 - `<Map>` in React sets `internalUsageAttributionIds={["gmp_git_agentskills_v1"]}` and uses `AdvancedMarkerElement` with a valid `mapId`.
-- Dataset summary table (counts per category and per neighbourhood) is appended here automatically by `scripts/verify-places.ts` in Phase 1 (`T1.1`).
+
+## 8. Verified Dataset Summary (`2026-11-27T12:53:50Z`)
+- **Corridor (`data/orr/corridor.geojson`):** `545` LineString points, `15,080` metres (`Google Routes API v2` from Marathahalli Bridge to Silk Board Junction).
+- **Total verified places (`data/orr/places.json`):** `121` operational records inside `ORR_BBOX`.
+
+| Category | Count | Neighbourhood | Count |
+|---|---:|---|---:|
+| `pg_coliving` | 27 | Marathahalli | 27 |
+| `darshini` | 26 | Agara & HSR Layout | 20 |
+| `cafe_daily` | 25 | Bellandur | 18 |
+| `transit_stop` | 16 | Devarabisanahalli | 18 |
+| `lake_park` | 15 | Kadubeesanahalli | 17 |
+| `tech_park` | 12 | Silk Board | 11 |
+| **Total** | **121** | Sarjapur Road Junction | 10 |
