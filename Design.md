@@ -99,16 +99,16 @@ Selected from `design/discover/variation-1.html` (with two alternatives preserve
 - **Transparency & human override controls:** `Why did this change?` disclosure expands in `200ms` to display a 2x2 calibrated `gemini-decision-1` rubric grid (`Objective`, `Phrase`, `Tone` in `--accent-teal`, `Confidence` in `--accent-yellow`), paired with checkmark-indicated 1-click player overrides (`Keep gentler pace` / `Step up Kannada anyway`) so the player always has final say over AI routing.
 
 ### 4.5 Survival Kit & Confirm Sheets (`kit_open`)
-- **Peak headline:** `YOU'RE READY FOR MONDAY.`
-- **Three-column card grid (stacks cleanly at `390x844` mobile):**
-  1. `Where to live`: 3 verified residential pockets selected for the chosen office and budget band, with Monday `09:00` and `18:30` IST horizontal duration bars (`Drive`, `Two-wheeler`, `Transit`) pre-warmed via `computeRouteMatrix` and one factual Flash-Lite sentence.
-  2. `Phrases you spoke`: Learned Kannada phrases (`script · transliteration · meaning`) with `40x40px` play buttons (`gemini-3.8-flash-tts` cached WAV) and a `Copy phrases` button that confirms inline with `Copied` + check icon (`2s` reset, no blocking modal).
-  3. `Your first-week checklist`: 6 interactive items tailored to `budgetBand` and persisted in `localStorage`.
+- **Peak headline:** `YOU'RE READY FOR MONDAY.` inside a bounded `1160px` stage aligned with `.shell-topbar` rails on desktop (`Sound` toggle right, atmospheric radial map scrim hiding mid-game pins) and a compact 3-pill segmented tab switcher (`Commutes` | `Phrases` | `Checklist`) on `<= 768px` mobile so all three pillars stay one tap away without vertical scroll walls.
+- **Three-column hairline-divided bento (bounded above `y=876px` on `1440x900` desktop; tabbed single-column on `390x844` mobile):**
+  1. `Where to live`: 3 hairline-divided verified residential pockets selected for the chosen office and budget band, with Monday `09:00` and `18:30` IST horizontal duration bars (`Drive · 09:00`, `Drive · 18:30`, `Two-wheeler`, `BMTC / Transit`) pre-warmed via `computeRouteMatrix` (`--accent-teal` on fastest mode, neutral slate baseline), compact `Directions` trigger, and one spatial Flash-Lite corridor note (zero repeated bar numbers).
+  2. `Phrases you spoke`: 4 Kannada survival phrases grouped under `Practised out loud` and `Starter phrases` (`script · transliteration · meaning`) with `40x40px` play buttons (`gemini-3.8-flash-tts` cached WAV) and a `Copy phrases` button that confirms inline with `Copied` + check icon (`2s` reset, no blocking modal).
+  3. `Your first-week checklist`: 6 hairline-divided items tailored to `budgetBand` and persisted in `localStorage`, grouping active `To do` items at the top in bright `--text-primary` and stepping `Completed` items down quietly with a `16%` teal-tinted check badge.
 - **Confirm Sheet (mandatory gate for external navigation and file downloads):**
-  - Built on `@ui-sdk/react` dialog/focus-trap primitives (`Esc` closes, focus returns to trigger).
+  - Built on `@ui-sdk/react/alert-dialog` focus-trap primitives (`Esc` closes, focus returns to trigger via `lastExitRef`; centered modal with `Esc` hint on desktop, flush docked bottom sheet with top grabber and full-width stacked buttons on `<= 768px` mobile, paired with a recessed neutral target preview chip).
   - Exact copy per exit:
-    - Maps route: Title `Open this route in Google Maps?` · Body `Opens google.com/maps in a new tab with directions from {{areaName}} to {{officeName}}. Nothing else is shared.` · Actions: `Open Google Maps` / `Cancel`.
-    - Save kit: Title `Download your Survival Kit?` · Body `Saves a PNG summary card to your device. No account or upload is used.` · Actions: `Download PNG` / `Cancel`.
+    - Maps route: Title `Open this route in Google Maps?` · Target chip `google.com/maps · {{areaName}} to {{officeName}}` · Body `Opens google.com/maps in a new tab with directions from {{areaName}} to {{officeName}}. Nothing else is shared.` · Actions: `Open Google Maps` / `Cancel`.
+    - Save kit: Title `Download your Survival Kit?` · Target chip `apna-area-survival-kit.png · 1200 x 675 summary card` · Body `Saves a PNG summary card to your device. No account or upload is used.` · Actions: `Download PNG` / `Cancel`.
 
 ## 5. Accessibility Checklist
 - Minimum `40x40px` hit target on every button, chip, pin, and audio control.

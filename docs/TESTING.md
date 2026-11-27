@@ -46,3 +46,9 @@ A phase step never merges to `main` until `npm run check` (`tsc -b`, `eslint`, `
 | Strong Mission 1 (`auto_male_1` spoken clearly, `0` hints, `objectiveCompleted: true`) | `452 ms` cold / `519 ms` warm | `0` (`733` input) | `2.57 / 2.40 / 2.29` (`92%` conf, `P(met)=0.98`) | `step_up` · `3★` · `+300 XP` | `{ localLanguageShare: 0.50, hintLevel: 1, paceSeconds: 60 }` (`50%` Kannada blend) |
 | Weak Mission 1 (`3` hints, confused reply, `objectiveCompleted: false`) | `389 ms` warm | `0` (`727` input) | `0.16 / 0.09 / 0.95` (`97%` conf, `P(met)=0.03`) | `ease_level` · `1★` · `+140 XP` | `{ localLanguageShare: 0.05, hintLevel: 3, paceSeconds: 90 }` (`5%` Kannada blend, early hints) |
 | Low-confidence / `"other"` guard (`confidence: 0.74` or `routeChoice: "other"`) | Deterministic | `0` | Safety threshold `< 0.75` triggered | `keep_level` (safe default) | `{ localLanguageShare: 0.25, hintLevel: 2, paceSeconds: 75 }` (held steady) |
+
+## 5. Phase 5 Survival Kit, Routes Matrix & Confirm Sheet Evidence
+- **Live Google Routes API `computeRouteMatrix` (`POST /api/kit`):** `305 ms` across 4 parallel matrix calls (`DRIVE` Monday `09:00` & `18:30` IST + `TWO_WHEELER` `09:00` IST with `TRAFFIC_AWARE`, `TRANSIT` `09:00` IST without `routingPreference`), recorded in `server/src/__tests__/fixtures/kit-live.json`.
+- **Live `gemini-3.5-flash-lite` spatial notes:** `874 ms`, verified price-free and em-dash-free by `verifyAreaSummaryLine`.
+- **Live `gemini-3.8-flash-tts` (`v1beta`, `Sulafat`):** `24 kHz` `RIFF` `audio/wav` (`147 KB`), cached in memory by `phraseId` (`0 ms` on repeat).
+- **Human-in-Control Playwright E2E (`e2e/confirm-sheet.spec.ts`):** Proves `Escape` and `Cancel` abort with `0` `window.open` calls and restore trigger focus, while explicit `ConfirmSheet` confirmation opens `https://www.google.com/maps/dir/?api=1` or downloads `apna-area-survival-kit.png`.
