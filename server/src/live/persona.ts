@@ -88,6 +88,13 @@ export function buildNpcSystemInstruction(
   const leadLang = resolveEnabledLanguage(req.activeLanguage, enabledLanguages);
   const enabledLabels = enabledLanguages.map((code) => LANGUAGE_NAMES[code]).join(", ");
   const honorific = mission.npcGender === "female" ? "akka" : "anna";
+  const isHinglish =
+    leadLang === "hi" && req.languageComfort === "en_hi" && enabledLanguages.includes("hi");
+  const languageGuidance = isHinglish
+    ? "Lead in natural conversational Hinglish (everyday Hindi mixed smoothly with Indian English, using respectful 'aap' and 'ji'), and mirror whichever enabled language (Hindi or Indian English) the player speaks."
+    : enabledLanguages.includes("hi")
+      ? `Lead in ${LANGUAGE_NAMES[leadLang]} (use respectful 'aap' and 'ji' whenever speaking Hindi). Understand both Hindi and Indian English effortlessly, and code-switch naturally between Hindi and English whenever the player switches or mixes them.`
+      : `Lead in ${LANGUAGE_NAMES[leadLang]}. Follow the player immediately if they switch among enabled languages.`;
 
   const lines: string[] = [
     `You are ${mission.npcFirstName}, a fictional, warm, dignified ${ROLE_DESCRIPTIONS[mission.npcRole]} near ${CATEGORY_CONTEXT[placeCategory]} on Bengaluru's Outer Ring Road (near ${officeName}).`,
@@ -96,7 +103,7 @@ export function buildNpcSystemInstruction(
     "- Start the scene immediately when greeted or prompted, staying in character.",
     "- Keep EVERY spoken turn concise: 1 to 2 short sentences (under 10 seconds of audio) so the conversation feels brisk and natural inside a 90-second scene.",
     "- Always speak an audible reply out loud even when calling a tool.",
-    `Language rules: Enabled languages for this session are [${enabledLabels}]. Lead in ${LANGUAGE_NAMES[leadLang]}. Follow the player immediately if they switch among enabled languages.`,
+    `Language rules: Enabled languages for this session are [${enabledLabels}]. ${languageGuidance}`,
     `Politeness: Use respectful forms and match any Kannada kinship honorific to your gender (${honorific}).`,
     `Scene objective for the player: "${mission.objective}"`,
     `Success checks: ${mission.successCriteria.join("; ")}`,

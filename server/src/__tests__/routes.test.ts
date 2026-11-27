@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from "vitest";
 import {
+  ENABLED_LANGUAGES,
   HealthDataSchema,
   ORR_BBOX,
   PlacesPayloadSchema,
@@ -59,7 +60,7 @@ describe("server routes", () => {
     expect(body.ok).toBe(true);
     const parsed = PublicConfigDataSchema.parse(body.data);
     expect(parsed.mapsBrowserKey).toBe("maps-browser-referrer-restricted");
-    expect(parsed.enabledLanguages).toEqual(["en"]);
+    expect(parsed.enabledLanguages).toEqual([...ENABLED_LANGUAGES]);
 
     await app.close();
   });

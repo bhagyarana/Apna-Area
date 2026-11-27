@@ -62,7 +62,7 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 ### Phase 3b · Hindi & Code-Switching (`phase/p3b-hindi` -> tag `p3b-hindi`)
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
-| `T3b.1` | Lead | Neon | 25m | `shared/src/config.ts`, `server/src/live/persona.ts`, `web/src/picker/TunePopover.tsx`, `web/index.html`, `docs/TESTING.md` | Set `ENABLED_LANGUAGES = ["en", "hi"]`, load Noto Sans Devanagari fallback, enable Hindi/English code-switching in persona, verify live and run `ship-phase` -> tag `p3b-hindi`. |
+| `T3b.1` | Lead | Neon | 25m | `shared/src/config.ts`, `server/src/live/persona.ts`, `web/src/picker/TunePopover.tsx`, `web/index.html`, `docs/TESTING.md` | [x] Set `ENABLED_LANGUAGES = ["en", "hi"]`, loaded `Noto Sans Devanagari` (`400..700`), wired `Tune · EN/HI/HI+EN` + `resolveComfortLanguage`, and verified live Hindi (`765 ms`) + Hinglish (`529 ms`) on `gemini-3.8-live` -> Cloud Run `p3b-hin` preview smoke tested. |
 
 ### Phase 3c · Kannada & Survival Phrases (`phase/p3c-kannada` -> tag `p3c-kannada`)
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |

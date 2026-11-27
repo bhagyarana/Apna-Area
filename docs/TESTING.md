@@ -34,6 +34,7 @@ A phase step never merges to `main` until `npm run check` (`tsc -b`, `eslint`, `
 | `P3a` | `pg_owner` (`Suresh`, `Charon`) | English | Live `v1alpha` ephemeral session | `780 ms` | Yes (`Welcome! We have 24/7 power backup, high-speed Wi-Fi...`) | `complete_objective` | PASS (`< 1.2s` target) |
 | `P3a` | `transit_helper` (`Kavitha`, `Kore`) | English | Live `v1alpha` ephemeral session | `823 ms` | Yes (`For the Silk Board bus, you need to cross over...`) | `complete_objective` | PASS (`< 1.2s` target) |
 | `P3a` | `office_buddy` (`Arjun`, `Charon`) | English | Live `v1alpha` ephemeral session | `632 ms` | Yes (`The lanes around the back of Bagmane are great...`) | `complete_objective` | PASS (`< 1.2s` target) |
-| `P3b` | `pg_owner` | Hindi + Hinglish switch | Laptop + headphones | pending | pending | `complete_objective` | pending |
+| `P3b` | `pg_owner` (`Suresh`, `Charon`) | Hindi (`languageComfort: "hi"`) | Live `v1alpha` ephemeral session | `765 ms` | Yes (`नमस्ते जी! यहाँ पावर बैकअप, वाई-फाई और पानी चौबीसों घंटे उपलब्ध रहता है...`) | `give_hint`, `complete_objective` | PASS (`< 1.2s` target) |
+| `P3b` | `auto_driver` (`Ramesh`, `Puck`) | Hinglish switch (`languageComfort: "en_hi"`) | Live `v1alpha` ephemeral session | `529 ms` | Yes (`Namaskara ji, bilkul meter se chalenge! Bagmane IT park main gate drop kar deta hoon.`) | `complete_objective` | PASS (`< 1.2s` target) |
 | `P3c` | `auto_driver` | Kannada lead -> beginner tries taught phrase | Laptop + headphones | pending | pending | `mark_phrase_attempt` + `complete_objective` | pending |
 | `P3c` | `darshini_owner` | Kannada lead -> player asks in Hindi for help | Laptop + headphones | pending | pending | `give_hint` + `mark_phrase_attempt` | pending |

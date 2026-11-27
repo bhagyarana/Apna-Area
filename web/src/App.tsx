@@ -6,7 +6,7 @@
  * Deliberately excludes: Client-side API keys or unverified fallback places.
  */
 import { useCallback, useMemo, useState, type JSX } from "react";
-import type { DifficultyState } from "@apna-area/shared";
+import { resolveComfortLanguage, type DifficultyState } from "@apna-area/shared";
 import { HealthBadge } from "./components/HealthBadge";
 import { MissionCard } from "./hud/MissionCard";
 import { ProgressChips } from "./hud/ProgressChips";
@@ -165,7 +165,8 @@ export function App(): JSX.Element {
           office={selectedOffice}
           missionPlace={activeMissionPlace}
           difficulty={INITIAL_DIFFICULTY}
-          activeLanguage={config.enabledLanguages[0] ?? "en"}
+          activeLanguage={resolveComfortLanguage(prefs.languageComfort, config.enabledLanguages)}
+          languageComfort={prefs.languageComfort}
           onExitMission={() => setInVoiceMission(false)}
           onAdvanceNextMission={() => {
             setInVoiceMission(false);

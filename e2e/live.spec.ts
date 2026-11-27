@@ -34,7 +34,7 @@ test("live: launches voice mission, renders portrait + captions, handles text re
         sendAudio16k: () => {},
         sendAudioStreamEnd: () => {},
         sendText: (text: string) => {
-          if (text === "Hello!") return;
+          if (text === "Hello!" || text === "नमस्ते!" || text === "Namaste! Hello!") return;
           window.setTimeout(() => {
             if (text.toLowerCase().includes("hint")) {
               callbacks.onToolCalls([
@@ -102,6 +102,13 @@ test("live: launches voice mission, renders portrait + captions, handles text re
 
     await page.getByTestId("build-week-cta").click();
     await expect(page.getByTestId("mission-card")).toBeVisible();
+    await expect(page.getByTestId("tune-trigger")).toContainText("Tune · EN");
+
+    // Switch comfort language to Hindi + English (Hinglish) via Tune popover
+    await page.getByTestId("tune-trigger").click();
+    await page.getByRole("button", { name: "Hindi + English" }).click();
+    await page.getByRole("button", { name: "Close setup" }).click();
+    await expect(page.getByTestId("tune-trigger")).toContainText("Tune · HI+EN");
 
     // Open Stop 1 live voice mission
     await page.getByTestId("start-mission-cta").click();

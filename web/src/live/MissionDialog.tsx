@@ -11,6 +11,7 @@ import { ArrowRight01Icon, Mic01Icon } from "@hugeicons/core-free-icons";
 import type {
   DifficultyState,
   LanguageCode,
+  LanguageComfort,
   Mission,
   NpcRole,
   VerifiedPlace,
@@ -27,6 +28,7 @@ export interface MissionDialogProps {
   missionPlace: VerifiedPlace;
   difficulty: DifficultyState;
   activeLanguage: LanguageCode;
+  languageComfort?: LanguageComfort;
   onExitMission: () => void;
   onAdvanceNextMission: () => void;
 }
@@ -52,6 +54,7 @@ export function MissionDialog({
   missionPlace,
   difficulty,
   activeLanguage,
+  languageComfort,
   onExitMission,
   onAdvanceNextMission,
 }: MissionDialogProps): JSX.Element {
@@ -71,22 +74,10 @@ export function MissionDialog({
       placeCategory: missionPlace.category,
       difficulty: { localLanguageShare, hintLevel, paceSeconds },
       activeLanguage,
+      languageComfort,
     });
-    return () => {
-      stopSession();
-    };
-  }, [
-    mission,
-    office.name,
-    missionPlace.name,
-    missionPlace.category,
-    localLanguageShare,
-    hintLevel,
-    paceSeconds,
-    activeLanguage,
-    startSession,
-    stopSession,
-  ]);
+    return () => stopSession();
+  }, [mission, office.name, missionPlace.name, missionPlace.category, localLanguageShare, hintLevel, paceSeconds, activeLanguage, languageComfort, startSession, stopSession]);
 
   const handleRetry = () => {
     primeUserGestureAudioContext();
@@ -97,6 +88,7 @@ export function MissionDialog({
       placeCategory: missionPlace.category,
       difficulty,
       activeLanguage,
+      languageComfort,
     });
   };
 

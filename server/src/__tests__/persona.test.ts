@@ -13,6 +13,7 @@ import {
   buildSharedLiveTools,
   LiveTokenDataSchema,
   MODEL_IDS,
+  resolveComfortLanguage,
   type LiveTokenRequest,
   type WeekPlan,
 } from "@apna-area/shared";
@@ -56,6 +57,20 @@ describe("server/live/persona & POST /api/live-token", () => {
     expect(prompt).toContain("Never say anything negative");
     expect(prompt).toContain("Lead in Indian English");
     expect(prompt).not.toContain("\u2014");
+
+    // Phase 3b Hindi & Hinglish code-switching routing
+    expect(resolveComfortLanguage("hi", ["en", "hi"])).toBe("hi");
+    expect(resolveComfortLanguage("en_hi", ["en", "hi"])).toBe("hi");
+    expect(resolveComfortLanguage("hi", ["en"])).toBe("en");
+
+    const hiReq: LiveTokenRequest = { ...makeTokenRequest(), activeLanguage: "hi", languageComfort: "hi" };
+    const hiPrompt = buildNpcSystemInstruction(hiReq, ["en", "hi"]);
+    expect(hiPrompt).toContain("Lead in Hindi");
+    expect(hiPrompt).toContain("code-switch naturally between Hindi and English");
+
+    const hinglishReq: LiveTokenRequest = { ...makeTokenRequest(), activeLanguage: "hi", languageComfort: "en_hi" };
+    const hinglishPrompt = buildNpcSystemInstruction(hinglishReq, ["en", "hi"]);
+    expect(hinglishPrompt).toContain("Lead in natural conversational Hinglish");
   });
 
   it("registers NON_BLOCKING tools and omits mark_phrase_attempt until Kannada phrase is active", () => {
