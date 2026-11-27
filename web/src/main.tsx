@@ -12,6 +12,8 @@ import "./styles/shell.css";
 import "./styles/map.css";
 import "./styles/picker.css";
 import "./styles/tune.css";
+import "./styles/hud.css";
+import "./styles/mission.css";
 import { App } from "./App";
 
 const rootEl = document.getElementById("root");

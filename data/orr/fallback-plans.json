@@ -1,0 +1,1622 @@
+{
+  "ChIJ10E9RAQRrjsRJxXRmkKBqcw": {
+    "officePlaceId": "ChIJ10E9RAQRrjsRJxXRmkKBqcw",
+    "weekTheme": "Settle into Marathahalli with easy commutes, warm tiffins, and friendly local chats.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "marathahalli",
+        "fitReason": "Walkable to Bagmane IT park with many PG and tiffin options."
+      },
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Quick ORR commute north to Marathahalli with peaceful residential lanes."
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Short bus ride along ORR with modern co-living spaces nearby."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "Morning auto ride to Bagmane",
+        "whyItMatters": "Builds confidence negotiating your daily commute in simple Kannada.",
+        "whyThisPlace": "A popular morning pickup spot just outside your office zone.",
+        "placeId": "ChIJxy8uiZ4TrjsRXWMsfOUQ_2o",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask the driver to use the meter to Bagmane IT park.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Politely request a meter ride in Kannada",
+          "Confirm the drop point near the office gate"
+        ],
+        "hintLadder": [
+          "Start with a warm namaskara greeting",
+          "Ask meter haaki for a meter ride",
+          "Confirm Bagmane IT park clearly"
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Quick breakfast at Mayura Sagar",
+        "whyItMatters": "Darshinis offer fast, delicious morning meals before your workday begins.",
+        "whyThisPlace": "Just half a kilometer from Bagmane IT park for quick tiffins.",
+        "placeId": "ChIJd71PsScSrjsRTpHYe2IZrHY",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order idli vada and filter coffee at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order two breakfast items clearly",
+          "Thank the owner after receiving your token"
+        ],
+        "hintLadder": [
+          "Say namaskara at the billing counter",
+          "Ask for idli vada and coffee",
+          "Say dhanyavaada when taking your token"
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Touring Staylix Co-living PG",
+        "whyItMatters": "Visiting in person helps you check room light and ventilation.",
+        "whyThisPlace": "Very close to your office for an easy daily walk.",
+        "placeId": "ChIJoVuTPAATrjsRcSRI8Q2G144",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask about private room availability and included meals.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask about single room availability",
+          "Check if daily meals and laundry are included"
+        ],
+        "hintLadder": [
+          "Greet the manager politely at reception",
+          "Ask for a single sharing room tour",
+          "Confirm meal timings and house rules"
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catching the bus at Marathahalli",
+        "whyItMatters": "Knowing bus stops saves time during busy ORR peak hours.",
+        "whyThisPlace": "A major transit hub connecting Marathahalli to the rest of Bengaluru.",
+        "placeId": "ChIJ_-JLMjUSrjsRkBg-q3n1ots",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask which BMTC bus heads back toward Bagmane IT park.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask for the right bus route number",
+          "Confirm which side of the road to wait"
+        ],
+        "hintLadder": [
+          "Excuse yourself politely with a smile",
+          "Mention Bagmane IT park clearly",
+          "Ask which platform or side to stand"
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Friday evening tea at Parco",
+        "whyItMatters": "Relaxing with a colleague turns a new neighbourhood into home.",
+        "whyThisPlace": "A cozy neighborhood bakery less than a kilometer from office.",
+        "placeId": "ChIJ9Tw0BhcRrjsRYosSZBZcclQ",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Arjun",
+        "npcGender": "male",
+        "objective": "Share your first week impressions and thank your buddy.",
+        "phraseSituation": "thanks",
+        "successCriteria": [
+          "Share one favorite spot from your week",
+          "Thank your buddy for helping you settle in"
+        ],
+        "hintLadder": [
+          "Suggest grabbing evening snacks together",
+          "Mention a place you liked this week",
+          "Say thanks warmly in Kannada"
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJ5VaF8K0TrjsRYfUW2Rql_MU": {
+    "officePlaceId": "ChIJ5VaF8K0TrjsRYfUW2Rql_MU",
+    "weekTheme": "Settle into Kadubeesanahalli with daily commutes, darshini breakfasts, and local walks.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Walkable access to Cessna Business Park and many nearby co-living options."
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Adjacent to your office with quick Ring Road transit and lakeside paths."
+      },
+      {
+        "neighbourhoodId": "marathahalli",
+        "fitReason": "Major bus hub nearby for easy connections across the Outer Ring Road."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "First auto ride to Ring Road",
+        "whyItMatters": "Learn how to confirm meter rides near your office gate.",
+        "whyThisPlace": "This Ring Road stop is a busy arrival point near Cessna.",
+        "placeId": "ChIJ60PgDaYTrjsRYH3NcJoCj-0",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask the driver for a meter ride to your office gate.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Confirm the drop point clearly",
+          "Request a ride by meter politely"
+        ],
+        "hintLadder": [
+          "Start with a polite namaskara",
+          "Name Cessna Business Park clearly",
+          "Ask for a meter ride politely"
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Morning filter coffee and tiffin",
+        "whyItMatters": "Darshinis are fast, friendly spots for daily weekday breakfasts.",
+        "whyThisPlace": "A popular Kadubeesanahalli spot less than a kilometer from work.",
+        "placeId": "ChIJiXH5IAATrjsRuNHmJ5-821U",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order breakfast and a hot coffee at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Place your breakfast order clearly",
+          "Thank the owner after eating"
+        ],
+        "hintLadder": [
+          "Greet the counter staff warmly",
+          "Ask for idli or dosa",
+          "Say dhanyavaadagalu when picking up"
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Tour a private PG room",
+        "whyItMatters": "Visiting PGs in person helps you check comfort and house rules.",
+        "whyThisPlace": "Located in Kadubeesanahalli within an easy walk to Cessna.",
+        "placeId": "ChIJf3TuZAATrjsRWRnIDSv4COs",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask about private room availability and included daily meals.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask about private room options",
+          "Check meal timings and rules"
+        ],
+        "hintLadder": [
+          "Mention you work nearby",
+          "Ask to see a single room",
+          "Confirm Wi-Fi and laundry access"
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catch the Ring Road bus",
+        "whyItMatters": "BMTC buses connect major Outer Ring Road stops all day.",
+        "whyThisPlace": "Marathahalli Multiplex is a key transit hub near your office.",
+        "placeId": "ChIJ_-JLMjUSrjsRkBg-q3n1ots",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Deepa",
+        "npcGender": "female",
+        "objective": "Ask a commuter which bus goes toward Kadubeesanahalli.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Confirm the right bus stop side",
+          "Verify the bus route number"
+        ],
+        "hintLadder": [
+          "Say excuse me politely",
+          "Mention Kadubeesanahalli as your destination",
+          "Ask which side to wait"
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Friday evening walk by the lake",
+        "whyItMatters": "Unwinding with a colleague helps turn a new city into home.",
+        "whyThisPlace": "Devarabeesanahalli Lake Entrance offers a calm green break near work.",
+        "placeId": "ChIJWyiDGwATrjsRQVfDb03dHUM",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Karthik",
+        "npcGender": "male",
+        "objective": "Meet your office buddy for a relaxed Friday evening stroll.",
+        "phraseSituation": "greeting",
+        "successCriteria": [
+          "Share your first week highlights",
+          "Exchange local weekend spot tips"
+        ],
+        "hintLadder": [
+          "Greet your buddy warmly",
+          "Mention places you visited this week",
+          "Ask for their favourite neighbourhood spot"
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJ4VFw06gTrjsRBi6R59JUG0Q": {
+    "officePlaceId": "ChIJ4VFw06gTrjsRBi6R59JUG0Q",
+    "weekTheme": "Settle into Devarabisanahalli with easy commutes, warm breakfasts, and friendly local routines.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Walkable to Embassy TechVillage with quiet inner lanes and nearby PGs."
+      },
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Right next door with modern co-living spaces and daily bakeries."
+      },
+      {
+        "neighbourhoodId": "bellandur",
+        "fitReason": "Short commute south along the Ring Road with lively shared flats."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "Morning auto to the Ring Road",
+        "whyItMatters": "Learning meter etiquette makes daily office commutes smooth and stress-free.",
+        "whyThisPlace": "This Ring Road stop sits right outside Embassy TechVillage.",
+        "placeId": "ChIJ60PgDaYTrjsRYH3NcJoCj-0",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask Ramesh to use the meter for your short ride.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Politely greet Ramesh and mention your drop point.",
+          "Request running by the meter in simple Kannada."
+        ],
+        "hintLadder": [
+          "Start with a warm namaskara to set a friendly tone.",
+          "Mention Devarabisanahalli Ring Road clearly.",
+          "Ask if he will go by meter before hopping in."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Quick breakfast at Udupi Nalapaka",
+        "whyItMatters": "Darshinis offer fast, comforting South Indian breakfasts before work.",
+        "whyThisPlace": "A popular morning spot just a short walk from your office.",
+        "placeId": "ChIJP0egcaYTrjsR9JURSp-v5_c",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Order idli vada and filter coffee at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Place your breakfast order clearly at the counter.",
+          "Thank Suresh warmly after picking up your plate."
+        ],
+        "hintLadder": [
+          "Check the morning menu board near the entrance.",
+          "Ask for idli vada and one coffee in simple Kannada.",
+          "Say dhanyavadagalu when Suresh hands over your token."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Tour a private co-living room",
+        "whyItMatters": "Checking rooms in person helps you pick a comfortable long-term stay.",
+        "whyThisPlace": "A co-living option in Devarabisanahalli close to your office.",
+        "placeId": "ChIJz68QSYITrjsRkf97oG6bVho",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask Kavitha about private rooms, Wi-Fi, and house rules.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask to see an available private room.",
+          "Check what meals and Wi-Fi facilities are included."
+        ],
+        "hintLadder": [
+          "Introduce yourself as a newcomer working nearby.",
+          "Ask politely to tour a single occupancy room.",
+          "Confirm notice period and visitor rules before leaving."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catch the bus at Eco Space",
+        "whyItMatters": "Knowing Outer Ring Road bus stops gives you a reliable backup.",
+        "whyThisPlace": "A major transit hub one stop away from your office.",
+        "placeId": "ChIJs1vu7qATrjsRj8di42VU00I",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Manjunath",
+        "npcGender": "male",
+        "objective": "Confirm which BMTC bus heads back toward Devarabisanahalli.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask Manjunath which bus stops at Devarabisanahalli.",
+          "Confirm the right side of the road to wait."
+        ],
+        "hintLadder": [
+          "Walk up to the bus shelter near Eco Space.",
+          "Ask if the bus goes toward Devarabisanahalli.",
+          "Thank Manjunath once he points out the right lane."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Friday unwind at Beany Bread Cafe",
+        "whyItMatters": "Connecting with a colleague helps you feel at home faster.",
+        "whyThisPlace": "A cozy cafe in nearby Kadubeesanahalli for Friday evening chats.",
+        "placeId": "ChIJg2ZL7CcTrjsRotGnjedi3WU",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Ananya",
+        "npcGender": "female",
+        "objective": "Meet Ananya for coffee and share your first week wins.",
+        "phraseSituation": "thanks",
+        "successCriteria": [
+          "Greet Ananya and swap notes on local spots.",
+          "Thank her for helping you settle into the neighbourhood."
+        ],
+        "hintLadder": [
+          "Grab a quiet table inside the cafe.",
+          "Share your favourite spot from this week.",
+          "Thank Ananya in Kannada for her local tips."
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJ7-Cgk7MTrjsRpYr_lkVDiM8": {
+    "officePlaceId": "ChIJ7-Cgk7MTrjsRpYr_lkVDiM8",
+    "weekTheme": "Settling into Kadubeesanahalli with easy commutes, local food, and friendly neighbours.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Walkable to Prestige Tech Park with plenty of co-living PGs nearby."
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Just south on Outer Ring Road with direct bus stops."
+      },
+      {
+        "neighbourhoodId": "marathahalli",
+        "fitReason": "Busy junction just north with frequent buses and daily conveniences."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "First auto ride to work",
+        "whyItMatters": "Polite Kannada phrases make daily auto rides smooth and friendly.",
+        "whyThisPlace": "Marathahalli Multiplex is a well-known landmark near your office.",
+        "placeId": "ChIJ_-JLMjUSrjsRkBg-q3n1ots",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask Ramesh to go by meter to Prestige Tech Park.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Politely request a meter ride in Kannada.",
+          "Confirm your drop point at Prestige Tech Park."
+        ],
+        "hintLadder": [
+          "Start with a polite greeting before naming your destination.",
+          "Say Prestige Tech Park clearly and ask for the meter.",
+          "Use the phrase Meter haaki, please."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Morning coffee and tiffin",
+        "whyItMatters": "Local darshinis are fast, welcoming spots for daily South Indian breakfast.",
+        "whyThisPlace": "The Filter Coffee is a short walk from your office.",
+        "placeId": "ChIJiXH5IAATrjsRuNHmJ5-821U",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order breakfast and filter coffee smoothly at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order one breakfast item and filter coffee politely.",
+          "Thank Lakshmi before picking up your plate."
+        ],
+        "hintLadder": [
+          "Greet Lakshmi warmly at the billing counter.",
+          "Name your tiffin item and ask for one coffee.",
+          "Say Dhanyavaadagalu after receiving your token."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Touring a nearby PG",
+        "whyItMatters": "Asking clear housing questions helps you pick a comfortable private room.",
+        "whyThisPlace": "AA Premium Co-Living PG is right next to Prestige Tech Park.",
+        "placeId": "ChIJf3TuZAATrjsRWRnIDSv4COs",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask Suresh about private room availability and house rules.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask if a private room is currently available.",
+          "Check what meals or laundry facilities are included."
+        ],
+        "hintLadder": [
+          "Mention you are joining Prestige Tech Park soon.",
+          "Ask clearly about single room options and notice period.",
+          "Thank Suresh for showing you around the property."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catching the ORR bus",
+        "whyItMatters": "Knowing BMTC bus stops saves time during peak Outer Ring Road hours.",
+        "whyThisPlace": "Devarabisanahalli Ring Road stop connects you across the tech corridor.",
+        "placeId": "ChIJ60PgDaYTrjsRYH3NcJoCj-0",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Confirm which bus heads toward Marathahalli from this stop.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask Kavitha which bus goes toward Marathahalli.",
+          "Confirm you are standing on the correct side."
+        ],
+        "hintLadder": [
+          "Politely get Kavitha's attention at the bus shelter.",
+          "Ask if buses from here go toward Marathahalli.",
+          "Say Dhanyavaadagalu once she points out the route."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Friday evening lake walk",
+        "whyItMatters": "Unwinding outdoors with a teammate helps Bengaluru feel like home.",
+        "whyThisPlace": "Devarabeesanahalli Lake Entrance offers a peaceful evening walk near work.",
+        "placeId": "ChIJWyiDGwATrjsRQVfDb03dHUM",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Ananya",
+        "npcGender": "female",
+        "objective": "Chat with Ananya about weekend plans and local spots.",
+        "phraseSituation": "thanks",
+        "successCriteria": [
+          "Share your favourite moment from your first week.",
+          "Thank Ananya for helping you settle into the area."
+        ],
+        "hintLadder": [
+          "Greet Ananya warmly at the lake entrance.",
+          "Ask for her favourite weekend spots around Kadubeesanahalli.",
+          "Thank her for the helpful tips and company."
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJ6aQn-5ATrjsRYXM2We56cV8": {
+    "officePlaceId": "ChIJ6aQn-5ATrjsRYXM2We56cV8",
+    "weekTheme": "Settle into Devarabisanahalli with easy commutes, warm breakfasts, and friendly neighbours.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Walkable to Smartworks Global Technology Park with calm residential lanes nearby."
+      },
+      {
+        "neighbourhoodId": "bellandur",
+        "fitReason": "Right next to your office with many co-living spaces and daily eateries."
+      },
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Just one short bus stop north along the Outer Ring Road."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "Morning auto to Ecospace gate",
+        "whyItMatters": "Polite Kannada phrases help you start daily auto rides smoothly.",
+        "whyThisPlace": "Ecospace Auto Stand sits right outside your office tech park.",
+        "placeId": "ChIJaUVpwaATrjsRSEg6E9lfO4I",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask Ramesh to use the meter and drop you at the gate.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Request the meter politely in Kannada",
+          "Confirm the Smartworks drop-off point clearly"
+        ],
+        "hintLadder": [
+          "Start with a warm namaskara",
+          "Say meter haaki politely",
+          "Point toward the main Ecospace entrance"
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Quick tiffin before standup",
+        "whyItMatters": "Local darshinis are the fastest way to grab breakfast before work.",
+        "whyThisPlace": "Udupi Gokula Vegetarian Restaurant is a short walk from your desk.",
+        "placeId": "ChIJa1vKzqMTrjsRFmrR07Kq8Gk",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order masala dosa and filter coffee at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Place your breakfast order clearly",
+          "Ask if the coffee has sugar"
+        ],
+        "hintLadder": [
+          "Greet Lakshmi at the token counter",
+          "Say ondu masala dosa and filter kaapi",
+          "Thank her before picking up your plate"
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Tour a nearby co-living room",
+        "whyItMatters": "Checking rooms in person helps you pick a comfortable private space.",
+        "whyThisPlace": "TARA CO-LIVING PG sits in nearby Bellandur, close to work.",
+        "placeId": "ChIJnWZ0qyATrjsRR9xzEFaNf4E",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask Suresh about private room availability and house rules.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask to see a private room",
+          "Check meal timings and guest rules"
+        ],
+        "hintLadder": [
+          "Introduce yourself as a newcomer nearby",
+          "Ask about single room options",
+          "Confirm quiet hours and laundry access"
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catching the Outer Ring Road bus",
+        "whyItMatters": "Knowing the right bus stop saves time during busy evening commutes.",
+        "whyThisPlace": "Eco Space bus stop is steps away from your office campus.",
+        "placeId": "ChIJ2SHbw6ATrjsRlPZLmMU-Oy4",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask Kavitha which bus goes toward Bellandur and Silk Board.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask for the correct bus route",
+          "Confirm which side of the road to wait on"
+        ],
+        "hintLadder": [
+          "Politely get Kavitha's attention at the stop",
+          "Mention Bellandur or Silk Board clearly",
+          "Double check if the bus stops here"
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Evening walk by the lake",
+        "whyItMatters": "Unwinding after work helps your new neighbourhood feel like home.",
+        "whyThisPlace": "Devarabeesanahalli Lake Entrance offers a peaceful green walk near work.",
+        "placeId": "ChIJWyiDGwATrjsRQVfDb03dHUM",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Karthik",
+        "npcGender": "male",
+        "objective": "Thank Karthik for showing you around during your first week.",
+        "phraseSituation": "thanks",
+        "successCriteria": [
+          "Express warm thanks in Kannada",
+          "Share your favourite spot from this week"
+        ],
+        "hintLadder": [
+          "Meet Karthik near the lake gate",
+          "Say tumba dhanyavaadagalu with a smile",
+          "Plan a coffee catch-up next week"
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJh9_I9A0TrjsRj_uXAthQcWg": {
+    "officePlaceId": "ChIJh9_I9A0TrjsRj_uXAthQcWg",
+    "weekTheme": "Settle into Bellandur and Sarjapur Road with five simple daily routines.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "sarjapur_junction",
+        "fitReason": "Walkable to Vaishnavi Tech Park with daily groceries and lake trails nearby."
+      },
+      {
+        "neighbourhoodId": "bellandur",
+        "fitReason": "Close to your office along ORR with many co-living PGs and darshinis."
+      },
+      {
+        "neighbourhoodId": "agara_hsr",
+        "fitReason": "Short bus ride west with leafy parks and quiet residential streets."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "Take an auto to your office gate",
+        "whyItMatters": "Learning to ask for meter rides builds daily commute confidence.",
+        "whyThisPlace": "Ecospace Auto Stand is a busy hub near your office corridor.",
+        "placeId": "ChIJaUVpwaATrjsRSEg6E9lfO4I",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Greet the driver in Kannada and request a meter ride.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Use a polite Kannada greeting.",
+          "Ask to go by the meter."
+        ],
+        "hintLadder": [
+          "Start with a warm Namaskara.",
+          "Mention Vaishnavi Tech Park clearly.",
+          "Ask for meter put please politely."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Order breakfast at Udupi Kitchen",
+        "whyItMatters": "Darshinis offer quick and comforting morning meals before work.",
+        "whyThisPlace": "Udupi Kitchen sits close to Sarjapur Junction for easy mornings.",
+        "placeId": "ChIJVVbA7aITrjsR_dwLywJw1ew",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order idli and filter coffee politely at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order your breakfast item clearly.",
+          "Thank the owner in Kannada."
+        ],
+        "hintLadder": [
+          "Say Namaskara before ordering.",
+          "Ask for one idli and coffee.",
+          "End with Dhanyavadagalu."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Tour a private room nearby",
+        "whyItMatters": "Seeing rooms in person helps you pick a comfortable home.",
+        "whyThisPlace": "TARA CO-LIVING PG is half a kilometer from your tech park.",
+        "placeId": "ChIJnWZ0qyATrjsRR9xzEFaNf4E",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask about private room availability and house rules politely.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask about single room availability.",
+          "Check what meals or laundry are included."
+        ],
+        "hintLadder": [
+          "Greet the manager warmly.",
+          "Ask if a private room is free.",
+          "Confirm basic house timings politely."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catch a bus at Bellanduru Gate",
+        "whyItMatters": "Knowing local BMTC stops saves time during peak office hours.",
+        "whyThisPlace": "Bellanduru Gate is the nearest transit stop to your office.",
+        "placeId": "ChIJyy3hQnETrjsReP-3ViFAGWE",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask a fellow commuter which bus goes toward HSR Layout.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask politely for bus directions.",
+          "Confirm which side of the road to wait."
+        ],
+        "hintLadder": [
+          "Excuse yourself politely first.",
+          "Name your destination clearly.",
+          "Thank them for the help."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Unwind at Kaikondrahalli Lake Trail",
+        "whyItMatters": "Evening walks with a colleague help a new city feel like home.",
+        "whyThisPlace": "Kaikondrahalli Lake Trail offers a peaceful green loop near Sarjapur Road.",
+        "placeId": "ChIJY0FPSvATrjsR8HnkuWTzMz4",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Vikram",
+        "npcGender": "male",
+        "objective": "Chat with your buddy and share your favorite spot from the week.",
+        "phraseSituation": "greeting",
+        "successCriteria": [
+          "Greet your colleague warmly.",
+          "Share one highlight from your first week."
+        ],
+        "hintLadder": [
+          "Start with a friendly hello.",
+          "Mention a place you visited.",
+          "Ask for their weekend recommendation."
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJI8sI-qkTrjsRYK4osEAuD-Y": {
+    "officePlaceId": "ChIJI8sI-qkTrjsRYK4osEAuD-Y",
+    "weekTheme": "Settle into Marathahalli with easy commutes, warm breakfasts, and friendly neighbours.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "marathahalli",
+        "fitReason": "Walkable to Solarium City with plenty of co-living and darshini options."
+      },
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Short ride down Outer Ring Road with quiet residential lanes."
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Easy bus access along the corridor with many shared flats."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "First auto ride near the lake",
+        "whyItMatters": "Polite Kannada phrases help you start daily auto commutes smoothly.",
+        "whyThisPlace": "Chinnappanahalli Lake is a clear landmark close to your office.",
+        "placeId": "ChIJxy8uiZ4TrjsRXWMsfOUQ_2o",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Mahesh",
+        "npcGender": "male",
+        "objective": "Ask Mahesh to use the meter for a short ride.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Greet Mahesh politely in Kannada",
+          "Request a meter ride clearly"
+        ],
+        "hintLadder": [
+          "Start with a warm Namaskara",
+          "Ask if the meter is working",
+          "Say meter haaki politely"
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Morning tiffin at Mayura Sagar",
+        "whyItMatters": "Darshinis offer fast, comforting breakfasts before your workday begins.",
+        "whyThisPlace": "Mayura Sagar Restaurant sits just half a kilometre from work.",
+        "placeId": "ChIJd71PsScSrjsRTpHYe2IZrHY",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Order idli vade and filter coffee at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order breakfast items clearly",
+          "Thank Ramesh after receiving your token"
+        ],
+        "hintLadder": [
+          "Mention idli vade at the counter",
+          "Add one coffee to your order",
+          "Say dhanyavaadagalu when taking your plate"
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Visit a private PG room",
+        "whyItMatters": "Checking rooms in person helps you pick a comfortable home.",
+        "whyThisPlace": "Staylix Co-living PG is a short walk from your office.",
+        "placeId": "ChIJoVuTPAATrjsRcSRI8Q2G144",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask Kavitha about private room availability and house rules.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask about single room options",
+          "Check meal timings and guest rules"
+        ],
+        "hintLadder": [
+          "Introduce yourself as a newcomer",
+          "Ask to see a single room",
+          "Confirm Wi-Fi and food timings"
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catch the right ORR bus",
+        "whyItMatters": "Knowing bus stops saves time during busy Outer Ring Road hours.",
+        "whyThisPlace": "Marathahalli Multiplex stop connects major buses along the ring road.",
+        "placeId": "ChIJ_-JLMjUSrjsRkBg-q3n1ots",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask Suresh which bus goes toward your office junction.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask for directions to Solarium City",
+          "Confirm the correct boarding side"
+        ],
+        "hintLadder": [
+          "Mention your destination clearly",
+          "Ask which bus stops there",
+          "Double check which side to wait"
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Unwind with your office buddy",
+        "whyItMatters": "Building local friendships turns a new city into home.",
+        "whyThisPlace": "Anthara cafe offers a relaxed spot nearby for Friday chats.",
+        "placeId": "ChIJf8S5zUARrjsR1G_kfrvmR8w",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Ananya",
+        "npcGender": "female",
+        "objective": "Share your first week stories and thank Ananya for her tips.",
+        "phraseSituation": "thanks",
+        "successCriteria": [
+          "Share one highlight from your week",
+          "Thank Ananya warmly in Kannada"
+        ],
+        "hintLadder": [
+          "Mention the PG or darshini visit",
+          "Ask Ananya for weekend tips",
+          "End with a cheerful dhanyavaadagalu"
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJnfXMnosTrjsRVroH9vLgbkw": {
+    "officePlaceId": "ChIJnfXMnosTrjsRVroH9vLgbkw",
+    "weekTheme": "Settling into Kadubeesanahalli with daily commutes, local breakfasts, and housing visits.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Walking distance to Cessna Business Park with many co-living options."
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Just south along the ring road with quick bus access."
+      },
+      {
+        "neighbourhoodId": "bellandur",
+        "fitReason": "Short commute south with lively cafes, lakes, and shared flats."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "First auto ride to Outer Ring Road",
+        "whyItMatters": "Builds confidence negotiating your daily last-mile auto commute.",
+        "whyThisPlace": "Key drop-off point near Cessna Business Park on the ring road.",
+        "placeId": "ChIJ60PgDaYTrjsRYH3NcJoCj-0",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask Ramesh to use the meter and drop you near Cessna.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Politely request the meter in simple Kannada.",
+          "Confirm the landmark near Cessna Business Park."
+        ],
+        "hintLadder": [
+          "Start with a warm Namaskara before mentioning your destination.",
+          "Ask if the meter is working using polite Kannada.",
+          "Confirm Devarabisanahalli Ring Road stop before boarding."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Morning filter coffee and tiffin",
+        "whyItMatters": "Darshinis are the fastest, warmest way to start workdays here.",
+        "whyThisPlace": "Popular Kadubeesanahalli spot for fresh South Indian breakfast.",
+        "placeId": "ChIJiXH5IAATrjsRuNHmJ5-821U",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order breakfast and filter coffee at the counter in Kannada.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order one breakfast dish and coffee clearly.",
+          "Thank Lakshmi politely after collecting your token."
+        ],
+        "hintLadder": [
+          "Greet Lakshmi and wait for your turn at the counter.",
+          "Use simple Kannada words for one coffee and breakfast.",
+          "Say dhanyavaadagalu when she hands over your cup."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Touring a private co-living room",
+        "whyItMatters": "Checking room rules early helps you lock in comfortable housing.",
+        "whyThisPlace": "Close co-living option within walking distance of your office.",
+        "placeId": "ChIJf3TuZAATrjsRWRnIDSv4COs",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask Suresh about private room availability, meals, and notice rules.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask about private room availability and included amenities.",
+          "Clarify guest policies and notice period expectations."
+        ],
+        "hintLadder": [
+          "Mention you are joining Cessna Business Park soon.",
+          "Ask specifically about single occupancy rooms and Wi-Fi.",
+          "Confirm meal timings and laundry access before leaving."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catching the ring road BMTC bus",
+        "whyItMatters": "Knowing bus bays saves time during peak Outer Ring Road traffic.",
+        "whyThisPlace": "Major nearby transit stop connecting Kadubeesanahalli and Bellandur.",
+        "placeId": "ChIJs1vu7qATrjsRj8di42VU00I",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask Kavitha which bus heads toward Kadubeesanahalli from this bay.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask for the correct bus route toward Kadubeesanahalli.",
+          "Confirm which side of the road to board from."
+        ],
+        "hintLadder": [
+          "Approach Kavitha near the bus shelter politely.",
+          "Ask which bus stops at Kadubeesanahalli in simple Kannada.",
+          "Double-check the direction of travel before the bus arrives."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Evening walk by the lake",
+        "whyItMatters": "Unwinding locally helps your new neighbourhood feel like home.",
+        "whyThisPlace": "Green lakeside spot near Devarabisanahalli for an evening stroll.",
+        "placeId": "ChIJWyiDGwATrjsRQVfDb03dHUM",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Arjun",
+        "npcGender": "male",
+        "objective": "Meet Arjun for an evening walk and swap local weekend tips.",
+        "phraseSituation": "greeting",
+        "successCriteria": [
+          "Greet Arjun warmly and share your Week One impressions.",
+          "Ask for one local weekend recommendation nearby."
+        ],
+        "hintLadder": [
+          "Start with a casual greeting as you meet at the gate.",
+          "Mention the neighbourhoods you explored earlier this week.",
+          "Ask Arjun where colleagues usually hang out on weekends."
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJx-z2arITrjsRt99jc09vjY4": {
+    "officePlaceId": "ChIJx-z2arITrjsRt99jc09vjY4",
+    "weekTheme": "Settle into Kadubeesanahalli with easy commutes, morning coffee, and nearby PG visits.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Walkable to Prestige Tech Platina with several co-living PGs nearby."
+      },
+      {
+        "neighbourhoodId": "marathahalli",
+        "fitReason": "Just north on Outer Ring Road with busy transit and eateries."
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Adjacent south on the Ring Road near lakes and bus stops."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "Auto ride to Kadubeesanahalli",
+        "whyItMatters": "Learn polite meter requests for smooth daily office commutes.",
+        "whyThisPlace": "Major Outer Ring Road landmark just north of your office.",
+        "placeId": "ChIJ_-JLMjUSrjsRkBg-q3n1ots",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask Ramesh to go by meter to Prestige Tech Platina.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Greet the driver politely in Kannada.",
+          "Confirm meter usage before starting the ride."
+        ],
+        "hintLadder": [
+          "Start with a friendly Namaskara.",
+          "Use meter haaki to request the meter.",
+          "Mention Prestige Tech Platina clearly."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Morning filter coffee run",
+        "whyItMatters": "Quick darshini breakfasts power busy mornings along Outer Ring Road.",
+        "whyThisPlace": "Steps away from Prestige Tech Platina for fast morning tiffin.",
+        "placeId": "ChIJiXH5IAATrjsRuNHmJ5-821U",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order breakfast and filter coffee at the counter in Kannada.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order one breakfast item and coffee.",
+          "Thank the owner after receiving your token."
+        ],
+        "hintLadder": [
+          "Say Ondu filter coffee kodi.",
+          "Ask politely for your tiffin choice.",
+          "End with Dhanyavaadagalu when paying."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Private PG room tour",
+        "whyItMatters": "Seeing rooms in person helps you pick a comfortable stay.",
+        "whyThisPlace": "Co-living option within an easy walk of your office.",
+        "placeId": "ChIJf3TuZAATrjsRWRnIDSv4COs",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask Suresh about private room availability and house rules.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask if a single room is available.",
+          "Check meal timings and guest rules."
+        ],
+        "hintLadder": [
+          "Ask for a single room politely.",
+          "Confirm what amenities are included.",
+          "Ask about notice period terms."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catching the Ring Road bus",
+        "whyItMatters": "BMTC buses offer reliable backup along the busy corridor.",
+        "whyThisPlace": "Key Outer Ring Road bus stop serving Kadubeesanahalli commuters.",
+        "placeId": "ChIJ60PgDaYTrjsRYH3NcJoCj-0",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Confirm which BMTC bus heads toward Kadubeesanahalli Bridge.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask which bus stops at Kadubeesanahalli.",
+          "Confirm the right side of the road."
+        ],
+        "hintLadder": [
+          "Say Kadubeesanahalli yaava bus hogutte.",
+          "Point toward the Ring Road lane.",
+          "Say Dhanyavaada for the help."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Friday evening coffee unwind",
+        "whyItMatters": "Local tips from colleagues make your new neighbourhood feel familiar.",
+        "whyThisPlace": "Relaxed cafe right inside Prestige Tech Park for Friday chats.",
+        "placeId": "ChIJF_2cznoTrjsR8sMlpVR8Yko",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Ananya",
+        "npcGender": "female",
+        "objective": "Swap weekend settling tips and practice casual Kannada greetings.",
+        "phraseSituation": "greeting",
+        "successCriteria": [
+          "Greet your colleague warmly in Kannada.",
+          "Ask for one local weekend recommendation."
+        ],
+        "hintLadder": [
+          "Try Hegiddira to ask how they are.",
+          "Mention your PG search progress.",
+          "Ask where to walk this weekend."
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJZWmag6ATrjsRWXHDopfvwVc": {
+    "officePlaceId": "ChIJZWmag6ATrjsRWXHDopfvwVc",
+    "weekTheme": "Build your daily Bellandur routine around Ecospace with confidence.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "bellandur",
+        "fitReason": "Walkable access to Ecospace gates, daily bakeries, and co-living options."
+      },
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Right across Outer Ring Road with direct bus stops near Ecospace."
+      },
+      {
+        "neighbourhoodId": "sarjapur_junction",
+        "fitReason": "Short commute south with calm lakeside trails for evening breaks."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "First auto ride to Ecospace",
+        "whyItMatters": "Clear auto communication makes your daily office arrival stress free.",
+        "whyThisPlace": "Ecospace Auto Stand sits right outside your main office gate.",
+        "placeId": "ChIJaUVpwaATrjsRSEg6E9lfO4I",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask Ramesh to use the meter for your short ride.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Greet Ramesh politely before starting the ride.",
+          "Request the meter clearly in simple Kannada."
+        ],
+        "hintLadder": [
+          "Start with a friendly hello or namaskara.",
+          "Ask if the meter can be turned on.",
+          "Thank him warmly as you step out."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Quick breakfast at a darshini",
+        "whyItMatters": "Local darshinis offer fast, fresh breakfasts before morning standups.",
+        "whyThisPlace": "Udupi Aatithya Restaurant is an easy walk from your office.",
+        "placeId": "ChIJl_6AF3wTrjsRYwSh1wdrLIQ",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order idli and filter coffee from Lakshmi at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order one breakfast item and coffee clearly.",
+          "Confirm whether your order is for here or takeaway."
+        ],
+        "hintLadder": [
+          "Ask for idli or dosa politely at the counter.",
+          "Add filter coffee to your breakfast order.",
+          "Say thank you when you collect your token."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Tour a nearby co-living space",
+        "whyItMatters": "Seeing rooms in person helps you pick the right private space.",
+        "whyThisPlace": "TARA CO-LIVING PG is close enough for a quick walk.",
+        "placeId": "ChIJnWZ0qyATrjsRR9xzEFaNf4E",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask Suresh about private room availability and house rules.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask to see an available private room.",
+          "Check what meals and laundry services are included."
+        ],
+        "hintLadder": [
+          "Introduce yourself as a newcomer working near Ecospace.",
+          "Ask about private room options and included facilities.",
+          "Confirm guest timings and notice period details politely."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catch the right ORR bus",
+        "whyItMatters": "Knowing Outer Ring Road bus stops saves time during peak hours.",
+        "whyThisPlace": "Eco Space bus stop connects you along the main corridor.",
+        "placeId": "ChIJ2SHbw6ATrjsRlPZLmMU-Oy4",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Anitha",
+        "npcGender": "female",
+        "objective": "Confirm with Anitha which direction goes toward Bellandur gate.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask which side of the road has buses toward Bellandur.",
+          "Verify the next major landmark along the route."
+        ],
+        "hintLadder": [
+          "Point toward the main road and greet Anitha.",
+          "Ask if this stop goes toward Bellandur or Marathahalli.",
+          "Thank her before waiting for your bus."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Unwind by the lake",
+        "whyItMatters": "Connecting with colleagues outside work helps Bengaluru feel like home.",
+        "whyThisPlace": "Devarabeesanahalli Lake Entrance offers a peaceful green walk nearby.",
+        "placeId": "ChIJWyiDGwATrjsRQVfDb03dHUM",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Karthik",
+        "npcGender": "male",
+        "objective": "Share your first week highlights with Karthik on an evening walk.",
+        "phraseSituation": "greeting",
+        "successCriteria": [
+          "Greet Karthik warmly after wrapping up Friday work.",
+          "Share one favourite spot you discovered this week."
+        ],
+        "hintLadder": [
+          "Meet Karthik near the lake gate after work.",
+          "Mention how your housing search and commute went.",
+          "Ask for his favourite weekend food recommendation nearby."
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJz6c4KacTrjsRmBjZeep3swA": {
+    "officePlaceId": "ChIJz6c4KacTrjsRmBjZeep3swA",
+    "weekTheme": "Settle into Devarabisanahalli with daily commutes, local meals, and housing visits.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Walkable to Global Tech Park with many daily eateries nearby."
+      },
+      {
+        "neighbourhoodId": "bellandur",
+        "fitReason": "Adjacent to your office with abundant PG and co-living choices."
+      },
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Just north along the Outer Ring Road for easy bus access."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "First auto ride to the gate",
+        "whyItMatters": "Auto stands near tech parks help you start commutes smoothly.",
+        "whyThisPlace": "Ecospace Auto Stand sits right beside your office entry.",
+        "placeId": "ChIJaUVpwaATrjsRSEg6E9lfO4I",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Ramesh",
+        "npcGender": "male",
+        "objective": "Ask Ramesh to use the meter for your short ride.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Greet Ramesh politely before stating your drop point.",
+          "Ask clearly to go by the meter."
+        ],
+        "hintLadder": [
+          "Start with a simple Namaskara to build rapport.",
+          "Say meter haaki to request the meter politely.",
+          "Confirm Global Tech Park gate before getting inside."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Quick darshini breakfast stop",
+        "whyItMatters": "Local darshinis offer fast, fresh breakfasts before morning standups.",
+        "whyThisPlace": "Udupi Gokula is a short walk from Global Tech Park.",
+        "placeId": "ChIJa1vKzqMTrjsRFmrR07Kq8Gk",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Lakshmi",
+        "npcGender": "female",
+        "objective": "Order breakfast and coffee at the counter in simple Kannada.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order one breakfast item clearly at the counter.",
+          "Ask for filter coffee with less sugar."
+        ],
+        "hintLadder": [
+          "Use Ondu idli or Ondu dosa to order.",
+          "Say sakkare kammi for less sugar in coffee.",
+          "Thank Lakshmi before picking up your token."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Tour a nearby co-living space",
+        "whyItMatters": "Visiting PGs in person helps you check commute time and amenities.",
+        "whyThisPlace": "Tara Co-Living PG sits under one kilometer from your office.",
+        "placeId": "ChIJnWZ0qyATrjsRR9xzEFaNf4E",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Ask Suresh about private room availability and included house facilities.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask if a single private room is currently available.",
+          "Check whether meals, laundry, and Wi-Fi are included."
+        ],
+        "hintLadder": [
+          "Mention you work nearby at Global Tech Park.",
+          "Ask about guest rules and notice period terms.",
+          "Request a quick look at a sample room."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catch the Outer Ring Road bus",
+        "whyItMatters": "Knowing BMTC bus stops saves you time during peak traffic.",
+        "whyThisPlace": "Eco Space bus stop is steps away from your workplace.",
+        "placeId": "ChIJ2SHbw6ATrjsRlPZLmMU-Oy4",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask Kavitha which bus heads toward Bellandur or Marathahalli.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask politely which direction the bus travels from here.",
+          "Confirm the right side of the road to wait."
+        ],
+        "hintLadder": [
+          "Use Elli hogutte to ask where a bus goes.",
+          "Mention Marathahalli or Bellandur clearly as your landmark.",
+          "Thank Kavitha with a quick Dhanyavaada."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Evening walk by the lake",
+        "whyItMatters": "Finding a quiet spot helps you unwind after your first week.",
+        "whyThisPlace": "Devarabeesanahalli Lake Entrance is an easy walk after work.",
+        "placeId": "ChIJWyiDGwATrjsRQVfDb03dHUM",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Ananya",
+        "npcGender": "female",
+        "objective": "Chat with Ananya about weekend plans and favourite local hangout spots.",
+        "phraseSituation": "greeting",
+        "successCriteria": [
+          "Share how your first week around the office felt.",
+          "Ask Ananya for one weekend food recommendation nearby."
+        ],
+        "hintLadder": [
+          "Greet Ananya warmly as you reach the entrance.",
+          "Mention the darshini or PG visit from earlier.",
+          "Ask about easy Saturday errands around Bellandur."
+        ],
+        "mood": "evening"
+      }
+    ]
+  },
+  "ChIJY1us488TrjsReWn3vhpi6LQ": {
+    "officePlaceId": "ChIJY1us488TrjsReWn3vhpi6LQ",
+    "weekTheme": "Settle into Devarabisanahalli with daily commutes, local breakfasts, and friendly walks.",
+    "recommendedNeighbourhoods": [
+      {
+        "neighbourhoodId": "devarabisanahalli",
+        "fitReason": "Walk or take short autos straight to RMZ Ecoworld."
+      },
+      {
+        "neighbourhoodId": "bellandur",
+        "fitReason": "Close to Bellandur Lake with many cafes and daily essentials."
+      },
+      {
+        "neighbourhoodId": "kadubeesanahalli",
+        "fitReason": "Just north along Outer Ring Road for easy bus access."
+      }
+    ],
+    "missions": [
+      {
+        "id": "m1",
+        "day": "Monday",
+        "title": "Morning auto to Ecospace",
+        "whyItMatters": "Asking for the meter sets a smooth daily commute habit.",
+        "whyThisPlace": "Ecospace Auto Stand sits right outside the main office gate.",
+        "placeId": "ChIJaUVpwaATrjsRSEg6E9lfO4I",
+        "npcRole": "auto_driver",
+        "npcFirstName": "Raju",
+        "npcGender": "male",
+        "objective": "Ask the driver to use the meter for your short ride.",
+        "phraseSituation": "auto_meter",
+        "successCriteria": [
+          "Greet the driver politely in Kannada.",
+          "Request a metered ride to the office."
+        ],
+        "hintLadder": [
+          "Start with a warm Namaskara.",
+          "Use the phrase for meter.",
+          "End with Dhanyavadagalu."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m2",
+        "day": "Tuesday",
+        "title": "Quick darshini breakfast",
+        "whyItMatters": "Local darshinis offer fast, fresh meals before morning standups.",
+        "whyThisPlace": "Udupi Gokula is a popular breakfast stop near your campus.",
+        "placeId": "ChIJa1vKzqMTrjsRFmrR07Kq8Gk",
+        "npcRole": "darshini_owner",
+        "npcFirstName": "Suresh",
+        "npcGender": "male",
+        "objective": "Order idli vada and filter coffee at the counter.",
+        "phraseSituation": "darshini_order",
+        "successCriteria": [
+          "Order two items clearly.",
+          "Thank the owner after receiving your token."
+        ],
+        "hintLadder": [
+          "Say Namaskara at the counter.",
+          "Ask for idli vada and coffee.",
+          "Say Dhanyavadagalu when handed your plate."
+        ],
+        "mood": "morning"
+      },
+      {
+        "id": "m3",
+        "day": "Wednesday",
+        "title": "Tour a private PG room",
+        "whyItMatters": "Visiting in person helps you check light, water, and quietness.",
+        "whyThisPlace": "Elly coliving offers private rooms just over one kilometer away.",
+        "placeId": "ChIJi5UeoYETrjsRUpEJ0D_ITjY",
+        "npcRole": "pg_owner",
+        "npcFirstName": "Kavitha",
+        "npcGender": "female",
+        "objective": "Ask about private room availability and included daily meals.",
+        "phraseSituation": "renting",
+        "successCriteria": [
+          "Ask to see a single occupancy room.",
+          "Check if Wi-Fi and meals are included."
+        ],
+        "hintLadder": [
+          "Greet Kavitha with a polite Namaskara.",
+          "Ask about private room availability.",
+          "Confirm what daily facilities are included."
+        ],
+        "mood": "calm"
+      },
+      {
+        "id": "m4",
+        "day": "Thursday",
+        "title": "Catch the Outer Ring Road bus",
+        "whyItMatters": "Knowing the bus stop saves time during busy evening traffic.",
+        "whyThisPlace": "Eco Space bus stop connects directly along Outer Ring Road.",
+        "placeId": "ChIJ2SHbw6ATrjsRlPZLmMU-Oy4",
+        "npcRole": "transit_helper",
+        "npcFirstName": "Manjunath",
+        "npcGender": "male",
+        "objective": "Confirm which BMTC bus heads toward Bellandur gate.",
+        "phraseSituation": "directions",
+        "successCriteria": [
+          "Ask a commuter for the right bus.",
+          "Confirm the direction toward Bellandur."
+        ],
+        "hintLadder": [
+          "Say excuse me politely first.",
+          "Mention Bellandur clearly.",
+          "Thank them before boarding."
+        ],
+        "mood": "rush"
+      },
+      {
+        "id": "m5",
+        "day": "Friday",
+        "title": "Friday evening lake walk",
+        "whyItMatters": "Unwinding with a colleague helps you feel at home quickly.",
+        "whyThisPlace": "Devarabeesanahalli Lake Entrance is steps away from your office campus.",
+        "placeId": "ChIJWyiDGwATrjsRQVfDb03dHUM",
+        "npcRole": "office_buddy",
+        "npcFirstName": "Ananya",
+        "npcGender": "female",
+        "objective": "Meet Ananya for a relaxed walk and weekend tips.",
+        "phraseSituation": "greeting",
+        "successCriteria": [
+          "Greet your colleague warmly.",
+          "Ask for one local weekend recommendation."
+        ],
+        "hintLadder": [
+          "Start with a friendly greeting.",
+          "Ask about favourite nearby spots.",
+          "Thank them for the local tips."
+        ],
+        "mood": "evening"
+      }
+    ]
+  }
+}

@@ -18,10 +18,13 @@ import {
   SAFETY_LIMITS,
   type FeatureFlags,
   type LogSink,
+  type WeekPlan,
 } from "@apna-area/shared";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerConfigRoutes } from "./routes/config.js";
 import { loadVerifiedWorldData, registerPlacesRoutes, type LoadedWorldData } from "./routes/places.js";
+import { registerWorldRoutes } from "./routes/world.js";
+import type { ModelInteractionRunner } from "./world/director.js";
 
 export interface ServerOptions {
   version?: string;
@@ -34,6 +37,8 @@ export interface ServerOptions {
   mapsServerKey?: string;
   mapId?: string;
   featureFlags?: Partial<FeatureFlags>;
+  worldRunner?: ModelInteractionRunner;
+  fallbackPlans?: Readonly<Record<string, WeekPlan>>;
   rateLimitMax?: number;
   webDistPath?: string;
   logSink?: LogSink;
@@ -174,6 +179,14 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
   });
 
   await registerPlacesRoutes(app, world);
+
+  await registerWorldRoutes(app, {
+    worldData: world,
+    geminiApiKey: options.geminiApiKey,
+    runner: options.worldRunner,
+    fallbackPlans: options.fallbackPlans,
+    log,
+  });
 
   const webDist = options.webDistPath ?? defaultWebDist;
   const hasBuiltWeb = existsSync(path.join(webDist, "index.html"));

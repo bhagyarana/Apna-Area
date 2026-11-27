@@ -40,7 +40,7 @@ export const ENABLED_LANGUAGES = ["en"] as const;
 /** Network and upstream call timeouts in milliseconds. */
 export const TIMEOUTS_MS = {
   healthCheck: 2_000,
-  worldDirector: 14_000,
+  worldDirector: 32_000,
   liveToken: 6_000,
   decisionsScore: 4_000,
   routesMatrix: 7_000,
@@ -72,11 +72,21 @@ export const DECISION_THRESHOLDS = {
 /** Default runtime feature flags exposed on GET /api/config. */
 export const DEFAULT_FEATURE_FLAGS = {
   enableMapPicker: true,
-  enableDirector: false,
+  enableDirector: true,
   enableVoiceNpcs: false,
   enableAdaptiveScoring: false,
   enableSurvivalKit: false,
   enableAmbientMusic: false,
+} as const;
+
+/** Tunables for the Phase 2 Week One Director and candidate selector. */
+export const DIRECTOR_CONFIG = {
+  thinkingLevel: "medium",
+  minPrimaryCandidates: 8,
+  maxPromptCandidates: 15,
+  lruMaxEntries: 50,
+  lruTtlMs: 2 * 60 * 60 * 1_000,
+  pinStaggerMs: 60,
 } as const;
 
 /** Eastern ORR neighbourhood anchors (ordered northeast to southwest along the corridor). */

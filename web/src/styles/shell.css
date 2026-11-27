@@ -2,7 +2,7 @@
  * Feature: Shell Topbar, Wordmark Pill & Health Badge Styles
  * Purpose: Styles the root viewport frame, smoked-acrylic topbar chrome, and live health popover.
  * Inputs: CSS custom properties from web/src/styles/tokens.css.
- * Outputs: Crisp topbar utility layout under 185 lines with opacity-only reduced-motion fallback.
+ * Outputs: Crisp topbar utility layout under 210 lines with opacity-only reduced-motion fallback.
  * Deliberately excludes: Map pin rules (map.css), picker rules (picker.css), and Tune popover rules (tune.css).
  */
 .shell-stage {
@@ -26,9 +26,10 @@
   position: relative;
   z-index: 5;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-3);
 }
 
 .topbar-actions {
@@ -78,10 +79,12 @@
   padding: 0 var(--space-3);
   border-radius: var(--radius-pill);
   border: 0;
-  background: rgba(16, 13, 28, 0.86);
+  background: rgba(16, 13, 28, 0.56);
   backdrop-filter: blur(18px);
-  box-shadow: var(--shadow-card);
-  color: var(--text-secondary);
+  box-shadow:
+    0 6px 18px rgba(5, 3, 12, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
   font-family: var(--font-sans);
   font-size: var(--text-xs);
   font-weight: 600;

@@ -7,8 +7,8 @@
  */
 .picker-card {
   width: 100%;
-  background: rgba(16, 13, 28, 0.88);
-  backdrop-filter: blur(20px);
+  background: rgba(25, 19, 46, 0.84);
+  backdrop-filter: blur(18px);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   box-shadow: var(--shadow-modal);

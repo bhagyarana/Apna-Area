@@ -1,0 +1,135 @@
+{
+  "officePlaceId": "ChIJ10E9RAQRrjsRJxXRmkKBqcw",
+  "weekTheme": "Settle into Marathahalli with easy commutes, warm tiffins, and friendly local chats.",
+  "recommendedNeighbourhoods": [
+    {
+      "neighbourhoodId": "marathahalli",
+      "fitReason": "Walkable to Bagmane IT park with many PG and tiffin options."
+    },
+    {
+      "neighbourhoodId": "kadubeesanahalli",
+      "fitReason": "Quick ORR commute north to Marathahalli with peaceful residential lanes."
+    },
+    {
+      "neighbourhoodId": "devarabisanahalli",
+      "fitReason": "Short bus ride along ORR with modern co-living spaces nearby."
+    }
+  ],
+  "missions": [
+    {
+      "id": "m1",
+      "day": "Monday",
+      "title": "Morning auto ride to Bagmane",
+      "whyItMatters": "Builds confidence negotiating your daily commute in simple Kannada.",
+      "whyThisPlace": "A popular morning pickup spot just outside your office zone.",
+      "placeId": "ChIJxy8uiZ4TrjsRXWMsfOUQ_2o",
+      "npcRole": "auto_driver",
+      "npcFirstName": "Ramesh",
+      "npcGender": "male",
+      "objective": "Ask the driver to use the meter to Bagmane IT park.",
+      "phraseSituation": "auto_meter",
+      "successCriteria": [
+        "Politely request a meter ride in Kannada",
+        "Confirm the drop point near the office gate"
+      ],
+      "hintLadder": [
+        "Start with a warm namaskara greeting",
+        "Ask meter haaki for a meter ride",
+        "Confirm Bagmane IT park clearly"
+      ],
+      "mood": "morning"
+    },
+    {
+      "id": "m2",
+      "day": "Tuesday",
+      "title": "Quick breakfast at Mayura Sagar",
+      "whyItMatters": "Darshinis offer fast, delicious morning meals before your workday begins.",
+      "whyThisPlace": "Just half a kilometer from Bagmane IT park for quick tiffins.",
+      "placeId": "ChIJd71PsScSrjsRTpHYe2IZrHY",
+      "npcRole": "darshini_owner",
+      "npcFirstName": "Lakshmi",
+      "npcGender": "female",
+      "objective": "Order idli vada and filter coffee at the counter.",
+      "phraseSituation": "darshini_order",
+      "successCriteria": [
+        "Order two breakfast items clearly",
+        "Thank the owner after receiving your token"
+      ],
+      "hintLadder": [
+        "Say namaskara at the billing counter",
+        "Ask for idli vada and coffee",
+        "Say dhanyavaada when taking your token"
+      ],
+      "mood": "morning"
+    },
+    {
+      "id": "m3",
+      "day": "Wednesday",
+      "title": "Touring Staylix Co-living PG",
+      "whyItMatters": "Visiting in person helps you check room light and ventilation.",
+      "whyThisPlace": "Very close to your office for an easy daily walk.",
+      "placeId": "ChIJoVuTPAATrjsRcSRI8Q2G144",
+      "npcRole": "pg_owner",
+      "npcFirstName": "Suresh",
+      "npcGender": "male",
+      "objective": "Ask about private room availability and included meals.",
+      "phraseSituation": "renting",
+      "successCriteria": [
+        "Ask about single room availability",
+        "Check if daily meals and laundry are included"
+      ],
+      "hintLadder": [
+        "Greet the manager politely at reception",
+        "Ask for a single sharing room tour",
+        "Confirm meal timings and house rules"
+      ],
+      "mood": "calm"
+    },
+    {
+      "id": "m4",
+      "day": "Thursday",
+      "title": "Catching the bus at Marathahalli",
+      "whyItMatters": "Knowing bus stops saves time during busy ORR peak hours.",
+      "whyThisPlace": "A major transit hub connecting Marathahalli to the rest of Bengaluru.",
+      "placeId": "ChIJ_-JLMjUSrjsRkBg-q3n1ots",
+      "npcRole": "transit_helper",
+      "npcFirstName": "Kavitha",
+      "npcGender": "female",
+      "objective": "Ask which BMTC bus heads back toward Bagmane IT park.",
+      "phraseSituation": "directions",
+      "successCriteria": [
+        "Ask for the right bus route number",
+        "Confirm which side of the road to wait"
+      ],
+      "hintLadder": [
+        "Excuse yourself politely with a smile",
+        "Mention Bagmane IT park clearly",
+        "Ask which platform or side to stand"
+      ],
+      "mood": "rush"
+    },
+    {
+      "id": "m5",
+      "day": "Friday",
+      "title": "Friday evening tea at Parco",
+      "whyItMatters": "Relaxing with a colleague turns a new neighbourhood into home.",
+      "whyThisPlace": "A cozy neighborhood bakery less than a kilometer from office.",
+      "placeId": "ChIJ9Tw0BhcRrjsRYosSZBZcclQ",
+      "npcRole": "office_buddy",
+      "npcFirstName": "Arjun",
+      "npcGender": "male",
+      "objective": "Share your first week impressions and thank your buddy.",
+      "phraseSituation": "thanks",
+      "successCriteria": [
+        "Share one favorite spot from your week",
+        "Thank your buddy for helping you settle in"
+      ],
+      "hintLadder": [
+        "Suggest grabbing evening snacks together",
+        "Mention a place you liked this week",
+        "Say thanks warmly in Kannada"
+      ],
+      "mood": "evening"
+    }
+  ]
+}

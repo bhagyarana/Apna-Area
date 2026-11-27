@@ -48,11 +48,6 @@ export function haversineKm(lat1: number, lng1: number, lat2: number, lng2: numb
 
 /**
  * Checks whether a coordinate lies inclusively inside the eastern ORR bounding box.
- *
- * @param lat - Latitude in degrees.
- * @param lng - Longitude in degrees.
- * @param bbox - Bounding rectangle (defaults to ORR_BBOX).
- * @returns True if inside bounds.
  */
 export function isWithinBoundingBox(
   lat: number,

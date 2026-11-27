@@ -95,3 +95,10 @@ Every significant technical, product, or scope decision is recorded here. Update
 - **Why:** Bellandur, Kadubeesanahalli, Devarabisanahalli, Marathahalli, and Agara Blue Line stations are still under construction; filtering them ensures missions only direct newcomers to operational BMTC stops.
 - **Alternatives rejected:** Trusting `businessStatus === "OPERATIONAL"` alone (Google Maps marks several under-construction metro pillars/stations as `OPERATIONAL`).
 - **Revisit if:** Namma Metro Phase 2A ORR Blue Line opens for passenger service.
+
+### ADR-014 · Director Concise Prompt Budget, `32s` Upstream Timeout & Shared Zod Record Schema
+- **Date:** 2026-11-27
+- **Decision:** Cap Director candidate context at `15` balanced verified places, instruct `< 10 words` per text field on `gemini-4-neon` (`thinking_level: "medium"`), set `TIMEOUTS_MS.worldDirector = 32_000` (jumping directly to `gemini-4-hydrogen` on upstream timeout/503 without repeating Neon), and define `FallbackPlansMapSchema` inside `@apna-area/shared` so `z.record` shares one Zod prototype across workspaces.
+- **Why:** Prevents premature `14s`/`20s` aborts while `gemini-4-neon` reasons (~2,200 thought tokens + ~900 output tokens over India-to-US RTT), avoids ESM dual-package Zod `instanceof` mismatches at server boot, and ensures cold-503 fallback snapshots (`data/orr/fallback-plans.json`, `replayed: true`) load deterministically.
+- **Alternatives rejected:** Pre-populating the default cache with static plans (violates Truth Rule #7 against shipping cached mocks as the default path).
+- **Revisit if:** Regional `asia-south1` Gemini 4 Neon endpoint lowers p95 RTT below 10 seconds.
