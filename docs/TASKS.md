@@ -15,12 +15,12 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
-| `T0.1` | Lead first | Neon | 20m | `package.json`, `tsconfig.base.json`, `eslint.config.js`, `vitest.config.ts`, `web/package.json`, `server/package.json`, `shared/package.json` | Monorepo npm workspaces, strict TypeScript, `dev`, `build`, `check`, `start` scripts. Proof: `npm run check` exits 0. |
-| `T0.2` | Parallel A | Hydrogen | 25m | `shared/src/config.ts`, `shared/src/types.ts`, `shared/src/logger.ts`, `shared/src/__tests__/*` | `MODEL_IDS`, `ORR_BBOX`, `ENABLED_LANGUAGES = ["en"]`, Zod schemas, structured JSON logger redacting transcripts/audio/secrets. Proof: `vitest run shared`. |
-| `T0.3` | Parallel B | Hydrogen | 25m | `server/src/index.ts`, `server/src/routes/health.ts`, `server/src/routes/config.ts`, `server/src/__tests__/health.test.ts` | Fastify server on `PORT` (`8080`) with `trustProxy: true`, per-IP rate limit (`60/min`), `GET /api/health` (`commit`, `builtAt`), `GET /api/config`, static SPA fallback. Proof: `vitest run server`. |
-| `T0.4` | Parallel C | Hydrogen | 25m | `web/index.html`, `web/vite.config.ts`, `web/src/main.tsx`, `web/src/App.tsx`, `web/src/styles/tokens.css` | Vice City dusk CSS tokens, Anton + Hanken Grotesk fonts, wordmark, tagline, live `/api/health` teal status dot, reduced-motion support. Proof: `npm run build --workspace=web`. |
-| `T0.5` | Sequential | Hydrogen | 20m | `Dockerfile`, `.dockerignore`, `playwright.live.config.ts`, `e2e/smoke.spec.ts` | Multi-stage `node:22-slim` non-root image + Playwright smoke test asserting wordmark and green health dot. Proof: Playwright smoke passes against local preview. |
-| `T0.6` | Lead gate | Neon | 20m | `docs/HANDOFF.md`, `docs/TASKS.md` | Run `ship-phase` skill -> Cloud Run `asia-south1` live URL -> tag `p0-skeleton` -> **Check-in #2a**. |
+| `T0.1` | Lead first | Neon | 20m | `package.json`, `tsconfig.base.json`, `eslint.config.js`, `vitest.config.ts`, `web/package.json`, `server/package.json`, `shared/package.json` | [x] Monorepo npm workspaces, strict TypeScript, `dev`, `build`, `check`, `start` scripts. Proof: `npm run check` exits 0. |
+| `T0.2` | Parallel A | Hydrogen | 25m | `shared/src/config.ts`, `shared/src/types.ts`, `shared/src/logger.ts`, `shared/src/__tests__/*` | [x] `MODEL_IDS`, `ORR_BBOX`, `ENABLED_LANGUAGES = ["en"]`, Zod schemas, structured JSON logger redacting transcripts/audio/secrets. Proof: `vitest run shared`. |
+| `T0.3` | Parallel B | Hydrogen | 25m | `server/src/index.ts`, `server/src/routes/health.ts`, `server/src/routes/config.ts`, `server/src/__tests__/health.test.ts` | [x] Fastify server on `PORT` (`8080`) with `trustProxy: true`, per-IP rate limit (`60/min`), `GET /api/health` (`commit`, `builtAt`), `GET /api/config`, static SPA fallback. Proof: `vitest run server`. |
+| `T0.4` | Parallel C | Hydrogen | 25m | `web/index.html`, `web/vite.config.ts`, `web/src/main.tsx`, `web/src/App.tsx`, `web/src/styles/tokens.css` | [x] ORR Neon Dusk CSS tokens, Anton + Hanken Grotesk fonts, wordmark, tagline, live `/api/health` teal status dot, reduced-motion support. Proof: `npm run build --workspace=web`. |
+| `T0.5` | Sequential | Hydrogen | 20m | `Dockerfile`, `.dockerignore`, `playwright.live.config.ts`, `e2e/smoke.spec.ts` | [x] Multi-stage `node:22-slim` non-root image + Playwright smoke test asserting wordmark and green health dot. Proof: Playwright smoke passes against local preview. |
+| `T0.6` | Lead gate | Neon | 20m | `docs/HANDOFF.md`, `docs/TASKS.md` | [ ] Run `ship-phase` skill -> Cloud Run `asia-south1` live URL -> tag `p0-skeleton` -> **Check-in #2a**. |
 
 ---
 
