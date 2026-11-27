@@ -1,32 +1,33 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** Foundation (`phase/foundation-docs`, pre-`P0`)
-- **Current tag:** none yet (`p0-skeleton` ships next in Block 2)
-- **Live URL & revision:** not deployed yet (`gcloud` setup verified before `T0.6`)
+- **Current phase:** Phase 0 (`phase/p0-skeleton`, `T0.1` through `T0.5` green locally; ready for `T0.6` Cloud Run deploy)
+- **Current tag:** `v0.1-docs` on `main` (`p0-skeleton` tags right after Cloud Run deploy)
+- **Live URL & revision:** Local production server verified on `http://127.0.0.1:8080`; Cloud Run deploy ready as soon as `gcloud` CLI is authenticated on `PATH`.
 
 ## 2. Done This Session
-- Verified Windows PowerShell (`5.1`), Node (`v26.12.1`), npm (`12.2.3`), and Git (`2.56.0`).
-- Committed `.gitignore` first (`5b8b64f`), unpacked `01-copy-into-repo/` rules and skills to root, added `.env.example` and `docs/.gitkeep` (`e693716`).
-- Installed and verified official `gemini-api` and `google-maps-platform` plugins; verified `@google/genai` (`3.6.1`), `@vis.gl/react-google-maps` (`1.10.2`), and `@ui-sdk/react` (`0.1.0-beta.17`).
-- Drafted, self-checked, and committed all 11 core docs one by one on `phase/foundation-docs`.
-- Ran independent Carbon adversarial review (`03-adversarial-review.md`) in a fresh subagent context and applied all 6 accepted fixes (`trustProxy: true`, `computeRouteMatrix` background pre-warming, `toolSignals` split-brain scoring guard, committed `fallback-plans.json` snapshot, exclusion of under-construction ORR Blue Line metro stations, polite gender-matched Kannada honorifics, and player difficulty override).
+- Completed `04-design-discover`: created 3 CSPRNG-seeded HTML mockups in `design/discover/variation-1..3.html`, locked Variation 1 ("Smoked-Acrylic Fare-Meter & Cinema Ribbon") into `Design.md`, and merged `phase/design-discover` to `main`.
+- Built `T0.1` strict TypeScript npm-workspaces monorepo (`package.json`, `tsconfig.base.json`, `eslint.config.js`, `vitest.config.ts`).
+- Built `T0.2` `@apna-area/shared` (`config.ts`, `types.ts`, isomorphic Cloud Logging `logger.ts` with transcript/audio/key redaction, and 3 Vitest suites).
+- Built `T0.3` `@apna-area/server` Fastify API (`GET /api/health` with commit/build metadata, `GET /api/config`, `trustProxy: true`, 60/min rate limiter with 404 bot guard, SPA static fallback, and contract tests).
+- Built `T0.4` `@apna-area/web` Vite 7 + React 19 ORR Neon Dusk shell (`83.4 kB` gzipped, `HealthBadge` with hover/focus commit popover, reduced-motion support).
+- Built `T0.5` multi-stage non-root `Dockerfile` (`node:22-slim`) and `e2e/smoke.spec.ts` (`1 passed` on Chromium with zero console warnings/errors).
 
 ## 3. Decisions Made
-- Recorded `ADR-001` through `ADR-010` in `docs/DECISIONS.md` (SAFE-only hackathon execution, single Cloud Run container in `asia-south1`, schema-enum + verifier place lock, `v1beta` ephemeral Live tokens omitting `thinkingConfig`, Pro-SKU Places masks, sequential `en` -> `hi` -> `kn` rollout).
+- Locked Game Layer Direction in `Design.md` Section 3 to "Smoked-Acrylic Fare-Meter & Cinema Ribbon".
+- Made `shared/src/logger.ts` 100% isomorphic (dual 32-bit FNV-1a hex fingerprint, guarded `stdout` sink) so `@apna-area/shared` bundles cleanly in both Vite browser builds and Node 22+ servers.
 
 ## 4. Open Questions
-- **Taste check-in (`04-design-discover.md`):** Waiting on user selection of 2 to 3 favourite game-layer directions so we can generate 3 seeded HTML mockups in `design/discover/` and lock Section 3 of `Design.md`.
-- **Before `T0.6` Cloud Run deploy:** Install/add `gcloud` CLI to Windows `PATH` and authenticate to the hackathon GCP project with `gemini-api-key` and `maps-browser-key` secrets.
+- **Cloud Run Deploy (`T0.6`):** Need `gcloud` CLI installed/added to Windows `PATH`, authenticated (`gcloud auth login`), project set, and `gemini-api-key` + `maps-browser-key` created in Secret Manager (plus `.env.local` for `P1` `scripts/verify-places.ts`).
 
 ## 5. Known Issues
-- `gcloud` and `docker` are not currently on Windows `PATH` (`gcloud --version` returned `CommandNotFoundException`). Does not block local `P0` build/tests (`T0.1` to `T0.5`), only `T0.6` Cloud Run deploy.
+- `gcloud` and `docker` are not currently on Windows `PATH`. Local `npm run check` (`11/11` Vitest tests, `0` ESLint warnings, `0` TypeScript errors) and `npm run test:smoke` (`1/1` Playwright Chromium) are 100% green.
 
 ## 6. File State
-- All foundation docs are committed one by one on `phase/foundation-docs` and ready for `--no-ff` merge to `main` after adversarial review.
+- All `T0.1`..`T0.5` files committed cleanly on branch `phase/p0-skeleton`.
 
 ## 7. The Single Next Task
-- Generate 3 seeded static HTML game-layer variations in `design/discover/` from the user's chosen `04-design-discover` taste reactions, lock Section 3 of `Design.md`, merge `phase/foundation-docs` to `main`, and start `phase/p0-skeleton`.
+- Run `T0.6` (`ship-phase` first Cloud Run deploy to `asia-south1`, smoke test the live Cloud Run URL, `--no-ff` merge `phase/p0-skeleton` to `main`, tag `p0-skeleton`), or proceed to `P1` (`T1.2`/`T1.3` ORR Map & Office Picker) once `.env.local` Maps keys are set.
 
 ## 8. Resume Checklist
 1. `AGENTS.md`
