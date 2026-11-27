@@ -21,12 +21,14 @@ import {
 } from "@apna-area/shared";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerConfigRoutes } from "./routes/config.js";
+import { loadVerifiedWorldData, registerPlacesRoutes, type LoadedWorldData } from "./routes/places.js";
 
 export interface ServerOptions {
   version?: string;
   commit?: string;
   builtAt?: string;
   placesLoaded?: number;
+  worldData?: LoadedWorldData;
   geminiApiKey?: string;
   mapsBrowserKey?: string;
   mapsServerKey?: string;
@@ -154,11 +156,13 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
       );
   });
 
+  const world = options.worldData ?? loadVerifiedWorldData();
+
   await registerHealthRoutes(app, {
     version: options.version ?? "0.1.0",
     commit: options.commit ?? "dev",
     builtAt: options.builtAt ?? new Date().toISOString(),
-    placesLoaded: options.placesLoaded ?? 0,
+    placesLoaded: options.placesLoaded ?? world.dataset.places.length,
     geminiConfigured: Boolean(options.geminiApiKey && options.geminiApiKey.length > 0),
     mapsConfigured: Boolean(options.mapsBrowserKey && options.mapsBrowserKey.length > 0),
   });
@@ -168,6 +172,8 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     mapId: options.mapId,
     featureFlags: options.featureFlags,
   });
+
+  await registerPlacesRoutes(app, world);
 
   const webDist = options.webDistPath ?? defaultWebDist;
   const hasBuiltWeb = existsSync(path.join(webDist, "index.html"));

@@ -89,10 +89,10 @@ export function HealthBadge(): JSX.Element {
 
   const label =
     health.status === "ok"
-      ? `LIVE · ${health.data?.commit.slice(0, 7) ?? "ready"}`
+      ? "Live"
       : health.status === "loading"
-        ? "CHECKING"
-        : "OFFLINE";
+        ? "Checking"
+        : "Offline";
 
   return (
     <div

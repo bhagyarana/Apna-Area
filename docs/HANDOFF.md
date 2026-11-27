@@ -1,33 +1,31 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** Phase 0 (`phase/p0-skeleton`, `T0.1` through `T0.5` green locally; ready for `T0.6` Cloud Run deploy)
-- **Current tag:** `v0.1-docs` on `main` (`p0-skeleton` tags right after Cloud Run deploy)
-- **Live URL & revision:** Local production server verified on `http://127.0.0.1:8080`; Cloud Run deploy ready as soon as `gcloud` CLI is authenticated on `PATH`.
+- **Current phase:** Ready to start `phase/p2-director` (Phase 1 shipped and tagged)
+- **Current tag:** `p1-map` on `main`
+- **Live URL & revision:** `https://apna-area-481049877093.asia-south1.run.app` (alias `https://apna-area-qhtgwpzhpq-el.a.run.app`), revision `apna-area-00002-msn` (`placesLoaded: 121`, `geminiConfigured: true`, `mapsConfigured: true`, Playwright live smoke passing).
 
 ## 2. Done This Session
-- Completed `04-design-discover`: created 3 CSPRNG-seeded HTML mockups in `design/discover/variation-1..3.html`, locked Variation 1 ("Smoked-Acrylic Fare-Meter & Cinema Ribbon") into `Design.md`, and merged `phase/design-discover` to `main`.
-- Built `T0.1` strict TypeScript npm-workspaces monorepo (`package.json`, `tsconfig.base.json`, `eslint.config.js`, `vitest.config.ts`).
-- Built `T0.2` `@apna-area/shared` (`config.ts`, `types.ts`, isomorphic Cloud Logging `logger.ts` with transcript/audio/key redaction, and 3 Vitest suites).
-- Built `T0.3` `@apna-area/server` Fastify API (`GET /api/health` with commit/build metadata, `GET /api/config`, `trustProxy: true`, 60/min rate limiter with 404 bot guard, SPA static fallback, and contract tests).
-- Built `T0.4` `@apna-area/web` Vite 7 + React 19 ORR Neon Dusk shell (`83.4 kB` gzipped, `HealthBadge` with hover/focus commit popover, reduced-motion support).
-- Built `T0.5` multi-stage non-root `Dockerfile` (`node:22-slim`) and `e2e/smoke.spec.ts` (`1 passed` on Chromium with zero console warnings/errors).
+- Enabled `places.googleapis.com`, `routes.googleapis.com`, `run.googleapis.com`, `secretmanager.googleapis.com`, `cloudbuild.googleapis.com`, and `artifactregistry.googleapis.com` on `geminisprints26blr-3880`.
+- Generated real `data/orr/corridor.geojson` (`545` points, `15,080` m via Routes API v2) and `data/orr/places.json` (`121` verified operational ORR places across 6 categories and 7 neighbourhoods via Places API New), tightened `isNonCampusTechParkSubvenue` in `server/src/places/filter.ts`, and updated `docs/DATA.md`.
+- Added `COPY --chown=node:node data ./data` to `Dockerfile`, provisioned Secret Manager keys (`gemini-api-key`, `maps-browser-key`, `maps-server-key`), deployed `apna-area-00002-msn` to Cloud Run `asia-south1`, verified live `/api/health` + Playwright smoke, and merged `phase/p1-map` (`--no-ff`, tag `p1-map`) to `main`.
 
 ## 3. Decisions Made
-- Locked Game Layer Direction in `Design.md` Section 3 to "Smoked-Acrylic Fare-Meter & Cinema Ribbon".
-- Made `shared/src/logger.ts` 100% isomorphic (dual 32-bit FNV-1a hex fingerprint, guarded `stdout` sink) so `@apna-area/shared` bundles cleanly in both Vite browser builds and Node 22+ servers.
+- **ADR-011:** Used isomorphic FNV-1a fingerprinting in `shared/src/logger.ts` for browser + server compatibility.
+- **ADR-012:** Rendered `CorridorLayer` via `google.maps.OverlayView` SVG pane above the CSS-desaturated map `<canvas>`.
+- **ADR-013:** Filtered out under-construction ORR Blue Line metro stations and non-campus sub-venues (`isNonCampusTechParkSubvenue`) in `server/src/places/filter.ts`.
 
 ## 4. Open Questions
-- **Cloud Run Deploy (`T0.6`):** Need `gcloud` CLI installed/added to Windows `PATH`, authenticated (`gcloud auth login`), project set, and `gemini-api-key` + `maps-browser-key` created in Secret Manager (plus `.env.local` for `P1` `scripts/verify-places.ts`).
+- Confirm Phase 2 (`phase/p2-director`) plan before building `T2.1` through `T2.5`.
 
 ## 5. Known Issues
-- `gcloud` and `docker` are not currently on Windows `PATH`. Local `npm run check` (`11/11` Vitest tests, `0` ESLint warnings, `0` TypeScript errors) and `npm run test:smoke` (`1/1` Playwright Chromium) are 100% green.
+- **Carry-forward UI polish (included in `P2`):** Swap sparkle icon on `Build my first week` CTA (`web/src/picker/OfficePicker.tsx`) to a right-arrow/play glyph, and soften the `Live` status pill hairline (`web/src/components/HealthBadge.tsx` / `web/src/styles/shell.css`) relative to the interactive `Tune` control.
 
 ## 6. File State
-- All `T0.1`..`T0.5` files committed cleanly on branch `phase/p0-skeleton`.
+- Clean working tree on `main` at tag `p1-map` (pushed to `origin` with tags).
 
 ## 7. The Single Next Task
-- Run `T0.6` (`ship-phase` first Cloud Run deploy to `asia-south1`, smoke test the live Cloud Run URL, `--no-ff` merge `phase/p0-skeleton` to `main`, tag `p0-skeleton`), or proceed to `P1` (`T1.2`/`T1.3` ORR Map & Office Picker) once `.env.local` Maps keys are set.
+- Execute **Phase 2 (`phase/p2-director`)**: lock `WeekPlan` / `Mission` / `WorldProgressEvent` Zod contracts (`T2.1`), build `candidates.ts` + `verify.ts` (`T2.2`), wire `gemini-4-neon` (`thinking_level: "medium"`) structured output + `POST /api/world` SSE + `fallback-plans.json` (`T2.3`), build `ProgressChips`, `WeekProgressBar`, and `MissionCard` plus the 2 UI polish items (`T2.4`), and run the Critic + `ship-phase` (`T2.5`).
 
 ## 8. Resume Checklist
 1. `AGENTS.md`
@@ -35,3 +33,4 @@
 3. `docs/HANDOFF.md`
 4. `docs/TASKS.md`
 5. `Design.md`
+6. `.agents/rules/gemini-models.md`

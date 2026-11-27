@@ -5,8 +5,15 @@
  * Outputs: Active HTTP listener on 0.0.0.0:$PORT and structured startup/shutdown logs.
  * Deliberately excludes: Route logic (delegated to server/src/app.ts).
  */
+import { existsSync } from "node:fs";
 import { logger } from "@apna-area/shared";
 import { buildServer } from "./app.js";
+
+if (existsSync(".env.local")) {
+  process.loadEnvFile(".env.local");
+} else if (existsSync(".env")) {
+  process.loadEnvFile(".env");
+}
 
 /**
  * Starts the HTTP server and attaches SIGINT/SIGTERM handlers.

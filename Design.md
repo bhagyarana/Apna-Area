@@ -72,10 +72,11 @@ Selected from `design/discover/variation-1.html` (with two alternatives preserve
 
 ### 4.1 Landing, Camera Tour & Office Picker
 - **States:**
-  - `touring`: 8.5-second camera glide from Marathahalli (`12.9569, 77.7011`) down ORR to Silk Board (`12.9177, 77.6238`) at zoom `14.2`, tilt `45deg`. Four subtle pill labels fade in and out. Bottom hint: `Press Esc or click anywhere to skip`.
-  - `idle` (Picker): Wordmark `Apna Area` top-left with live health dot. Left-aligned card asks `WHICH OFFICE ARE YOU JOINING?` with `@ui-sdk/react` combobox (`Cmd/Ctrl+K` shortcut), 6 verified tech park chips, and one `Tune` button for language comfort + budget band. Tagline at bottom: `Play your first week before it happens.`
-  - `loading` / `error` / `offline`: Skeleton shimmer matching exact combobox height (`52px`); offline banner: `You appear to be offline. Reconnect to load the Outer Ring Road map.` with `Retry`.
-- **Microinteraction:** Selecting an office glides the camera in `950ms` to the office coordinate and drops a yellow destination pin (`#FFD24A`) with a subtle `240ms` scale-in (`0.95 -> 1`).
+  - `touring`: 8.8-second 4-stop camera glide from Marathahalli (`12.9569, 77.7011`) down ORR to Silk Board (`12.9177, 77.6238`). Top-centre smoked-acrylic card shows a 4-segment progress track, `STOP X OF 4 · OUTER RING ROAD`, `Anton` (`font-weight: 400`) neighbourhood title, and concrete subtitle while spotlighting matching neighbourhood pins in `--accent-yellow`. Bottom pill: `Skip tour · Esc`. `Tune` is hidden during the tour.
+  - `idle` (Picker): Wordmark `APNA AREA` top-left; `Tune` button + `Live` health indicator top-right. Top-left smoked-acrylic card asks `WHICH OFFICE ARE YOU JOINING?` with tagline `Play your first week before it happens.`, `@ui-sdk/react` combobox (`Cmd/Ctrl+K` shortcut), and 6 verified tech park quick-pick tiles in a 2x3 grid.
+  - `office_selected` (Destination Card): Picker collapses into a compact Selected Destination Card (`YOUR OFFICE · <AREA>`, `Switch` button, `Anton` office headline, locality subtitle, and `--accent-pink` primary CTA `Build my first week`). On `390x844` mobile, unselected corridor labels collapse to quiet magenta ground dots so the selected pin owns the upper viewport above the bottom sheet.
+  - `loading` / `error` / `offline`: Skeleton shimmer matching exact combobox height (`48px`); offline banner: `You appear to be offline. Reconnect to load the Outer Ring Road map.` with `Retry`.
+- **Map & Pin Craft:** `CorridorLayer` renders via `google.maps.OverlayView` SVG `<path>` in `overlayLayer` above the desaturated dark `<canvas>` (`clickableIcons={false}`) so the `#FF4FA0` corridor spline and ground-anchored `<AdvancedMarker>` capsules remain 100% vivid. Selecting an office glides the camera asymmetrically (`< 950ms`) to frame the pin in the open viewport.
 
 ### 4.2 Week Generation (`generating` -> `week_ready`)
 - **Labor illusion chips:** Real SSE steps appear in a vertical stack (`Found 15 verified places near Embassy TechVillage` -> `Verified 5 of 5 mission stops` -> `Writing your week`), each ticking teal (`#3DE6D0`) as completed.

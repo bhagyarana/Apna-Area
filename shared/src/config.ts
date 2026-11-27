@@ -71,13 +71,24 @@ export const DECISION_THRESHOLDS = {
 
 /** Default runtime feature flags exposed on GET /api/config. */
 export const DEFAULT_FEATURE_FLAGS = {
-  enableMapPicker: false,
+  enableMapPicker: true,
   enableDirector: false,
   enableVoiceNpcs: false,
   enableAdaptiveScoring: false,
   enableSurvivalKit: false,
   enableAmbientMusic: false,
 } as const;
+
+/** Eastern ORR neighbourhood anchors (ordered northeast to southwest along the corridor). */
+export const ORR_NEIGHBOURHOOD_ANCHORS = [
+  { id: "marathahalli", label: "Marathahalli", lat: 12.9569, lng: 77.7011 },
+  { id: "kadubeesanahalli", label: "Kadubeesanahalli", lat: 12.9392, lng: 77.6953 },
+  { id: "devarabisanahalli", label: "Devarabisanahalli", lat: 12.9315, lng: 77.6848 },
+  { id: "bellandur", label: "Bellandur", lat: 12.926, lng: 77.6762 },
+  { id: "sarjapur_junction", label: "Sarjapur Road Junction", lat: 12.9237, lng: 77.6675 },
+  { id: "agara_hsr", label: "Agara & HSR Layout", lat: 12.9185, lng: 77.6412 },
+  { id: "silk_board", label: "Silk Board", lat: 12.9177, lng: 77.6238 },
+] as const;
 
 /** Default Cloud Map ID fallback required when rendering AdvancedMarkerElement. */
 export const DEFAULT_MAP_ID = "DEMO_MAP_ID";
