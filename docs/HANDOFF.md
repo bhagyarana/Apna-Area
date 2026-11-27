@@ -2,8 +2,8 @@
 
 ## 1. Now
 - **Current phase:** `phase/p2-director` (all Phase 2 code, unit/contract/E2E tests, Code Review Gate `PASS 96/100` + fixes, and 3-round Design Critic `9.3/10` desktop / `8.7/10` overall complete)
-- **Current tag:** `p1-map` on `main` (`fed66a2`), with `p2` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting `"merge"` for `p2-director`.
-- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00002-msn`); Phase 2 preview at `https://p2---apna-area-qhtgwpzhpq-el.a.run.app`.
+- **Current tag:** `p1-map` on `main` (`fed66a2`), with `p2-dir` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting `"merge"` for `p2-director`.
+- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00002-msn`); Phase 2 preview at `https://p2-dir---apna-area-qhtgwpzhpq-el.a.run.app`.
 
 ## 2. Done This Session
 - Shipped Phase 1 (`p1-map`, `fed66a2`) with `121` verified ORR places (`data/orr/places.json`) and `545`-point corridor (`data/orr/corridor.geojson`) to Cloud Run `asia-south1`.
