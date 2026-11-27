@@ -23,5 +23,12 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
     target: "es2022",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-maps": ["@vis.gl/react-google-maps"],
+        },
+      },
+    },
   },
 });
