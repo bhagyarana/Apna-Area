@@ -160,12 +160,13 @@
   transition: transform var(--dur-fast) var(--ease-out-quint);
 }
 
-.office-chip:hover {
-  background: var(--bg-surface-elevated);
-}
-
-.office-chip:active {
-  transform: scale(0.98);
+.office-chip:hover { background: var(--bg-surface-elevated); }
+.office-chip:active { transform: scale(0.98); }
+.office-chip-skeleton {
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(32, 26, 56, 0.56);
+  box-shadow: inset 0 0 0 1px var(--ring-hairline);
 }
 
 .office-chip-hood {
@@ -225,21 +226,16 @@
 }
 
 @media (max-width: 768px) {
-  .picker-card {
-    padding: var(--space-4);
-    gap: var(--space-2);
-  }
+  .picker-card { padding: var(--space-4); gap: var(--space-2); }
   .combobox-kbd { display: none; }
-  .chip-toolbar {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .office-chip { flex: 0 0 auto; min-width: 148px; }
+  .chip-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .chip-toolbar > :nth-child(n + 5) { display: none; }
+  .office-chip { min-height: 42px; padding: 6px 10px; min-width: 0; }
+  .office-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .picker-card { animation: fade-only var(--dur-fast) linear both; }
-  .office-chip:active { transform: none; }
+  .office-chip, .primary-cta-btn { transition: none; }
+  .office-chip:active, .primary-cta-btn:active { transform: none; }
 }

@@ -85,14 +85,7 @@ function buildClientFallbackScore(
   };
 }
 
-/**
- * Coordinates POST /api/score evaluation, XP/star odometer updates, and 1-click player pace overrides.
- *
- * @param prefs - Current persisted PlayerPreferences.
- * @param setPrefs - State setter for PlayerPreferences.
- * @param enabledLanguages - Active language list from server config.
- * @returns Adaptive result state and action callbacks.
- */
+/** Coordinates POST /api/score evaluation, XP/star odometer updates, and 1-click player pace overrides. */
 export function useAdaptiveProgress(
   prefs: PlayerPreferences,
   setPrefs: (next: PlayerPreferences) => void,
@@ -160,9 +153,16 @@ export function useAdaptiveProgress(
       const latest = loadPlayerPreferences();
       const prevBestStars = latest.missionStars[turn.mission.id] ?? 0;
       const bestStars = Math.max(prevBestStars, resolvedScore.stars) as 1 | 2 | 3;
+      const earnedPhraseId =
+        turn.targetPhrase && resolvedScore.rubric.phraseScore >= 2.0 ? turn.targetPhrase.id : null;
+      const nextPhraseIds =
+        earnedPhraseId && !latest.learnedPhraseIds.includes(earnedPhraseId)
+          ? [...latest.learnedPhraseIds, earnedPhraseId]
+          : latest.learnedPhraseIds;
       const updated = savePlayerPreferences({
         totalXp: latest.totalXp + resolvedScore.xpEarned,
         missionStars: { ...latest.missionStars, [turn.mission.id]: bestStars },
+        learnedPhraseIds: nextPhraseIds,
         difficulty: resolvedScore.nextDifficulty,
       });
       setPrefs(updated);

@@ -23,10 +23,11 @@ import {
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerConfigRoutes } from "./routes/config.js";
 import { loadVerifiedWorldData, registerPlacesRoutes, type LoadedWorldData } from "./routes/places.js";
-import { registerWorldRoutes } from "./routes/world.js";
+import { loadFallbackWeekPlans, registerWorldRoutes } from "./routes/world.js";
 import { registerLiveTokenRoutes } from "./routes/liveToken.js";
 import { registerScoreRoutes } from "./routes/score.js";
 import { registerKitRoutes } from "./routes/kit.js";
+import { loadSurvivalPhrases } from "./live/phrases.js";
 import type { ModelInteractionRunner } from "./world/director.js";
 import type { LiveTokenMinter } from "./live/token.js";
 import type { DecisionModelRunner } from "./score/decide.js";
@@ -144,28 +145,21 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     const message = error instanceof Error ? error.message : "Unexpected server error";
     log.error("http.error", {
       requestId: request.id,
-      meta: {
-        statusCode,
-        url: request.url,
-        errorMessage: message,
-      },
+      meta: { statusCode, url: request.url, errorMessage: message },
     });
     if (statusCode === 429) {
-      return reply.status(429).send(
-        createApiError("RATE_LIMITED", "Too many requests right now, so wait a moment and retry.", true, request.id),
-      );
+      return reply
+        .status(429)
+        .send(createApiError("RATE_LIMITED", "Too many requests right now, so wait a moment and retry.", true, request.id));
     }
-    return reply.status(statusCode).send(
-      createApiError(
-        "INTERNAL_ERROR",
-        "Something went wrong on the server, so please retry in a few seconds.",
-        statusCode >= 500,
-        request.id,
-      ),
-    );
+    return reply
+      .status(statusCode)
+      .send(createApiError("INTERNAL_ERROR", "Something went wrong on the server, so please retry in a few seconds.", statusCode >= 500, request.id));
   });
 
   const world = options.worldData ?? loadVerifiedWorldData();
+  const resolvedFallbackPlans = options.fallbackPlans ?? loadFallbackWeekPlans();
+  const phrasesCount = loadSurvivalPhrases().phrases.length;
 
   await registerHealthRoutes(app, {
     version: options.version ?? "0.1.0",
@@ -174,6 +168,12 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     placesLoaded: options.placesLoaded ?? world.dataset.places.length,
     geminiConfigured: Boolean(options.geminiApiKey && options.geminiApiKey.length > 0),
     mapsConfigured: Boolean(options.mapsBrowserKey && options.mapsBrowserKey.length > 0),
+    mapsServerConfigured: Boolean(
+      (options.mapsServerKey && options.mapsServerKey.length > 0) ||
+        (options.mapsBrowserKey && options.mapsBrowserKey.length > 0),
+    ),
+    phrasesLoaded: phrasesCount,
+    fallbackPlansLoaded: Object.keys(resolvedFallbackPlans).length,
   });
 
   await registerConfigRoutes(app, {
@@ -199,10 +199,9 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     worldData: world,
     geminiApiKey: options.geminiApiKey,
     runner: options.worldRunner,
-    fallbackPlans: options.fallbackPlans,
-    onPlanReady: (plan, reqId) => {
-      kitHooks.prewarmOfficeCommutes(plan.officePlaceId, plan.recommendedNeighbourhoods, reqId);
-    },
+    fallbackPlans: resolvedFallbackPlans,
+    onPlanReady: (plan, reqId) =>
+      kitHooks.prewarmOfficeCommutes(plan.officePlaceId, plan.recommendedNeighbourhoods, reqId),
     log,
   });
 

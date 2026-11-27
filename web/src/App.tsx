@@ -5,10 +5,11 @@
  * Outputs: Interactive ORR Neon Dusk map stage with TopbarChrome, StageRouter, Voice Ribbon, and Survival Kit peak screen.
  * Deliberately excludes: Client-side API keys or unconfirmed external exits.
  */
-import { lazy, Suspense, useMemo, useState, type JSX } from "react";
+import { lazy, useMemo, useState, type JSX } from "react";
 import { resolveComfortLanguage, type MissionMood } from "@apna-area/shared";
 import { ambientAudio } from "./audio/ambient";
 import { useAmbientSync } from "./audio/useAmbientSync";
+import { StageSuspenseBoundary } from "./components/StageSuspenseCard";
 import { StageRouter } from "./hud/StageRouter";
 import { TopbarChrome } from "./hud/TopbarChrome";
 import { useDirectorStream } from "./hud/useDirectorStream";
@@ -37,8 +38,8 @@ const LazySurvivalKit = lazy(() =>
  */
 export function App(): JSX.Element {
   const [prefs, setPrefs] = useState<PlayerPreferences>(() => loadPlayerPreferences());
-  const { config, world, worldReady, loadError } = useWorldBootstrap();
-  const { director, buildWeek, cancelGeneration, clearWeek } = useDirectorStream();
+  const { config, world, worldReady, loadError, retryBootstrap } = useWorldBootstrap();
+  const { director, buildWeek, retryBuildWeek, cancelGeneration, clearWeek } = useDirectorStream();
   const {
     resultState,
     effectiveNextDifficulty,
@@ -97,7 +98,10 @@ export function App(): JSX.Element {
   const missions = director.weekPlan?.missions ?? [];
 
   return (
-    <div className={stage.kitOpen ? "shell-stage shell-stage-kit" : "shell-stage"}>
+    <div
+      className={stage.kitOpen ? "shell-stage shell-stage-kit" : "shell-stage"}
+      data-week-ready={director.status === "week_ready" ? "true" : "false"}
+    >
       <OrrMap
         mapsBrowserKey={config.mapsBrowserKey}
         mapId={config.mapId}
@@ -109,6 +113,7 @@ export function App(): JSX.Element {
         weekPlan={director.weekPlan}
         activeMissionIndex={stage.activeMissionIndex}
         inVoiceMission={stage.inVoiceMission}
+        hidePins={stage.kitOpen}
         onSelectMission={stage.selectMission}
         tourActive={stage.tourActive}
         onFinishTour={stage.handleFinishTour}
@@ -146,7 +151,10 @@ export function App(): JSX.Element {
           Play your first week before it happens.
         </div>
       ) : stage.kitOpen && selectedOffice ? (
-        <Suspense fallback={null}>
+        <StageSuspenseBoundary
+          loadingLabel="Opening your Outer Ring Road Survival Kit..."
+          onBack={() => stage.setKitOpen(false)}
+        >
           <LazySurvivalKit
             office={selectedOffice}
             weekPlan={director.weekPlan}
@@ -154,13 +162,16 @@ export function App(): JSX.Element {
             onToggleChecklist={(id) => setPrefs(toggleChecklistItem(id))}
             onBackToMap={() => stage.setKitOpen(false)}
           />
-        </Suspense>
+        </StageSuspenseBoundary>
       ) : stage.inVoiceMission &&
         director.weekPlan &&
         selectedOffice &&
         activeMission &&
         activeMissionPlace ? (
-        <Suspense fallback={null}>
+        <StageSuspenseBoundary
+          loadingLabel={`Connecting to ${activeMission.npcFirstName} at ${activeMissionPlace.name}...`}
+          onBack={() => stage.setInVoiceMission(false)}
+        >
           <LazyMissionDialog
             mission={activeMission}
             missionIndex={stage.activeMissionIndex}
@@ -178,10 +189,13 @@ export function App(): JSX.Element {
               stage.selectMission((stage.activeMissionIndex + 1) % missions.length)
             }
           />
-        </Suspense>
+        </StageSuspenseBoundary>
       ) : (
         <StageRouter
           bannerMessage={loadError ?? director.errorMessage}
+          onRetryBanner={loadError ? retryBootstrap : director.errorMessage ? retryBuildWeek : undefined}
+          savedOfficeId={prefs.selectedOfficeId}
+          hasBootstrapError={Boolean(loadError)}
           directorStatus={director.status}
           directorChips={director.chips}
           directorReplayed={director.replayed}

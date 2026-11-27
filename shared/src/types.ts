@@ -118,6 +118,9 @@ export const HealthDataSchema = z.object({
     placesLoaded: z.number().int().nonnegative(),
     geminiConfigured: z.boolean(),
     mapsConfigured: z.boolean(),
+    mapsServerConfigured: z.boolean().optional(),
+    phrasesLoaded: z.number().int().nonnegative().optional(),
+    fallbackPlansLoaded: z.number().int().nonnegative().optional(),
   }),
 });
 export type HealthData = z.infer<typeof HealthDataSchema>;

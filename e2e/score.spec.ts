@@ -110,6 +110,7 @@ test("score: rolls up XP odometer, reveals 4 calibrated rubric bars, and feeds 1
   try {
     await page.goto(address);
     await page.keyboard.press("Escape");
+    await expect(page.getByTestId("office-combobox-input")).toBeEnabled();
 
     const targetOffice = worldData.dataset.places.find((p) => p.id === recordedPlan.officePlaceId)!;
     await page.keyboard.press("Control+k");

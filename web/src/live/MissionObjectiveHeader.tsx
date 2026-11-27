@@ -107,11 +107,7 @@ export function MissionObjectiveHeader({
           </button>
           <button
             type="button"
-            className={
-              showTextBox || status === "permission_denied"
-                ? "live-chip-btn live-chip-btn-active"
-                : "live-chip-btn"
-            }
+            className={showTextBox ? "live-chip-btn live-chip-btn-active" : "live-chip-btn"}
             aria-expanded={showTextBox || status === "permission_denied"}
             onClick={() => {
               if (status === "permission_denied") {
@@ -122,7 +118,7 @@ export function MissionObjectiveHeader({
             }}
             data-testid="toggle-text-fallback-btn"
           >
-            {showTextBox || status === "permission_denied" ? "Keyboard reply active" : "Type instead"}
+            {status === "permission_denied" ? "Focus reply" : showTextBox ? "Hide keyboard" : "Type instead"}
           </button>
         </div>
       )}

@@ -8,6 +8,7 @@
 import type { JSX } from "react";
 import type { BudgetBand, LanguageComfort, PublicConfigData, WeekPlan } from "@apna-area/shared";
 import { AmbientMuteButton } from "../components/AmbientMuteButton";
+import { DemoTimerPill } from "../components/DemoTimerPill";
 import { HealthBadge } from "../components/HealthBadge";
 import { TunePopover } from "../picker/TunePopover";
 import type { PlayerPreferences } from "../state/sessionStore";
@@ -76,17 +77,22 @@ export function TopbarChrome({
       )}
       <div className="topbar-actions">
         {showXpHud && <XpCounter totalXp={prefs.totalXp} totalStars={totalStars} />}
-        {!tourActive && !kitOpen && config.enabledLanguages.includes("kn") && (
-          <PhrasebookPill
-            count={prefs.learnedPhraseIds.length}
-            pulse={phrasePulse}
-            kitActive={kitOpen}
-            onOpenKit={canOpenKit ? onToggleKit : undefined}
-          />
-        )}
-        {!tourActive && config.featureFlags.enableAmbientMusic && (
-          <AmbientMuteButton muted={prefs.musicMuted} onToggle={onToggleMute} />
-        )}
+        {!tourActive &&
+          !kitOpen &&
+          config.enabledLanguages.includes("kn") &&
+          (weekReady || prefs.learnedPhraseIds.length > 0) && (
+            <PhrasebookPill
+              count={prefs.learnedPhraseIds.length}
+              pulse={phrasePulse}
+              kitActive={kitOpen}
+              onOpenKit={canOpenKit ? onToggleKit : undefined}
+            />
+          )}
+        {!tourActive &&
+          config.featureFlags.enableAmbientMusic &&
+          (weekReady || kitOpen) && (
+            <AmbientMuteButton muted={prefs.musicMuted} onToggle={onToggleMute} />
+          )}
         {!tourActive && !kitOpen && (
           <TunePopover
             budgetBand={prefs.budgetBand}
@@ -98,6 +104,7 @@ export function TopbarChrome({
         )}
         {!kitOpen && <HealthBadge />}
       </div>
+      {!tourActive && !kitOpen && <DemoTimerPill />}
     </header>
   );
 }

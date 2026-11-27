@@ -94,6 +94,7 @@ test("kit & confirm-sheet: gates Google Maps navigation and PNG downloads behind
   try {
     await page.goto(address);
     await page.keyboard.press("Escape");
+    await expect(page.getByTestId("office-combobox-input")).toBeEnabled();
 
     const targetOffice = worldData.dataset.places.find((p) => p.id === recordedPlan.officePlaceId)!;
     await page.keyboard.press("Control+k");

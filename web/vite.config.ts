@@ -21,12 +21,21 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: false,
     target: "es2022",
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-maps": ["@vis.gl/react-google-maps"],
+        manualChunks(id) {
+          if (id.includes("@vis.gl/react-google-maps")) {
+            return "vendor-maps";
+          }
+          if (id.includes("@hugeicons/")) {
+            return "vendor-icons";
+          }
+          if (id.includes("node_modules/zod")) {
+            return "vendor-zod";
+          }
+          return undefined;
         },
       },
     },

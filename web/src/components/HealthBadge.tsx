@@ -31,6 +31,7 @@ export function HealthBadge(): JSX.Element {
   const [focused, setFocused] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [checkNonce, setCheckNonce] = useState(0);
 
   useEffect(() => {
     let unmounted = false;
@@ -63,8 +64,8 @@ export function HealthBadge(): JSX.Element {
           status: "error",
           data: null,
           errorMessage: timedOut
-            ? "Server health check timed out, so refresh the page to retry."
-            : "Could not reach the Apna Area server, so refresh the page to retry.",
+            ? "Server health check timed out, so tap Recheck."
+            : "Could not reach the Apna Area server, so tap Recheck.",
         });
       })
       .finally(() => {
@@ -76,7 +77,7 @@ export function HealthBadge(): JSX.Element {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, []);
+  }, [checkNonce]);
 
   const open = !dismissed && (hovered || focused || pinned);
 
@@ -133,14 +134,26 @@ export function HealthBadge(): JSX.Element {
           {health.status === "ok" && health.data ? (
             <>
               <strong>Service healthy</strong>
+              <span>Places verified: {health.data.upstreams.placesLoaded}</span>
               <span>Commit: {health.data.commit}</span>
               <span>Built: {health.data.builtAt}</span>
-              <span>Version: {health.data.version}</span>
             </>
           ) : health.status === "loading" ? (
             <span>Checking Outer Ring Road server health.</span>
           ) : (
-            <span>{health.errorMessage ?? "Could not reach the server, so refresh to retry."}</span>
+            <>
+              <span>{health.errorMessage ?? "Could not reach the server, so tap Recheck."}</span>
+              <button
+                type="button"
+                className="change-office-btn"
+                onClick={() => {
+                  setHealth({ status: "loading", data: null, errorMessage: null });
+                  setCheckNonce((n) => n + 1);
+                }}
+              >
+                Recheck
+              </button>
+            </>
           )}
         </div>
       )}

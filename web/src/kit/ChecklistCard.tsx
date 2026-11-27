@@ -40,6 +40,13 @@ export function ChecklistCard({
   const remaining = items.filter((item) => !checkedIds.includes(item.id));
   const completed = items.filter((item) => checkedIds.includes(item.id));
 
+  const handleToggleAndFocus = (itemId: string): void => {
+    onToggleItem(itemId);
+    window.requestAnimationFrame(() => {
+      document.querySelector<HTMLButtonElement>(`[data-testid="kit-check-${itemId}"]`)?.focus();
+    });
+  };
+
   const renderRow = (item: ChecklistItem, checked: boolean): JSX.Element => (
     <button
       key={item.id}
@@ -47,7 +54,7 @@ export function ChecklistCard({
       role="checkbox"
       aria-checked={checked}
       className={checked ? "kit-check-row kit-check-row-done" : "kit-check-row"}
-      onClick={() => onToggleItem(item.id)}
+      onClick={() => handleToggleAndFocus(item.id)}
       data-testid={`kit-check-${item.id}`}
     >
       <span

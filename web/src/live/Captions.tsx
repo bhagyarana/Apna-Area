@@ -27,7 +27,7 @@ function statusCue(status: LiveSessionStatus, npcFirstName: string): string {
     case "npc_speaking":
       return `${npcFirstName} is speaking · Speak anytime to interrupt`;
     case "permission_denied":
-      return `${npcFirstName} · Type your reply below`;
+      return "Keyboard mode";
     case "completed":
       return `${npcFirstName} · Scene complete`;
     case "error":
@@ -77,13 +77,15 @@ export function Captions({
             : `Greet ${npcFirstName} or start with your objective.`)}
       </p>
 
-      <p className="caption-player-line" data-testid="player-caption-line">
-        {playerCaption
-          ? `You: ${playerCaption}`
-          : status === "permission_denied"
-            ? "Mic blocked in browser, so send a typed line below."
-            : "Your live speech appears here as you talk."}
-      </p>
+      {playerCaption ? (
+        <p className="caption-player-line" data-testid="player-caption-line">
+          You: {playerCaption}
+        </p>
+      ) : status !== "permission_denied" ? (
+        <p className="caption-player-line" data-testid="player-caption-line">
+          Your live speech appears here as you talk.
+        </p>
+      ) : null}
 
       {targetPhrase && (
         <div

@@ -48,25 +48,8 @@ const ROLE_LABELS: Record<NpcRole, string> = {
   office_buddy: "Office teammate",
 };
 
-/**
- * Renders the in-mission voice HUD with 72px amplitude mic orb, live captions, Kannada mastery chime, and docked text fallback.
- *
- * @param props - Active mission, verified place metadata, difficulty, language, and navigation callbacks.
- * @returns Full-stage voice HUD overlay.
- */
-export function MissionDialog({
-  mission,
-  missionIndex,
-  office,
-  missionPlace,
-  difficulty,
-  activeLanguage,
-  languageComfort,
-  onPhraseMastered,
-  onMissionCompleted,
-  onExitMission,
-  onAdvanceNextMission,
-}: MissionDialogProps): JSX.Element {
+/** Renders the in-mission voice HUD with 72px mic orb, live captions, Kannada mastery chime, and text fallback. */
+export function MissionDialog({ mission, missionIndex, office, missionPlace, difficulty, activeLanguage, languageComfort, onPhraseMastered, onMissionCompleted, onExitMission, onAdvanceNextMission }: MissionDialogProps): JSX.Element {
   const { live, startSession, toggleMute, sendTextReply, requestLocalHint, stopSession } = useLiveSession();
   const [imgFailed, setImgFailed] = useState(false);
   const [showTextBox, setShowTextBox] = useState(false);
@@ -77,6 +60,20 @@ export function MissionDialog({
   const submittedScoreRef = useRef<string | null>(null);
   const usedTextRef = useRef(false);
   const { localLanguageShare, hintLevel, paceSeconds } = difficulty;
+
+  useEffect(() => {
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.key !== "Escape" || ev.defaultPrevented) return;
+      if (showTextBox && live.status !== "permission_denied") {
+        setShowTextBox(false);
+        return;
+      }
+      stopSession();
+      onExitMission();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [live.status, onExitMission, showTextBox, stopSession]);
 
   useEffect(() => {
     setImgFailed(false);
@@ -126,15 +123,7 @@ export function MissionDialog({
 
   const handleRetry = () => {
     primeUserGestureAudioContext();
-    void startSession({
-      mission,
-      officeName: office.name,
-      placeName: missionPlace.name,
-      placeCategory: missionPlace.category,
-      difficulty,
-      activeLanguage,
-      languageComfort,
-    });
+    void startSession({ mission, officeName: office.name, placeName: missionPlace.name, placeCategory: missionPlace.category, difficulty, activeLanguage, languageComfort });
   };
 
   const handleSubmitText = (e: FormEvent) => {
@@ -167,15 +156,9 @@ export function MissionDialog({
       />
 
       <section className="cinema-voice-dock" aria-label="Voice conversation controls">
-        {live.status === "permission_denied" && (
-          <div className="live-warning-banner" role="alert" data-testid="mic-denied-banner">
-            Microphone access is blocked. Allow mic access in your browser bar or type your reply below.
-          </div>
-        )}
-
         {live.status === "error" && (
           <div className="live-warning-banner" role="alert" data-testid="live-error-banner">
-            <span>{live.errorMessage ?? "Voice connection dropped. Tap Retry to reconnect to this mission."}</span>
+            <span>{live.errorMessage ?? "Voice connection dropped, so tap Retry to reconnect to this mission."}</span>
             <button type="button" className="change-office-btn" onClick={handleRetry} data-testid="retry-live-btn">Retry</button>
           </div>
         )}
@@ -225,7 +208,11 @@ export function MissionDialog({
           </div>
 
           {textInputVisible && (
-            <form className="live-text-form" onSubmit={handleSubmitText} data-testid="live-text-form">
+            <form
+              className="live-text-form"
+              onSubmit={handleSubmitText}
+              data-testid="live-text-form"
+            >
               <input
                 type="text"
                 className="live-text-input"
@@ -240,7 +227,7 @@ export function MissionDialog({
           )}
         </div>
 
-        {!isCompleted && (
+        {!isCompleted && live.status !== "permission_denied" && (
           <MicOrbControl status={live.status} muted={live.muted} rmsLevel={live.rmsLevel} onToggleMute={toggleMute} />
         )}
       </section>

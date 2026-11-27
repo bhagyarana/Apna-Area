@@ -81,15 +81,7 @@ export function CameraGlideController({
       }
       const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
       if (isMobile) {
-        const midLat = (north + south) / 2;
-        const midLng = (east + west) / 2;
-        const maxSpan = Math.max((north - south) * 1.35, east - west);
-        const zoom = maxSpan > 0.03 ? 13.1 : maxSpan > 0.018 ? 13.55 : 13.95;
-        const southOffset = 0.0068 * Math.pow(2, 14 - zoom);
-        map.moveCamera({
-          center: { lat: midLat - southOffset, lng: midLng },
-          zoom,
-        });
+        map.fitBounds({ north, south, east, west }, { top: 124, right: 32, bottom: 386, left: 32 });
         return;
       }
       map.fitBounds({ north, south, east, west }, { top: 96, right: 84, bottom: 72, left: 492 });

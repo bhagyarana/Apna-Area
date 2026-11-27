@@ -200,8 +200,13 @@
   white-space: nowrap;
 }
 
-.mission-pin:not(.mission-pin-active):not(:hover):not(:focus-visible) .mission-pin-name {
+.mission-pin:not(.mission-pin-active):not(:hover):not(:focus-visible) .mission-pin-name,
+.orr-map-container[data-voice-mission="true"] .mission-pin:not(:hover):not(:focus-visible) .mission-pin-name {
   display: none;
+}
+
+.orr-map-container[data-voice-mission="true"] .mission-pin-active:not(:hover):not(:focus-visible) {
+  padding: 0 9px;
 }
 
 .mission-pin-num {

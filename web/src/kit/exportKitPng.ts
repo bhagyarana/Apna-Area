@@ -30,11 +30,14 @@ function drawRoundedRect(
   ctx.closePath();
 }
 
-/**
- * Generates and downloads a 1200x675 PNG summary card of the player's Outer Ring Road Survival Kit.
- *
- * @param input - Hydrated KitPayload, checked checklist IDs, and XP total.
- */
+function truncateClean(text: string, maxChars: number): string {
+  if (text.length <= maxChars) return text;
+  const sliced = text.slice(0, maxChars - 3);
+  const lastSpace = sliced.lastIndexOf(" ");
+  return `${(lastSpace > 16 ? sliced.slice(0, lastSpace) : sliced).trimEnd()}...`;
+}
+
+/** Generates and downloads a 1200x675 PNG summary card of the player's Outer Ring Road Survival Kit. */
 export function downloadSurvivalKitPng(input: ExportKitPngInput): void {
   const canvas = document.createElement("canvas");
   canvas.width = 1200;
@@ -102,7 +105,7 @@ export function downloadSurvivalKitPng(input: ExportKitPngInput): void {
 
     ctx.fillStyle = "#A397C2";
     ctx.font = "400 13px 'Hanken Grotesk', system-ui, sans-serif";
-    ctx.fillText(area.fitReason.slice(0, 48), 70, y + 50);
+    ctx.fillText(truncateClean(area.oneLine || area.fitReason, 46), 70, y + 50);
   });
 
   // Column 2: Phrases you spoke
@@ -119,12 +122,12 @@ export function downloadSurvivalKitPng(input: ExportKitPngInput): void {
     const y = 242 + idx * 96;
     ctx.fillStyle = "#F7F1FF";
     ctx.font = "600 17px 'Noto Sans Kannada', 'Hanken Grotesk', sans-serif";
-    ctx.fillText(phr.kannada.slice(0, 34), 444, y);
+    ctx.fillText(truncateClean(phr.kannada, 34), 444, y);
     ctx.fillStyle = "#CFC4E8";
     ctx.font = "500 13px 'Hanken Grotesk', system-ui, sans-serif";
-    ctx.fillText(phr.transliteration.slice(0, 44), 444, y + 23);
+    ctx.fillText(truncateClean(phr.transliteration, 44), 444, y + 23);
     ctx.fillStyle = "#A397C2";
-    ctx.fillText(phr.english.slice(0, 46), 444, y + 43);
+    ctx.fillText(truncateClean(phr.english, 46), 444, y + 43);
   });
 
   // Column 3: Checklist
@@ -145,7 +148,7 @@ export function downloadSurvivalKitPng(input: ExportKitPngInput): void {
     ctx.fillText(done ? "[x]" : "[ ]", 818, y);
     ctx.fillStyle = "#F7F1FF";
     ctx.font = "500 13.5px 'Hanken Grotesk', system-ui, sans-serif";
-    ctx.fillText(item.label.slice(0, 42), 848, y);
+    ctx.fillText(truncateClean(item.label, 42), 848, y);
   });
 
   const dataUrl = canvas.toDataURL("image/png");

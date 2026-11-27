@@ -5,7 +5,7 @@
  * Outputs: Bounded 3-column desktop / segmented mobile Survival Kit stage with focus-trapped ConfirmSheet.
  * Deliberately excludes: Unconfirmed window.open calls or unconfirmed file downloads.
  */
-import { useCallback, useRef, useState, type JSX } from "react";
+import { useCallback, useEffect, useRef, useState, type JSX, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, Download01Icon } from "@hugeicons/core-free-icons";
 import type { NeighbourhoodCommute, VerifiedPlace, WeekPlan } from "@apna-area/shared";
@@ -59,6 +59,37 @@ export function SurvivalKit({
   if (pendingExit !== null) {
     lastExitRef.current = pendingExit;
   }
+
+  useEffect(() => {
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (
+        ev.key === "Escape" &&
+        !ev.defaultPrevented &&
+        pendingExit === null &&
+        !document.querySelector('[data-testid="confirm-sheet"]')
+      ) {
+        ev.preventDefault();
+        onBackToMap();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onBackToMap, pendingExit]);
+
+  const handleTabKeyDown = (ev: ReactKeyboardEvent<HTMLDivElement>) => {
+    const order: readonly MobileSectionTab[] = ["commute", "phrases", "checklist"];
+    const idx = order.indexOf(mobileTab);
+    let nextIdx = idx;
+    if (ev.key === "ArrowRight") nextIdx = (idx + 1) % order.length;
+    else if (ev.key === "ArrowLeft") nextIdx = (idx - 1 + order.length) % order.length;
+    else if (ev.key === "Home") nextIdx = 0;
+    else if (ev.key === "End") nextIdx = order.length - 1;
+    else return;
+    ev.preventDefault();
+    const nextTab = order[nextIdx]!;
+    setMobileTab(nextTab);
+    document.querySelector<HTMLButtonElement>(`[data-testid="kit-tab-${nextTab}"]`)?.focus();
+  };
 
   const handleConfirmExit = useCallback(() => {
     const active = pendingExit;
@@ -118,7 +149,12 @@ export function SurvivalKit({
       </section>
 
       {kit && !loading && !errorMessage && (
-        <div className="kit-mobile-tabs" role="tablist" aria-label="Survival Kit sections">
+        <div
+          className="kit-mobile-tabs"
+          role="tablist"
+          aria-label="Survival Kit sections"
+          onKeyDown={handleTabKeyDown}
+        >
           {(
             [
               { id: "commute", label: `Commutes (${kit.neighbourhoods.length})` },
@@ -130,6 +166,7 @@ export function SurvivalKit({
               key={tab.id}
               type="button"
               role="tab"
+              tabIndex={mobileTab === tab.id ? 0 : -1}
               aria-selected={mobileTab === tab.id}
               className={
                 mobileTab === tab.id ? "kit-mobile-tab kit-mobile-tab-active" : "kit-mobile-tab"

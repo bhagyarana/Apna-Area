@@ -15,8 +15,8 @@
   background: radial-gradient(circle at 50% 45%, rgba(14, 10, 28, 0.78) 0%, rgba(14, 10, 28, 0.56) 100%);
 }
 .shell-stage-kit .mission-pin-anchor,
-.shell-stage-kit .office-pin-anchor { opacity: 0; pointer-events: none; }
-.shell-stage-kit .shell-topbar { width: min(1160px, 100%); margin: 0 auto; }
+.shell-stage-kit .map-pin-anchor,
+.shell-stage-kit .fallback-pin-badge { opacity: 0; pointer-events: none; }
 
 .phrasebook-pill-interactive { border: 0; cursor: pointer; }
 .phrasebook-pill-interactive:hover { background: rgba(25, 19, 46, 0.96); color: var(--text-primary); }
@@ -232,6 +232,7 @@
   }
   .kit-mobile-tab-active { background: var(--bg-surface-elevated); color: var(--text-primary); box-shadow: inset 0 0 0 1px var(--ring-hairline); }
   .kit-col-mobile-hidden { display: none; }
+  .kit-card { mask-image: linear-gradient(to bottom, #000 calc(100% - 14px), rgba(0, 0, 0, 0.35) 100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {

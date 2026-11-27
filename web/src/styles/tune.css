@@ -29,6 +29,7 @@
 
 @media (max-width: 768px) {
   .tune-trigger { padding: 0 9px; gap: 5px; }
+  .tune-lang-suffix { display: none; }
 }
 
 .tune-close,

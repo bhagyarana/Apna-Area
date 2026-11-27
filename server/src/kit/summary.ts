@@ -48,24 +48,13 @@ function isTransientError(err: unknown): boolean {
   return /\b(429|503|UNAVAILABLE|RESOURCE_EXHAUSTED|timeout|aborted|ECONNRESET)\b/i.test(msg);
 }
 
-/**
- * Verifies that a model-generated neighbourhood summary line contains zero price claims, hype punctuation, or em dashes.
- *
- * @param line - Candidate summary string.
- * @returns True when safe to ship to the UI.
- */
+/** Verifies that a model-generated summary line has zero price claims, hype punctuation, or em dashes. */
 export function verifyAreaSummaryLine(line: string): boolean {
   const trimmed = line.trim();
   return trimmed.length >= 12 && trimmed.length <= 195 && !FORBIDDEN_CLAIM_REGEX.test(trimmed);
 }
 
-/**
- * Builds a deterministic, factual one-sentence summary strictly from verified Routes API numbers.
- *
- * @param item - Raw neighbourhood commute record.
- * @param officeName - Verified office name.
- * @returns Honest single-sentence blurb free of price claims or em dashes.
- */
+/** Builds a deterministic, factual one-sentence summary strictly from verified corridor metadata. */
 export function buildDeterministicAreaOneLine(
   item: RawNeighbourhoodCommute,
   officeName: string,
@@ -77,12 +66,7 @@ export function buildDeterministicAreaOneLine(
   return `Direct Outer Ring Road service-lane link toward ${officeName}.`;
 }
 
-/**
- * Creates the production v1 Gemini 3.5 Flash-Lite runner for Survival Kit area summaries.
- *
- * @param apiKey - Server-only GEMINI_API_KEY.
- * @returns KitSummaryRunner bound to MODEL_IDS.textFastLite.
- */
+/** Creates the production v1 Gemini 3.5 Flash-Lite runner for Survival Kit area summaries. */
 export function createGenAiKitSummaryRunner(apiKey: string): KitSummaryRunner {
   const client = new GoogleGenAI({ apiKey });
 
@@ -91,9 +75,10 @@ export function createGenAiKitSummaryRunner(apiKey: string): KitSummaryRunner {
       let timer: ReturnType<typeof setTimeout> | undefined;
       try {
         const timeoutPromise = new Promise<never>((_, reject) => {
-          timer = setTimeout(() => {
-            reject(new Error(`Kit summary call timed out after ${TIMEOUTS_MS.kitSummary}ms`));
-          }, TIMEOUTS_MS.kitSummary);
+          timer = setTimeout(
+            () => reject(new Error(`Kit summary call timed out after ${TIMEOUTS_MS.kitSummary}ms`)),
+            TIMEOUTS_MS.kitSummary,
+          );
         });
         const callPromise = client.interactions.create({
           model: MODEL_IDS.textFastLite,
@@ -127,24 +112,57 @@ export function createGenAiKitSummaryRunner(apiKey: string): KitSummaryRunner {
   };
 }
 
-/**
- * Hydrates RawNeighbourhoodCommute records with verified Flash-Lite one-liners (or deterministic Routes API fallbacks).
- *
- * @param rawItems - Commute records from computeOfficeCommutes.
- * @param officeName - Verified office name.
- * @param opts - Optional runner, requestId, and structured logger.
- * @returns Hydrated NeighbourhoodCommute array and summaryFallbackUsed boolean.
- */
+export interface SummaryCache {
+  get(key: string): ReadonlyMap<NeighbourhoodId, string> | null;
+  set(key: string, value: ReadonlyMap<NeighbourhoodId, string>): void;
+}
+
+/** Creates a bounded TTL cache for verified Flash-Lite neighbourhood summaries. */
+export function createSummaryCache(): SummaryCache {
+  const store = new Map<string, { value: ReadonlyMap<NeighbourhoodId, string>; expiresAt: number }>();
+  return {
+    get(key: string) {
+      const hit = store.get(key);
+      if (!hit || Date.now() > hit.expiresAt) {
+        if (hit) store.delete(key);
+        return null;
+      }
+      return hit.value;
+    },
+    set(key: string, value: ReadonlyMap<NeighbourhoodId, string>) {
+      if (store.size >= KIT_CONFIG.commuteCacheMaxEntries) {
+        const oldestKey = store.keys().next().value;
+        if (oldestKey !== undefined) store.delete(oldestKey);
+      }
+      store.set(key, { value, expiresAt: Date.now() + KIT_CONFIG.commuteCacheTtlMs });
+    },
+  };
+}
+
+/** Hydrates RawNeighbourhoodCommute records with verified Flash-Lite one-liners or deterministic fallbacks. */
 export async function populateNeighbourhoodSummaries(
   rawItems: readonly RawNeighbourhoodCommute[],
   officeName: string,
   opts: {
     runner?: KitSummaryRunner | null;
+    cache?: SummaryCache;
     requestId?: string;
     log?: ReturnType<typeof createLogger>;
   } = {},
 ): Promise<{ neighbourhoods: NeighbourhoodCommute[]; summaryFallbackUsed: boolean }> {
   const log = opts.log ?? createLogger();
+  const cacheKey = `${officeName}:${rawItems.map((r) => r.neighbourhoodId).join(",")}`;
+  const cachedMap = opts.cache?.get(cacheKey);
+  if (cachedMap) {
+    let fallback = false;
+    const neighbourhoods = rawItems.map((item) => {
+      const line = cachedMap.get(item.neighbourhoodId);
+      if (!line) fallback = true;
+      return { ...item, oneLine: line ?? buildDeterministicAreaOneLine(item, officeName) };
+    });
+    return { neighbourhoods, summaryFallbackUsed: fallback };
+  }
+
   const byId = new Map<NeighbourhoodId, string>();
   let summaryFallbackUsed = false;
 
@@ -157,8 +175,7 @@ export async function populateNeighbourhoodSummaries(
         originPlaceName: r.originPlaceName,
         fitReason: r.fitReason,
         fastestMode:
-          r.twoWheelerMin !== null &&
-          (r.morningDriveMin === null || r.twoWheelerMin < r.morningDriveMin)
+          r.twoWheelerMin !== null && (r.morningDriveMin === null || r.twoWheelerMin < r.morningDriveMin)
             ? "two_wheeler"
             : "car_or_bus",
       })),
@@ -216,5 +233,8 @@ export async function populateNeighbourhoodSummaries(
     return { ...item, oneLine: modelLine ?? buildDeterministicAreaOneLine(item, officeName) };
   });
 
+  if (!summaryFallbackUsed && byId.size > 0) {
+    opts.cache?.set(cacheKey, byId);
+  }
   return { neighbourhoods, summaryFallbackUsed };
 }

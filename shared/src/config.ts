@@ -41,6 +41,7 @@ export const ENABLED_LANGUAGES = ["en", "hi", "kn"] as const;
 export const TIMEOUTS_MS = {
   healthCheck: 2_000,
   worldDirector: 32_000,
+  worldDirectorFallback: 20_000,
   liveToken: 6_000,
   decisionsScore: 4_000,
   routesMatrix: 7_000,
@@ -52,7 +53,8 @@ export const TIMEOUTS_MS = {
 
 /** Per-IP API rate limits and Live session duration caps for budget protection. */
 export const SAFETY_LIMITS = {
-  apiRequestsPerMinutePerIp: 60,
+  apiRequestsPerMinutePerIp: 180,
+  worldRequestsPerMinutePerIp: 30,
   liveTokensPerMinutePerIp: 30,
   scoreRequestsPerMinutePerIp: 30,
   kitRequestsPerMinutePerIp: 30,
@@ -113,6 +115,7 @@ export const LIVE_VOICE_CONFIG = {
 /** Tunables for the Phase 2 Week One Director and candidate selector. */
 export const DIRECTOR_CONFIG = {
   thinkingLevel: "medium",
+  fallbackThinkingLevel: "low",
   minPrimaryCandidates: 8,
   maxPromptCandidates: 15,
   lruMaxEntries: 50,

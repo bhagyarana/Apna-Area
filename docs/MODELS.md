@@ -21,7 +21,7 @@ export const MODEL_IDS = {
 
 ## 2. Hard SDK Rules (Verified via `gemini-api-dev` & `gemini-live-api-dev`)
 - **SDK package:** `@google/genai` `>= 3.6.1`.
-- **API versions:** Default `new GoogleGenAI({})` (`v1`) for Interactions API (`gemini-4-neon`, `gemini-4-hydrogen`, `gemini-3.5-flash-lite`, `lyria-3-clip-preview`, `gemini-nano-banana-2.1`). Use `new GoogleGenAI({ httpOptions: { apiVersion: "v1beta" } })` for `decisions.create`, `authTokens.create`, `live.connect`, and `gemini-3.8-flash-tts`.
+- **API versions:** Default `new GoogleGenAI({})` (`v1`) for Interactions API (`gemini-4-neon`, `gemini-4-hydrogen`, `gemini-3.5-flash-lite`, `gemini-nano-banana-2.1`). Use `v1beta` for `decisions.create`, `gemini-3.8-flash-tts`, and `lyria-3-clip-preview`, and `v1alpha` for `authTokens.create` + `live.connect` (`ADR-015`).
 - **Gemini 4 parameter boundaries:** Never pass `temperature`, `top_p`, `top_k`, `thinking_budget`, `minimal` thinking, or `cached_content` to `gemini-4-*`. Valid `thinking_level` values for Neon and Hydrogen: `"low" | "medium" | "high" | "xhigh"`.
 - **Gemini 3.8 Live boundary:** Never pass `thinkingConfig` / `thinking_level` or `proactive_audio: false` to `gemini-3.8-live`. Use `responseModalities: ["AUDIO"]` with `inputAudioTranscription: {}` and `outputAudioTranscription: {}`.
 - **Privacy opt-out:** Pass `store: false` on stateless server `interactions.create` calls so user inputs are not retained unnecessarily.
@@ -30,13 +30,13 @@ export const MODEL_IDS = {
 
 | Job | Model ID | API Surface | Thinking | Latency Budget | Est. Cost / Demo Run | Fallback Path |
 |---|---|---|---|---|---|---|
-| **1. Director (`POST /api/world`)** | `gemini-4-neon` | `interactions.create` (`v1`) | `"medium"` | `< 10 s` (`p50 ~5.5 s`, timeout `14 s`) | ~$0.018 (1 call, cached per office) | 1 retry with verifier diff -> `gemini-4-hydrogen` (`"medium"`) -> labelled real replay |
-| **2. Voice NPC (`POST /api/live-token` + WSS)** | `gemini-3.8-live` | `authTokens.create` + `live.connect` (`v1beta`) | omitted (not supported on `3.8-live`) | `< 1.0 s` turn response, `90 s` cap | ~$0.035 per 60 s voice mission | Reconnect once with session resumption; text input fallback via `sendRealtimeInput({ text })` if mic denied |
-| **3. Mission Scorer (`POST /api/score`)** | `gemini-decision-1` | `decisions.create` (`v1beta`) | prefill pass (`0` output tokens) | `< 500 ms` (`p50 ~220 ms`, timeout `4 s`) | ~$0.0008 per mission | Retry once on 503 -> deterministic safe default (`keep_level`, `usedSafeDefault: true`) |
-| **4. Kit Neighbourhood Blurbs (`POST /api/kit`)** | `gemini-3.5-flash-lite` | `interactions.create` (`v1`) | `"minimal"` | `< 1.8 s` (timeout `5 s`) | ~$0.0004 per kit | Deterministic template string built strictly from Routes API numbers |
-| **5. Phrasebook Replay (`POST /api/tts`)** | `gemini-3.8-flash-tts` | `interactions.create` (`v1beta`, `stream: false`) | n/a | `< 2.0 s` first play, `0 ms` cached | ~$0.002 per phrase | Replay captured NPC audio snippet or show phonetic syllable breakdown |
-| **6. Ambient Loops (Build Script)** | `lyria-3-clip-preview` | `interactions.create` (`v1`) | n/a | Build-time only (`4 x 30 s` MP3s) | ~$0.16 one-time build cost (`$0` per visitor) | App runs silently if audio asset missing or muted |
-| **7. NPC Portraits (Build Script)** | `gemini-nano-banana-2.1` | `interactions.create` (`v1`, `1:1`, `1K`) | n/a | Build-time only (`5` portraits) | ~$0.10 one-time build cost (`$0` per visitor) | Monogrammed geometric avatar SVG in palette tokens |
+| **1. Director (`POST /api/world`)** | `gemini-4-neon` | `interactions.create` (`v1`) | `"medium"` | `< 30 s` (`32 s` Neon cap, `20 s` Hydrogen `"low"` cap) | ~$0.018 (1 call, cached per office) | 1 verifier retry -> `gemini-4-hydrogen` (`"low"`) -> labelled real replay (`Replayed from an earlier run`) |
+| **2. Voice NPC (`POST /api/live-token` + WSS)** | `gemini-3.8-live` | `authTokens.create` + `live.connect` (`v1alpha`) | omitted (not supported on `3.8-live`) | `< 1.0 s` turn response, `90 s` cap | ~$0.035 per 60 s voice mission | `uses: 3` session resumption + `Retry`; text input fallback via `sendRealtimeInput({ text })` |
+| **3. Mission Scorer (`POST /api/score`)** | `gemini-decision-1` | `decisions.create` (`v1beta`) | prefill pass (`0` output tokens) | `< 600 ms` (`p50 ~450 ms`, timeout `4 s`) | ~$0.0008 per mission | Retry once on 429/503 -> labelled deterministic fallback (`fallbackUsed: true`) |
+| **4. Kit Neighbourhood Blurbs (`POST /api/kit`)** | `gemini-3.5-flash-lite` | `interactions.create` (`v1`) | `"minimal"` | `< 1.8 s` (timeout `5 s`, cached) | ~$0.0004 per kit | Deterministic corridor note verified free of price claims and repeated bar numbers |
+| **5. Phrasebook Replay (`POST /api/tts`)** | `gemini-3.8-flash-tts` | `interactions.create` (`v1beta`, `stream: false`) | n/a | `< 2.0 s` first play, `0 ms` cached | ~$0.002 per phrase | Inline pronunciation line (`script · transliteration · meaning`) |
+| **6. Ambient Loops (Build Script)** | `lyria-3-clip-preview` | `interactions.create` (`v1beta`) | n/a | Build-time only (`4 x 30 s` MP3s) | ~$0.16 one-time build cost (`$0` per visitor) | App runs silently if audio asset missing or muted |
+| **7. NPC Portraits (Build Script)** | `gemini-nano-banana-2.1` | `interactions.create` (`v1`, `1:1`, `1K`) | n/a | Build-time only (`10` WebP portraits) | ~$0.18 one-time build cost (`$0` per visitor) | Monogrammed geometric avatar fallback in palette tokens |
 
 **Total live API spend per complete 3-minute judge run:** approximately **$0.06 to $0.09** (well under 0.25% of the $40 hackathon budget).
 
@@ -101,46 +101,27 @@ Verified candidate places within 3 km: {{candidatesJson}}
 
 ---
 
-### 4.2 Decisions API Scorer (`server/score/decide.ts`)
+### 4.2 Decisions API Scorer (`server/src/score/decide.ts`, `server/src/score/questions.ts`)
 
 **SDK Call Pattern (`v1beta`):**
 ```ts
-const result = await genaiV1Beta.decisions.create({
+const res = await client.decisions.create({
   model: MODEL_IDS.decisions,
-  input: [
-    { type: "text", text: `Mission objective: ${objective}\n` },
-    { type: "text", text: activePhrase ? `Target phrase: ${activePhrase.kannada} (${activePhrase.transliteration} = ${activePhrase.english})\n` : "Target phrase: none\n" },
-    { type: "text", text: `Live audio tool signals: ${JSON.stringify(toolSignals ?? {})}\n` },
-    { type: "text", text: `Current difficulty: ${JSON.stringify(currentDifficulty)}\n` },
-    { type: "text", text: `Conversation transcript:\n${formattedTranscript}` },
-  ],
-  questions: buildQuestions(Boolean(activePhrase)),
+  input: buildDecisionInputText(req), // includes native Kannada script + Roman transliteration + English
+  questions: MISSION_DECISION_QUESTIONS,
 });
 ```
 
-**Questions Schema & Threshold Rules:**
+**Questions Schema & Threshold Rules (5 parallel questions, `0` output tokens):**
 1. `objective_met` (`type: "noul"`):
-   - `instructions`: `"Did the player achieve the stated mission objective during the conversation transcript or live tool signals?"`
-   - Threshold: `noul >= 0.60` (or `toolSignals?.objectiveCompleted === true`) counts as objective met; `confidence < 0.75` flags `usedSafeDefault`.
-2. `phrase_attempt` (`type: "score"`, included when `activePhrase` is defined in P3c):
-   - `instructions`: `"How clearly did the player attempt the target local phrase (accounting for phonetic ASR transliteration, typed fallback input, and Live audio tool signals)?"`
-   - `criteria` (ordered 0 to 3):
-     - `0`: `"No attempt at the target phrase"`
-     - `1`: `"Spoke only in their comfort language without trying the phrase"`
-     - `2`: `"Partial or hesitant attempt at the target phrase"`
-     - `3`: `"Clear, contextually appropriate use of the target phrase"`
-   - **Split-brain guard:** If `toolSignals?.phraseQuality === "clear"`, `shared/game` floors `phrase_attempt` at `>= 2.5` even if `inputAudioTranscription` garbled the Kannada phonetics into English homophones.
-3. `tone` (`type: "score"`):
-   - `instructions`: `"How respectful and constructive was the player's conversational tone with the local character?"`
-   - `criteria` (ordered 0 to 3): `["Dismissive or rude", "Abrupt or transactional", "Polite and clear", "Warm, curious, and locally respectful"]`
-4. `next_route` (`type: "choice"`, keys sorted alphabetically with mandatory `other`):
-   - `instructions`: `"Which difficulty adjustment best fits the next mission given objective completion, tone, and language comfort?"`
-   - `criteria`:
-     - `keep_level`: `"Player completed the mission at a comfortable stretch; keep current language mix and hint support."`
-     - `more_local_language`: `"Player succeeded smoothly and warmly; increase local language share and reduce hints on the next mission."`
-     - `more_support`: `"Player struggled, asked for multiple hints, or did not finish; add English/Hindi scaffolding and gentler pace."`
-     - `other`: `""`
-   - **Confidence & clamp rule:** If `next_route.confidence < 0.75` or `next_route.choice === "other"`, route to `"keep_level"` and set `usedSafeDefault: true`. When `ENABLED_LANGUAGES` is `["en"]`, `"more_local_language"` clamps `localLanguageShare` to `0` while still tightening pace and hint level.
+   - `instructions`: `"Did the player satisfy the scene objective in the conversation or via objectiveCompleted?"`
+   - Threshold: `noul >= 0.60` (or `toolSignals.objectiveCompleted === true`) counts as objective met.
+2. `objective_score`, `phrase_score`, `tone_score` (`type: "score"`, ordered `0..3` criteria):
+   - Evaluates objective clarity, local Kannada phrase engagement (accounting for phonetic ASR transliteration, typed fallback input, and Live `mark_phrase_attempt` signals), and polite everyday Bengaluru rapport.
+   - **Split-brain guard:** If `toolSignals.phraseQuality === "clear"`, `decide.ts` floors `phrase_score` at `>= 2.4`. If `phraseScore >= 2.0`, the phrase is persisted to `learnedPhraseIds` even if `mark_phrase_attempt` was skipped.
+3. `next_route` (`type: "choice"`, keys sorted alphabetically with mandatory `other`):
+   - `criteria` keys: `["ease_level", "keep_level", "other", "step_up"]`.
+   - **Confidence & clamp rule:** `confidence` is floor-truncated to 3 decimals; if `confidence < 0.75` or `choice === "other"`, `resolveEffectiveRoute` clamps to `"keep_level"` and sets `lowConfidenceFallback: true`. When `fallbackUsed === true`, the UI labels the drawer `"Estimated rubric (fallback)"` instead of `"Calibrated rubric"`.
 
 ---
 

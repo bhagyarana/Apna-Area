@@ -59,3 +59,38 @@ export async function fetchWithRetry(
 
   throw new Error("Exhausted fetch retry attempts.");
 }
+
+const RAW_FETCH_ERROR_REGEX =
+  /\b(failed to fetch|networkerror|load failed|fetch failed|network request failed|econnrefused|enotfound)\b/i;
+const RAW_ABORT_ERROR_REGEX = /\b(aborterror|signal is aborted|aborted|timed out|timeout)\b/i;
+
+/**
+ * Normalises unknown client network/abort exceptions into a clean single-sentence user message without em dashes.
+ *
+ * @param err - Caught error value.
+ * @param fallback - Default plain-English message when upstream or timeout fails.
+ * @param offlineMessage - Specific message shown when navigator.onLine is false or fetch fails at transport level.
+ * @returns Sanitized single-sentence message safe to render directly in UI banners.
+ */
+export function toUserErrorMessage(
+  err: unknown,
+  fallback: string,
+  offlineMessage = "You appear to be offline, so reconnect and tap Retry.",
+): string {
+  const browserOffline =
+    typeof navigator !== "undefined" && "onLine" in navigator && navigator.onLine === false;
+  if (browserOffline) {
+    return offlineMessage;
+  }
+  const raw = err instanceof Error ? err.message.trim() : "";
+  if (!raw) {
+    return fallback;
+  }
+  if (RAW_FETCH_ERROR_REGEX.test(raw)) {
+    return offlineMessage;
+  }
+  if (RAW_ABORT_ERROR_REGEX.test(raw)) {
+    return fallback;
+  }
+  return raw.replace(/\s*[\u2014\u2013]\s*/g, ", ");
+}

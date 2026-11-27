@@ -33,18 +33,19 @@ export async function registerConfigRoutes(
   app: FastifyInstance,
   options: PublicRuntimeOptions,
 ): Promise<void> {
+  const payload: PublicConfigData = PublicConfigDataSchema.parse({
+    mapsBrowserKey: options.mapsBrowserKey,
+    mapId: options.mapId && options.mapId.length > 0 ? options.mapId : DEFAULT_MAP_ID,
+    enabledLanguages: [...ENABLED_LANGUAGES],
+    orrBbox: ORR_BBOX,
+    featureFlags: {
+      ...DEFAULT_FEATURE_FLAGS,
+      ...options.featureFlags,
+    },
+  });
+
   app.get("/api/config", async (request, reply) => {
     reply.header("Cache-Control", "public, max-age=60");
-    const payload: PublicConfigData = PublicConfigDataSchema.parse({
-      mapsBrowserKey: options.mapsBrowserKey,
-      mapId: options.mapId && options.mapId.length > 0 ? options.mapId : DEFAULT_MAP_ID,
-      enabledLanguages: [...ENABLED_LANGUAGES],
-      orrBbox: ORR_BBOX,
-      featureFlags: {
-        ...DEFAULT_FEATURE_FLAGS,
-        ...options.featureFlags,
-      },
-    });
     return createApiSuccess(payload, request.id);
   });
 }

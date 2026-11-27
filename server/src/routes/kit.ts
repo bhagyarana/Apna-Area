@@ -29,8 +29,10 @@ import {
 } from "../kit/commute.js";
 import {
   createGenAiKitSummaryRunner,
+  createSummaryCache,
   populateNeighbourhoodSummaries,
   type KitSummaryRunner,
+  type SummaryCache,
 } from "../kit/summary.js";
 import type { PhraseTtsCache, TtsModelRunner } from "../kit/tts.js";
 
@@ -83,6 +85,7 @@ export interface RegisterKitRouteOptions {
   summaryRunner?: KitSummaryRunner;
   ttsRunner?: TtsModelRunner;
   commuteCache?: CommuteCache;
+  summaryCache?: SummaryCache;
   ttsCache?: PhraseTtsCache;
   log?: ReturnType<typeof createLogger>;
 }
@@ -109,6 +112,7 @@ export async function registerKitRoutes(
 ): Promise<KitPrewarmHooks> {
   const phrasesDataset = loadSurvivalPhrases();
   const commuteCache = opts.commuteCache ?? createCommuteCache();
+  const summaryCache = opts.summaryCache ?? createSummaryCache();
   const mapsKey = opts.mapsServerKey || opts.mapsBrowserKey || "";
   const routeFetcher: RouteMatrixFetcher | null =
     opts.routeMatrixFetcher ?? (mapsKey.length > 0 ? createGoogleRouteMatrixFetcher(mapsKey) : null);
@@ -183,7 +187,7 @@ export async function registerKitRoutes(
       const { neighbourhoods, summaryFallbackUsed } = await populateNeighbourhoodSummaries(
         rawCommutes,
         office.name,
-        { runner: summaryRunner, requestId: request.id, log: opts.log },
+        { runner: summaryRunner, cache: summaryCache, requestId: request.id, log: opts.log },
       );
 
       const { phrases, starterPhraseIds } = selectKitPhrases(

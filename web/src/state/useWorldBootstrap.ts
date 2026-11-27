@@ -5,7 +5,7 @@
  * Outputs: Validated PublicConfigData, PlacesPayload, worldReady flag, and optional loadError message.
  * Deliberately excludes: Mutating localStorage or initiating Gemini calls.
  */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   DEFAULT_FEATURE_FLAGS,
   DEFAULT_MAP_ID,
@@ -15,6 +15,7 @@ import {
   PlacesPayloadSchema,
   PublicConfigDataSchema,
   TIMEOUTS_MS,
+  toUserErrorMessage,
   type PlacesPayload,
   type PublicConfigData,
 } from "@apna-area/shared";
@@ -48,18 +49,36 @@ export interface WorldBootstrapState {
   world: PlacesPayload;
   worldReady: boolean;
   loadError: string | null;
+  retryBootstrap: () => void;
 }
 
 /**
- * Loads runtime public config and verified ORR places/corridor on mount.
+ * Loads runtime public config and verified ORR places/corridor on mount, with retry and auto-online recovery.
  *
- * @returns WorldBootstrapState with safe initial fallbacks.
+ * @returns WorldBootstrapState with safe initial fallbacks and retryBootstrap action.
  */
 export function useWorldBootstrap(): WorldBootstrapState {
   const [config, setConfig] = useState<PublicConfigData>(FALLBACK_CONFIG);
   const [world, setWorld] = useState<PlacesPayload>(EMPTY_WORLD);
   const [worldReady, setWorldReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadNonce, setReloadNonce] = useState(0);
+
+  const retryBootstrap = useCallback(() => {
+    setLoadError(null);
+    setReloadNonce((n) => n + 1);
+  }, []);
+
+  useEffect(() => {
+    const onOnline = () => {
+      if (!worldReady) {
+        setLoadError(null);
+        setReloadNonce((n) => n + 1);
+      }
+    };
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [worldReady]);
 
   useEffect(() => {
     let unmounted = false;
@@ -86,13 +105,20 @@ export function useWorldBootstrap(): WorldBootstrapState {
         if (plEnv.ok && parsedPlaces.success) {
           setWorld(parsedPlaces.data);
           setWorldReady(true);
+          setLoadError(null);
         } else {
-          setLoadError("Could not load verified Outer Ring Road places, so refresh to retry.");
+          setLoadError("Could not load verified Outer Ring Road places, so tap Retry.");
         }
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         if (!unmounted && !controller.signal.aborted) {
-          setLoadError("You appear to be offline, so reconnect and refresh to load the map.");
+          setLoadError(
+            toUserErrorMessage(
+              err,
+              "Could not reach the Outer Ring Road map service, so tap Retry.",
+              "You appear to be offline, so reconnect and tap Retry to load the map.",
+            ),
+          );
         }
       });
 
@@ -100,7 +126,7 @@ export function useWorldBootstrap(): WorldBootstrapState {
       unmounted = true;
       controller.abort();
     };
-  }, []);
+  }, [reloadNonce]);
 
-  return { config, world, worldReady, loadError };
+  return { config, world, worldReady, loadError, retryBootstrap };
 }
