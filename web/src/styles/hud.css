@@ -137,6 +137,9 @@
     order: 3;
     margin: 0 auto;
   }
+  .week-bar-in-mission {
+    display: none;
+  }
   .week-step-pill {
     min-width: 50px;
     padding: 0 var(--space-2);

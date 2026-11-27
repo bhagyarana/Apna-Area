@@ -15,6 +15,7 @@ import {
   Mic01Icon,
 } from "@hugeicons/core-free-icons";
 import type { NpcRole, VerifiedPlace, WeekPlan } from "@apna-area/shared";
+import { primeUserGestureAudioContext } from "../live/audioUnlock";
 
 export interface MissionCardProps {
   weekPlan: WeekPlan;
@@ -187,15 +188,30 @@ export function MissionCard({
         </button>
 
         {enableVoiceNpcs && onStartVoiceMission ? (
-          <button
-            type="button"
-            className="primary-cta-btn mission-primary-cta"
-            onClick={() => onStartVoiceMission(mission.id)}
-            data-testid="start-mission-cta"
-          >
-            <HugeiconsIcon icon={Mic01Icon} size={16} aria-hidden="true" />
-            <span>Talk with {mission.npcFirstName}</span>
-          </button>
+          <>
+            <button
+              type="button"
+              className="primary-cta-btn mission-primary-cta"
+              onClick={() => {
+                primeUserGestureAudioContext();
+                onStartVoiceMission(mission.id);
+              }}
+              data-testid="start-mission-cta"
+            >
+              <HugeiconsIcon icon={Mic01Icon} size={16} aria-hidden="true" />
+              <span>Talk with {mission.npcFirstName}</span>
+            </button>
+            <button
+              type="button"
+              className="mission-secondary-btn"
+              onClick={() => onSelectMission(nextIndex)}
+              aria-label={`Skip to ${nextMission.day}`}
+              data-testid="next-mission-cta"
+            >
+              <span>Next</span>
+              <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
+            </button>
+          </>
         ) : (
           <button
             type="button"

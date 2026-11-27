@@ -29,8 +29,11 @@ A phase step never merges to `main` until `npm run check` (`tsc -b`, `eslint`, `
 
 | Step | NPC Role | Language Mode | Mic Setup | Turn Latency | Captions Accurate? | Tool Fired Cleanly? | Pass / Notes |
 |---|---|---|---|---|---|---|---|
-| `P3a` | `auto_driver` | English | Laptop + headphones | pending | pending | `complete_objective` | pending |
-| `P3a` | `darshini_owner` | English | Laptop speakers (echo check) | pending | pending | `give_hint`, `complete_objective` | pending |
+| `P3a` | `auto_driver` (`Ramesh`, `Puck`) | English | Live `v1alpha` ephemeral session + headphones | `781 ms` | Yes (`Namaskara! I can definitely take you by the meter...`) | `give_hint`, `complete_objective` | PASS (`< 1.2s` target) |
+| `P3a` | `darshini_owner` (`Lakshmi`, `Aoede`) | English | Live `v1alpha` ephemeral session + echo-cancel worklet | `767 ms` | Yes (`Namaskara! Just pay here and take your token...`) | `give_hint`, `complete_objective` | PASS (`< 1.2s` target) |
+| `P3a` | `pg_owner` (`Suresh`, `Charon`) | English | Live `v1alpha` ephemeral session | `780 ms` | Yes (`Welcome! We have 24/7 power backup, high-speed Wi-Fi...`) | `complete_objective` | PASS (`< 1.2s` target) |
+| `P3a` | `transit_helper` (`Kavitha`, `Kore`) | English | Live `v1alpha` ephemeral session | `823 ms` | Yes (`For the Silk Board bus, you need to cross over...`) | `complete_objective` | PASS (`< 1.2s` target) |
+| `P3a` | `office_buddy` (`Arjun`, `Charon`) | English | Live `v1alpha` ephemeral session | `632 ms` | Yes (`The lanes around the back of Bagmane are great...`) | `complete_objective` | PASS (`< 1.2s` target) |
 | `P3b` | `pg_owner` | Hindi + Hinglish switch | Laptop + headphones | pending | pending | `complete_objective` | pending |
 | `P3c` | `auto_driver` | Kannada lead -> beginner tries taught phrase | Laptop + headphones | pending | pending | `mark_phrase_attempt` + `complete_objective` | pending |
 | `P3c` | `darshini_owner` | Kannada lead -> player asks in Hindi for help | Laptop + headphones | pending | pending | `give_hint` + `mark_phrase_attempt` | pending |

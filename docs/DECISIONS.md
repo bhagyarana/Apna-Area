@@ -34,10 +34,10 @@ Every significant technical, product, or scope decision is recorded here. Update
 
 ### ADR-005 · Client-to-Live WebSocket with Server-Locked Ephemeral Auth Tokens
 - **Date:** 2026-11-27
-- **Decision:** Mint single-use (`uses: 1`) `v1beta` ephemeral tokens on `POST /api/live-token` via `client.authTokens.create` with `liveConnectConstraints` locking `model: "gemini-3.8-live"`, `responseModalities: ["AUDIO"]`, NPC `systemInstruction`, transcriptions, and `NON_BLOCKING` tools. Omit `thinkingConfig` (unsupported on `gemini-3.8-live`).
-- **Why:** Keeps `GEMINI_API_KEY` and persona instructions strictly server-controlled while streaming 16 kHz / 24 kHz PCM directly between browser and Gemini Live API without an extra server WebSocket hop.
+- **Decision:** Mint short-lived (`uses: 3`, `15m` session expiry, `2m` new-session window) `v1alpha` ephemeral tokens on `POST /api/live-token` via `client.authTokens.create` with `liveConnectConstraints` locking `model: "gemini-3.8-live"`, `responseModalities: ["AUDIO"]`, NPC `systemInstruction`, transcriptions, `sessionResumption`, and `NON_BLOCKING` tools. Omit `thinkingConfig` and `proactive_audio: false` (unsupported on `gemini-3.8-live`).
+- **Why:** Keeps `GEMINI_API_KEY` and persona instructions strictly server-controlled while streaming 16 kHz / 24 kHz PCM directly between browser and Gemini Live API without an extra server WebSocket hop, with `uses: 3` permitting seamless session resumption on brief Wi-Fi drops.
 - **Alternatives rejected:** Exposing `GEMINI_API_KEY` in client bundle (forbidden) or full server audio proxy (higher latency; kept only as contingency if venue network blocks direct WSS).
-- **Revisit if:** P3a 20-minute audio spike encounters any constraint serialisation quirk on `liveConnectConstraints` (fallback: Fastify WebSocket proxy).
+- **Revisit if:** Venue firewall blocks direct browser WebSockets to Gemini Live API.
 
 ### ADR-006 · Sequential Language Rollout Behind `ENABLED_LANGUAGES`
 - **Date:** 2026-11-27
@@ -102,3 +102,10 @@ Every significant technical, product, or scope decision is recorded here. Update
 - **Why:** Prevents premature `14s`/`20s` aborts while `gemini-4-neon` reasons (~2,200 thought tokens + ~900 output tokens over India-to-US RTT), avoids ESM dual-package Zod `instanceof` mismatches at server boot, and ensures cold-503 fallback snapshots (`data/orr/fallback-plans.json`, `replayed: true`) load deterministically.
 - **Alternatives rejected:** Pre-populating the default cache with static plans (violates Truth Rule #7 against shipping cached mocks as the default path).
 - **Revisit if:** Regional `asia-south1` Gemini 4 Neon endpoint lowers p95 RTT below 10 seconds.
+
+### ADR-015 · `@google/genai@3.6.1` `v1alpha` Ephemeral Live Surface, Lazy Browser SDK Chunk & Gender-Matched WebP Portraits
+- **Date:** 2026-11-27
+- **Decision:** Configure `LIVE_VOICE_CONFIG.ephemeralApiVersion = "v1alpha"` on both `authTokens.create` (`server/src/live/token.ts`) and `live.connect` (`web/src/live/liveTransport.ts`), dynamically `await import("@google/genai")` only when entering a voice mission, and pre-generate 10 gender-matched `256x256` `.webp` portraits (`<role>_<gender>.webp`) via `gemini-nano-banana-2.1` in `scripts/generate-portraits.ts`.
+- **Why:** `@google/genai@3.6.1` restricts `auth_tokens/*` ephemeral WebSocket handshake support to `v1alpha`; lazy-loading `@google/genai` keeps the initial landing bundle at `162.7 KB` gzipped (`< 250 KB` budget) by deferring the `87.6 KB` SDK chunk; gender-matched `256x256` WebP portraits (`~200 KB` total across all 10 variants) prevent visual/voice mismatches when `gemini-4-neon` casts either male or female fictional NPCs.
+- **Alternatives rejected:** Static top-level `@google/genai` import in `App.tsx` (pushes initial bundle to `~250 KB` gzip) or shipping unresized `1024x1024` single-gender PNGs (`~3.7 MB` and gender-mismatched for female darshini/auto/transit characters).
+- **Revisit if:** Upstream `@google/genai` promotes `authTokens` to `v1` stable.

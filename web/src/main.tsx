@@ -14,6 +14,8 @@ import "./styles/picker.css";
 import "./styles/tune.css";
 import "./styles/hud.css";
 import "./styles/mission.css";
+import "./styles/live.css";
+import "./styles/mic.css";
 import { App } from "./App";
 
 const rootEl = document.getElementById("root");

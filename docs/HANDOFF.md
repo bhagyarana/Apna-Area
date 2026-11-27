@@ -1,31 +1,31 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** `phase/p2-director` (all Phase 2 code, unit/contract/E2E tests, Code Review Gate `PASS 96/100` + fixes, and 3-round Design Critic `9.3/10` desktop / `8.7/10` overall complete)
-- **Current tag:** `p1-map` on `main` (`fed66a2`), with `p2-dir` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting `"merge"` for `p2-director`.
-- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00002-msn`); Phase 2 preview at `https://p2-dir---apna-area-qhtgwpzhpq-el.a.run.app`.
+- **Current phase:** `phase/p3a-english` (all Phase 3a code, unit/contract/E2E tests `4/4`, Code Review Gate `PASS 93/100` + all 4 minor fixes, and Round 2 Design Critic `9.4/10` overall complete)
+- **Current tag:** `p2-director` on `main` (`2c43311`), with `p3a-eng` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting user `"merge"` confirmation for `p3a-english`.
+- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00003-goz`); Phase 3a preview at `https://p3a-eng---apna-area-qhtgwpzhpq-el.a.run.app`.
 
 ## 2. Done This Session
-- Shipped Phase 1 (`p1-map`, `fed66a2`) with `121` verified ORR places (`data/orr/places.json`) and `545`-point corridor (`data/orr/corridor.geojson`) to Cloud Run `asia-south1`.
-- Built `T2.1` (`shared/src/world.ts`, `DIRECTOR_CONFIG` in `shared/src/config.ts`), `T2.2` (`server/src/world/candidates.ts`, `server/src/world/verify.ts`, `verify.test.ts`), and `T2.3` (`server/src/world/{schema,prompt,runner,director,cache}.ts`, `POST /api/world` SSE + JSON in `server/src/routes/world.ts`, real 12-office `data/orr/fallback-plans.json`, and `world.test.ts`).
-- Built `T2.4` (`ProgressChips.tsx`, `WeekProgressBar.tsx`, `MissionCard.tsx`, `useDirectorStream.ts`, `MissionMarkers.tsx`, `CameraGlideController.tsx`, `hud.css`, `mission.css`, `e2e/director.spec.ts`) plus both Phase 1 carry-forward UI polish items.
-- Ran `T2.5` Code Review Gate (`PASS 96/100`, fixed all 3 minor items) and 3-round Screenshot Design Critic (`7.4` -> `8.3` -> `8.7/10`, `9.3/10` desktop), updated `Design.md`, `docs/DESIGN_SCORES.md`, `docs/DECISIONS.md`, `docs/PROMPT_LOG.md`, and `docs/TASKS.md`.
+- Shipped Phase 1 (`p1-map`, `fed66a2`) and Phase 2 (`p2-director`, `2c43311`, `apna-area-00003-goz`) to `main` and Cloud Run `asia-south1`.
+- Built `T3a.1`: `shared/src/live.ts`, `LIVE_VOICE_CONFIG` in `shared/src/config.ts` (`enableVoiceNpcs: true`), `server/src/live/{persona,tools,token}.ts`, `POST /api/live-token` (`30/min` per-IP, verified place guard, `v1alpha` `authTokens.create` locked to `gemini-3.8-live`), and `persona.test.ts`.
+- Built `T3a.2`: `web/src/live/{resample,audioUnlock,pcmWorklet,pcmPlayer,liveTransport,liveSessionTypes,useLiveSession}.ts` + `resample.test.ts`, keeping initial landing JS at `162.7 KB` gzip via dynamic `import("@google/genai")`.
+- Built `T3a.3`: Generated 10 gender-matched `256x256` WebP NPC portraits (`web/public/art/npcs/<role>_<gender>.webp`) via `gemini-nano-banana-2.1`, built `Captions.tsx`, `MissionObjectiveHeader.tsx`, `MissionDialog.tsx`, `live.css`, `mic.css`, stepped down `MissionCard` `Prev`/`Next` controls, added street-level `inVoiceMission` camera framing, and added `e2e/live.spec.ts`.
+- Completed `T3a.4`: Measured `632-823 ms` first-audio latency across all 5 NPC roles on live `gemini-3.8-live` (`docs/TESTING.md`), passed Code Review Gate (`93/100` + 4 polish fixes), and reached `9.4/10` (`9.4` Desktop, `9.3` Mobile) in Design Critic Round 2.
 
 ## 3. Decisions Made
-- **ADR-011..013:** Isomorphic logger fingerprinting, DOM `OverlayView` SVG corridor spline, and ORR Blue Line under-construction metro exclusion.
-- **ADR-014:** Set `maxPromptCandidates = 15`, `< 10 words` per text field on `gemini-4-neon` (`thinking_level: "medium"`), `TIMEOUTS_MS.worldDirector = 32_000`, and `FallbackPlansMapSchema` inside `@apna-area/shared`.
+- **ADR-005 & ADR-015:** Use `v1alpha` (`uses: 3`) for `@google/genai@3.6.1` `authTokens.create` + `live.connect`, lazy-load `@google/genai` into a separate `87.6 KB` chunk, and serve gender-matched `256x256` WebP portraits (`~200 KB` total).
 
 ## 4. Open Questions
-- **Check-in #3:** Try `Build my first week` on the `p2` Cloud Run preview URL and confirm `"merge"` to promote `p2` to 100% traffic (`tag: p2-director`) and begin **Phase 3a (`phase/p3a-english` · Gemini 3.8 Live English Voice NPCs)**.
+- **Phase 3a Preview Check:** Try `Talk with <NPC>` (voice or `Type instead`) on the `p3a-eng` Cloud Run preview URL and confirm `"merge"` to promote `p3a-eng` to 100% live traffic (`tag: p3a-english`) and begin **Phase 3b (`phase/p3b-hindi` · Hindi & Code-Switching)**.
 
 ## 5. Known Issues
-- **Carry-forward UI polish (`P3a`):** When `enableVoiceNpcs` turns on in `P3a` and `Talk with <NPC>` becomes the primary `--accent-pink` CTA in `MissionCard`, step `Next stop` down to a quiet secondary control so two pink buttons never compete.
+- Keep an eye on desktop Cinema Ribbon height in `P3b`/`P3c` when multi-script captions render while the keyboard drawer is open (`~14px` gap beneath the office pin on `1440x900`).
 
 ## 6. File State
-- All Phase 2 code, tests (`27/27` Vitest, `3/3` Playwright E2E), and `data/orr/fallback-plans.json` committed on `phase/p2-director`.
+- All Phase 3a source, 15 `.webp` portraits, tests (`10/10` Vitest suites / `33/33` tests, `4/4` Playwright E2E), and living docs committed on `phase/p3a-english`.
 
 ## 7. The Single Next Task
-- Promote `p2` Cloud Run preview to 100% live traffic (`merge: phase/p2-director`, tag `p2-director`) upon user confirmation, then start **Phase 3a (`phase/p3a-english`)**: `POST /api/live-token` (`v1beta` `authTokens.create` locked to `gemini-3.8-live`), 16 kHz / 24 kHz PCM AudioWorklet + `useLiveSession`, Nano Banana 2.1 NPC portraits, and `MissionDialog` + `Captions`.
+- Upon user `"merge"` confirmation, merge `phase/p3a-english` (`--no-ff`, tag `p3a-english`), route 100% traffic to `p3a-eng`, and execute **Phase 3b (`phase/p3b-hindi`, `T3b.1`)**: enable `ENABLED_LANGUAGES = ["en", "hi"]`, load `Noto Sans Devanagari`, enable Hindi + Hinglish code-switching in `persona.ts` and `TunePopover.tsx`, verify live, and ship `p3b-hindi`.
 
 ## 8. Resume Checklist
 1. `AGENTS.md`

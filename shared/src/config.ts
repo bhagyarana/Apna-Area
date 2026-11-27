@@ -73,10 +73,20 @@ export const DECISION_THRESHOLDS = {
 export const DEFAULT_FEATURE_FLAGS = {
   enableMapPicker: true,
   enableDirector: true,
-  enableVoiceNpcs: false,
+  enableVoiceNpcs: true,
   enableAdaptiveScoring: false,
   enableSurvivalKit: false,
   enableAmbientMusic: false,
+} as const;
+
+/** Audio and ephemeral token tunables for Gemini 3.8 Live voice NPCs. */
+export const LIVE_VOICE_CONFIG = {
+  ephemeralApiVersion: "v1alpha",
+  inputSampleRateHz: 16_000,
+  outputSampleRateHz: 24_000,
+  drainTimeoutMs: 3_500,
+  maleVoices: ["Puck", "Charon"] as const,
+  femaleVoices: ["Aoede", "Kore"] as const,
 } as const;
 
 /** Tunables for the Phase 2 Week One Director and candidate selector. */

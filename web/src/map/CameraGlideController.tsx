@@ -14,9 +14,15 @@ export const OVERVIEW_CAMERA = { lat: 12.942, lng: 77.653, zoom: 12.45 };
 function computeFramedCenter(
   target: VerifiedPlace,
   zoomOverride?: number,
+  inVoiceMission = false,
 ): { lat: number; lng: number; zoom: number } {
   const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
   const zoom = zoomOverride ?? (isMobile ? 14.5 : 14.8);
+  if (inVoiceMission) {
+    return isMobile
+      ? { lat: target.lat - 0.00025, lng: target.lng, zoom }
+      : { lat: target.lat - 0.00055, lng: target.lng - 0.0014, zoom };
+  }
   if (isMobile) {
     return { lat: target.lat - 0.0045, lng: target.lng, zoom };
   }
@@ -29,6 +35,7 @@ export interface CameraGlideControllerProps {
   fitCluster?: boolean;
   tourActive: boolean;
   isMissionStop: boolean;
+  inVoiceMission?: boolean;
 }
 
 /**
@@ -43,6 +50,7 @@ export function CameraGlideController({
   fitCluster = false,
   tourActive,
   isMissionStop,
+  inVoiceMission = false,
 }: CameraGlideControllerProps): null {
   const map = useMap();
 
@@ -96,7 +104,9 @@ export function CameraGlideController({
       return;
     }
 
-    const framed = computeFramedCenter(target, isMissionStop ? 15.3 : undefined);
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+    const zoomTarget = inVoiceMission ? (isMobile ? 16.0 : 16.5) : isMissionStop ? 15.3 : undefined;
+    const framed = computeFramedCenter(target, zoomTarget, inVoiceMission);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       map.moveCamera({ center: { lat: framed.lat, lng: framed.lng }, zoom: framed.zoom });
       return;
@@ -127,7 +137,7 @@ export function CameraGlideController({
 
     rafId = window.requestAnimationFrame(step);
     return () => window.cancelAnimationFrame(rafId);
-  }, [map, target, boundsPlaces, fitCluster, tourActive, isMissionStop]);
+  }, [map, target, boundsPlaces, fitCluster, tourActive, isMissionStop, inVoiceMission]);
 
   return null;
 }

@@ -12,6 +12,7 @@ import type { WeekPlan } from "@apna-area/shared";
 export interface WeekProgressBarProps {
   weekPlan: WeekPlan;
   activeMissionIndex: number;
+  inVoiceMission?: boolean;
   onSelectMission: (index: number) => void;
 }
 
@@ -32,10 +33,15 @@ const SHORT_DAY: Record<string, string> = {
 export function WeekProgressBar({
   weekPlan,
   activeMissionIndex,
+  inVoiceMission = false,
   onSelectMission,
 }: WeekProgressBarProps): JSX.Element {
   return (
-    <nav aria-label="Week One missions" className="week-bar-shell" data-testid="week-progress-bar">
+    <nav
+      aria-label="Week One missions"
+      className={inVoiceMission ? "week-bar-shell week-bar-in-mission" : "week-bar-shell"}
+      data-testid="week-progress-bar"
+    >
       <Toolbar orientation="horizontal" loop className="week-bar-toolbar">
         {weekPlan.missions.map((mission, idx) => {
           const isActive = idx === activeMissionIndex;

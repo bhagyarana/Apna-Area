@@ -37,6 +37,7 @@ export interface OrrMapProps {
   onSelectOffice: (placeId: string) => void;
   weekPlan?: WeekPlan | null;
   activeMissionIndex?: number;
+  inVoiceMission?: boolean;
   onSelectMission?: (index: number) => void;
   tourActive: boolean;
   onFinishTour: () => void;
@@ -51,6 +52,7 @@ function MapStageInner({
   onSelectOffice,
   weekPlan = null,
   activeMissionIndex = 0,
+  inVoiceMission = false,
   onSelectMission,
   tourActive,
   onFinishTour,
@@ -129,9 +131,10 @@ function MapStageInner({
           <CameraGlideController
             target={activeMissionPlace ?? selectedOffice}
             boundsPlaces={weekClusterPlaces}
-            fitCluster={Boolean(weekPlan && activeMissionIndex === 0)}
+            fitCluster={Boolean(weekPlan && activeMissionIndex === 0 && !inVoiceMission)}
             tourActive={tourActive}
-            isMissionStop={Boolean(activeMissionPlace && activeMissionIndex > 0)}
+            isMissionStop={Boolean(activeMissionPlace && (activeMissionIndex > 0 || inVoiceMission))}
+            inVoiceMission={inVoiceMission}
           />
 
           {visibleTechParks.map((park) => {
@@ -180,6 +183,7 @@ function MapStageInner({
               weekPlan={weekPlan}
               placesById={placesById}
               activeMissionIndex={activeMissionIndex}
+              onlyActive={inVoiceMission}
               onSelectMission={onSelectMission}
             />
           )}

@@ -24,7 +24,9 @@ import { registerHealthRoutes } from "./routes/health.js";
 import { registerConfigRoutes } from "./routes/config.js";
 import { loadVerifiedWorldData, registerPlacesRoutes, type LoadedWorldData } from "./routes/places.js";
 import { registerWorldRoutes } from "./routes/world.js";
+import { registerLiveTokenRoutes } from "./routes/liveToken.js";
 import type { ModelInteractionRunner } from "./world/director.js";
+import type { LiveTokenMinter } from "./live/token.js";
 
 export interface ServerOptions {
   version?: string;
@@ -38,6 +40,7 @@ export interface ServerOptions {
   mapId?: string;
   featureFlags?: Partial<FeatureFlags>;
   worldRunner?: ModelInteractionRunner;
+  liveTokenMinter?: LiveTokenMinter;
   fallbackPlans?: Readonly<Record<string, WeekPlan>>;
   rateLimitMax?: number;
   webDistPath?: string;
@@ -185,6 +188,13 @@ export async function buildServer(options: ServerOptions = {}): Promise<FastifyI
     geminiApiKey: options.geminiApiKey,
     runner: options.worldRunner,
     fallbackPlans: options.fallbackPlans,
+    log,
+  });
+
+  await registerLiveTokenRoutes(app, {
+    worldData: world,
+    geminiApiKey: options.geminiApiKey,
+    minter: options.liveTokenMinter,
     log,
   });
 
