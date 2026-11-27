@@ -54,8 +54,17 @@ Cinematic Bengaluru dusk atmosphere inspired by tropical twilight and Outer Ring
 
 ---
 
-## 3. Game Layer Direction
-*(Placeholder for `04-design-discover.md` winner. Once you react to the 24 directions at Check-in #1 and choose from the 3 seeded HTML mockups in `design/discover/`, the exact HUD metaphor, surface treatment, and signature detail will be locked here before `P0` / `P1` UI work.)*
+## 3. Game Layer Direction: Smoked-Acrylic Fare-Meter & Cinema Ribbon
+Selected from `design/discover/variation-1.html` (with two alternatives preserved in `design/discover/variation-2.html` and `variation-3.html`).
+
+- **Core metaphor:** Bengaluru street precision meets cinema-subtitle clarity. Surfaces read like smoked-acrylic instrument clusters (`rgba(25, 19, 46, 0.88)` with `backdrop-filter: blur(18px)` and `1px` `9%` white inner hairline ring) floating cleanly over the open ORR dusk map so the geography remains the hero.
+- **Signature Bengaluru touch (Fare-Meter Flag & Odometer):**
+  - When a mission starts, a subtle `--accent-yellow` pill (`METER ON · 01:30`) tilts its micro-flag indicator from upright to `-18deg` in `220ms` (`--ease-out-quint`).
+  - Top-right score cluster pairs the 5-pill week progress track (`--accent-teal` completed, `--accent-pink` active elongated pill) with 3 crisp star slots and a zero-padded tabular `Anton` XP odometer (`01,240`).
+- **Cinema Voice Ribbon:**
+  - Centered at bottom above a `72px` circular `--accent-pink` mic orb (`box-shadow` amplitude ring driven by WebAudio RMS, squish `0.97` on press).
+  - Three-tier caption hierarchy inside one `18px`-radius card: `12px` muted speaker/role label, `20px` high-contrast native script (`Noto Sans Kannada` / `Noto Sans Devanagari`), and `14px` Roman transliteration + English translation underneath.
+- **What to strictly avoid:** No cartoon auto-rickshaw illustrations, no heavy skeuomorphic bezels or rivets, no full-height sidebars covering more than 25% of map width, and no decorative neon outer glows on cards.
 
 ---
 

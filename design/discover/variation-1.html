@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Area · Variation 1 · Smoked-Acrylic Fare-Meter & Cinema Ribbon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-night: #0E0A1C;
+      --bg-surface: rgba(25, 19, 46, 0.88);
+      --bg-elevated: #231B3F;
+      --text-primary: #F7F1FF;
+      --text-secondary: #CFC4E8;
+      --text-muted: #A397C2;
+      --pink: #FF4FA0;
+      --yellow: #FFD24A;
+      --teal: #3DE6D0;
+      --ring: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+      --shadow-card: 0 16px 40px rgba(5, 3, 12, 0.62), 0 2px 8px rgba(5, 3, 12, 0.35), var(--ring);
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 62% 38%, rgba(255, 79, 160, 0.14), transparent 42%),
+        radial-gradient(circle at 28% 72%, rgba(61, 230, 208, 0.08), transparent 48%),
+        var(--bg-night);
+      color: var(--text-primary);
+      font-family: "Hanken Grotesk", system-ui, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Simulated dark vector ORR map grid & corridor */
+    .map-stage {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+    .HudTop {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .MissionCard {
+      width: 360px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(18px);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .FlagHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+    .MeterFlag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 210, 74, 0.14);
+      color: var(--yellow);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-variant-numeric: tabular-nums;
+    }
+    .MeterFlag::before {
+      content: "";
+      width: 8px;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--yellow);
+      transform: rotate(-18deg);
+    }
+    .MissionTitle {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .ObjectiveBox {
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--text-secondary);
+      box-shadow: var(--ring);
+    }
+    .ObjectiveBox strong {
+      color: var(--yellow);
+      font-weight: 600;
+    }
+    .Provenance {
+      font-size: 12px;
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .MeterCluster {
+      background: var(--bg-surface);
+      backdrop-filter: blur(18px);
+      border-radius: 18px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-variant-numeric: tabular-nums;
+    }
+    .Odometer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .OdometerLabel {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .OdometerValue {
+      font-family: "Anton", sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+    .Stars {
+      display: flex;
+      gap: 4px;
+      color: var(--yellow);
+      font-size: 16px;
+    }
+    .StarEmpty { color: rgba(255, 255, 255, 0.18); }
+    .WeekSteps {
+      display: flex;
+      gap: 6px;
+    }
+    .StepPill {
+      width: 22px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+    }
+    .StepPill.done { background: var(--teal); }
+    .StepPill.active { background: var(--pink); width: 32px; }
+
+    /* Cinema voice stage */
+    .VoiceStage {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(680px, calc(100vw - 48px));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .CaptionRibbon {
+      width: 100%;
+      background: var(--bg-surface);
+      backdrop-filter: blur(18px);
+      border-radius: 18px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .NpcAvatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #2D2150, #19132E);
+      box-shadow: inset 0 0 0 1px rgba(255, 210, 74, 0.35);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: var(--yellow);
+      flex-shrink: 0;
+    }
+    .CaptionLines {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .SpeakerTag {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .KannadaLine {
+      font-family: "Noto Sans Kannada", "Hanken Grotesk", sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .TranslitLine {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .ControlsRow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .SecondaryBtn {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 0;
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+    }
+    .MicOrb {
+      width: 72px;
+      height: 72px;
+      border-radius: 999px;
+      border: 0;
+      background: var(--pink);
+      color: var(--bg-night);
+      font-weight: 700;
+      box-shadow: 0 0 0 8px rgba(255, 79, 160, 0.18), 0 12px 28px rgba(255, 79, 160, 0.42);
+      cursor: pointer;
+      transition: transform 160ms var(--ease);
+    }
+    .MicOrb:active { transform: scale(0.97); }
+    .PhrasePocket {
+      position: fixed;
+      right: 24px;
+      bottom: 28px;
+      width: 264px;
+      background: var(--bg-surface);
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 12px 32px rgba(5, 3, 12, 0.55), inset 0 0 0 1px rgba(61, 230, 208, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .PocketBadge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--teal);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <svg class="map-stage" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path d="M180 760 Q 520 620, 740 450 T 1260 150" fill="none" stroke="rgba(255,79,160,0.22)" stroke-width="18" stroke-linecap="round" />
+    <path d="M180 760 Q 520 620, 740 450 T 1260 150" fill="none" stroke="#FF4FA0" stroke-width="4" stroke-dasharray="8 10" stroke-linecap="round" />
+    <circle cx="740" cy="450" r="10" fill="#FFD24A" />
+    <circle cx="740" cy="450" r="24" fill="rgba(255,210,74,0.18)" />
+  </svg>
+
+  <header class="HudTop">
+    <section class="MissionCard" aria-label="Current mission">
+      <div class="FlagHeader">
+        <span>MISSION 2 OF 5 · TUESDAY 08:30</span>
+        <span class="MeterFlag">METER ON · 01:08</span>
+      </div>
+      <h1 class="MissionTitle">Breakfast before standup</h1>
+      <p class="ObjectiveBox">
+        Order idli vada and one filter coffee in Kannada at <strong>Arogya Ahaara Darshini</strong>.
+      </p>
+      <div class="Provenance">Verified Google Maps place · 0.9 km from RMZ EcoWorld</div>
+    </section>
+
+    <aside class="MeterCluster" aria-label="Progress and score">
+      <div class="WeekSteps" aria-label="Week progress">
+        <span class="StepPill done"></span>
+        <span class="StepPill active"></span>
+        <span class="StepPill"></span>
+        <span class="StepPill"></span>
+        <span class="StepPill"></span>
+      </div>
+      <div class="Stars" aria-label="2 of 3 stars">
+        <span>★</span><span>★</span><span class="StarEmpty">★</span>
+      </div>
+      <div class="Odometer">
+        <span class="OdometerLabel">Week XP</span>
+        <span class="OdometerValue">01,240</span>
+      </div>
+    </aside>
+  </header>
+
+  <main class="VoiceStage">
+    <section class="CaptionRibbon" aria-live="polite">
+      <div class="NpcAvatar">R</div>
+      <div class="CaptionLines">
+        <span class="SpeakerTag">Raghavendra · Darshini counter</span>
+        <p class="KannadaLine">ಬಿಸಿ ಇಡ್ಲಿ ವಡೆ ರೆಡಿ ಇದೆ. ಒಂದು ಕಾಫಿ ಕೊಡ್ಲಾ?</p>
+        <p class="TranslitLine">bisi idli vade reḍi ide. ondu kāfi koḍlā? · Hot idli vada is ready. Shall I give one coffee?</p>
+      </div>
+    </section>
+    <div class="ControlsRow">
+      <button class="SecondaryBtn" type="button">Need a hint</button>
+      <button class="MicOrb" type="button" aria-label="Hold or tap to speak">SPEAK</button>
+      <button class="SecondaryBtn" type="button">End scene</button>
+    </div>
+  </main>
+
+  <aside class="PhrasePocket" aria-label="Saved survival phrase">
+    <span class="PocketBadge">Saved to your phrasebook</span>
+    <p style="font-weight:600;font-size:15px;">ಒಂದು ಕಾಫಿ ಕೊಡಿ</p>
+    <p style="font-size:13px;color:var(--text-secondary);">ondu kāfi koḍi · One coffee, please</p>
+  </aside>
+</body>
+</html>

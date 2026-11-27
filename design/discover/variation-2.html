@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apna Area · Variation 2 · Perforated BMTC Route-Strip & Field Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-night: #0E0A1C;
+      --bg-surface: #19132E;
+      --bg-elevated: #231B3F;
+      --text-primary: #F7F1FF;
+      --text-secondary: #CFC4E8;
+      --text-muted: #A397C2;
+      --pink: #FF4FA0;
+      --yellow: #FFD24A;
+      --teal: #3DE6D0;
+      --ring: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+      --shadow: 0 16px 36px rgba(4, 2, 10, 0.65), var(--ring);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 70% 30%, rgba(255, 79, 160, 0.12), transparent 45%), var(--bg-night);
+      color: var(--text-primary);
+      font-family: "Hanken Grotesk", system-ui, sans-serif;
+      overflow: hidden;
+    }
+    /* Left transit totem spine */
+    .RouteRail {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      bottom: 24px;
+      width: 310px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .TicketCard {
+      background: var(--bg-surface);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .Perforation {
+      margin: 12px 0;
+      border-top: 1px dashed rgba(255, 255, 255, 0.16);
+    }
+    .StopBadge {
+      display: inline-block;
+      font-family: "Anton", sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      color: var(--bg-night);
+      background: var(--yellow);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .StopList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-left: 14px;
+      border-left: 2px solid rgba(255, 79, 160, 0.35);
+    }
+    .StopNode {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .StopNode.current {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .TopRightScore {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      background: var(--bg-surface);
+      border-radius: 14px;
+      padding: 12px 18px;
+      box-shadow: var(--shadow);
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    .FieldDeck {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: min(760px, calc(100vw - 380px));
+      background: var(--bg-surface);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+    .DeckButton {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      border: 0;
+      background: var(--pink);
+      color: var(--bg-night);
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <aside class="RouteRail">
+    <section class="TicketCard">
+      <span class="StopBadge">STOP 02 · BELLANDUR</span>
+      <h1 style="font-size:19px;font-weight:600;">Breakfast before standup</h1>
+      <div class="Perforation"></div>
+      <p style="font-size:14px;color:var(--text-secondary);line-height:1.45;">
+        Order idli vada and filter coffee in Kannada at <span style="color:var(--yellow);font-weight:600;">Arogya Ahaara Darshini</span>.
+      </p>
+      <div class="Perforation"></div>
+      <div class="StopList">
+        <div class="StopNode" style="color:var(--teal);">01 · Silk Board Auto Stand ✓</div>
+        <div class="StopNode current">02 · Bellandur Darshini (Live)</div>
+        <div class="StopNode">03 · Green Glen PG Visit</div>
+        <div class="StopNode">04 · Kadubeesanahalli Bus Bay</div>
+        <div class="StopNode">05 · EcoWorld Coffee Catch-up</div>
+      </div>
+    </section>
+  </aside>
+
+  <header class="TopRightScore">
+    <span style="color:var(--teal);font-size:13px;font-weight:600;">PHRASES 2/5</span>
+    <span style="color:var(--yellow);">★★☆</span>
+    <strong style="font-size:20px;">1,240 XP</strong>
+  </header>
+
+  <section class="FieldDeck">
+    <div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">RAGHAVENDRA · LIVE 24kHz</p>
+      <p style="font-family:'Noto Sans Kannada',sans-serif;font-size:19px;font-weight:600;">ಒಂದು ಕಾಫಿ ಕೊಡಿ ಅಂತ ಹೇಳಿ ನೋಡೋಣ!</p>
+      <p style="font-size:14px;color:var(--text-secondary);margin-top:2px;">ondu kāfi koḍi anta hēḷi nōḍōṇa · Try saying "one coffee, please"</p>
+    </div>
+    <button class="DeckButton" type="button">REC</button>
+  </section>
+</body>
+</html>
