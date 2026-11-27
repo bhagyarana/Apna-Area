@@ -1,32 +1,32 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** `phase/p3c-kannada` (**Check-in #4**: all 3 Voice NPC language steps `P3a` English, `P3b` Hindi/Hinglish, and `P3c` Kannada + 30 Survival Phrases complete!)
-- **Current tag:** `p3b-hindi` on `main` (`9557085`, serving 100% live traffic on `apna-area-00007-dit`), with `p3c-kan` no-traffic preview deployed on Cloud Run (`asia-south1`) awaiting user `"merge"` confirmation for `p3c-kannada`.
-- **Live URL & revision:** Production `main` at `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00007-dit`); Phase 3c preview at `https://p3c-kan---apna-area-qhtgwpzhpq-el.a.run.app`.
+- **Current phase:** `phase/p4-adaptive` (checked out cleanly from `main` at tag `p3c-kannada`)
+- **Current tag:** `p3c-kannada` on `main` (preceded by `v0.1-docs`, `p0-skeleton`, `p1-map`, `p2-director`, `p3a-english`, `p3b-hindi`)
+- **Live URL & revision:** `https://apna-area-481049877093.asia-south1.run.app` (`100%` live traffic on `apna-area-00010-puy`, tag `p3c-kan`)
 
 ## 2. Done This Session
-- Shipped Phase 1 (`p1-map`), Phase 2 (`p2-director`), Phase 3a (`p3a-english`), and Phase 3b (`p3b-hindi`, `9557085`) to `main` and 100% Cloud Run traffic.
-- Built `T3c.1` + `T3c.2` (`phase/p3c-kannada`):
-  - Authored and linguistically audited 30 speaker-gender-neutral, polite-plural Bengaluru Kannada survival phrases in `data/phrases.json` across all 7 `PhraseSituation` keys (`server/src/live/phrases.ts` + `server/src/__tests__/phrases.test.ts`).
-  - Enabled `ENABLED_LANGUAGES = ["en", "hi", "kn"]` in `shared/src/config.ts`, attached matched `targetPhrase` on `POST /api/live-token`, and activated `mark_phrase_attempt` (`NON_BLOCKING`) in `server/src/live/persona.ts`.
-  - Built 2-line Kannada/transliteration/meaning phrase coaching strip in `Captions.tsx`, two-note WebAudio ascending fifth chime (`chime.ts`), `260ms` `--accent-teal` mastery ring, `PhraseFlyCard.tsx` flight animation into the persisted `Phrases · N` topbar badge (`sessionStore.ts`), and extracted `MicOrbControl.tsx` + `vendor-ui` Rollup chunk so zero files exceed 250 lines and zero Vite build warnings occur.
-  - Verified live `gemini-3.8-live` Kannada phrase mastery (`630 ms`) and Hindi-to-Kannada coaching bridge (`717 ms`, firing `give_hint` -> `mark_phrase_attempt("clear")` -> `complete_objective`) in `docs/TESTING.md`.
+- Shipped `p1-map` (`fed66a2`) and `p2-director` (`2c43311`): `data/orr/places.json` (`121` verified places), `data/orr/corridor.geojson`, `POST /api/world` SSE (`gemini-4-neon`), and `MissionCard.tsx`.
+- Shipped `p3a-english` (`5be2482`, `apna-area-00005-cux`): `POST /api/live-token` (`server/src/live/token.ts`), 16 kHz / 24 kHz WebAudio pipeline (`web/src/live/useLiveSession.ts`), 10 gender-matched `256x256` WebP Nano Banana 2.1 portraits, `MissionDialog.tsx`, Code Review Gate `PASS` (`93/100`), and Design Critic `9.4/10`.
+- Shipped `p3b-hindi` (`9557085`, `apna-area-00007-dit`): `ENABLED_LANGUAGES = ["en", "hi"]`, Hindi (`765 ms`) and Hinglish (`529 ms`) code-switching in `server/src/live/persona.ts`, and `Tune · EN/HI/HI+EN` in `web/src/picker/TunePopover.tsx`.
+- Shipped `p3c-kannada` (`a6a2599`, `apna-area-00010-puy`): 30 audited polite-plural Kannada survival phrases (`data/phrases.json`, `server/src/live/phrases.ts`), `ENABLED_LANGUAGES = ["en", "hi", "kn"]`, `mark_phrase_attempt` (`630-717 ms` live), WebAudio chime (`web/src/live/chime.ts`), `PhraseFlyCard.tsx`, and `React.lazy` `MissionDialog` split (`156.9 KB` gzip initial JS, `0` build warnings).
 
 ## 3. Decisions Made
-- **ADR-016:** Curate 30 speaker-gender-neutral, polite-plural spoken Bengaluru Kannada phrases in `data/phrases.json` matched by `PhraseSituation` and `honorificGender` (`aṇṇa` / `akka` / `neutral`).
+- **ADR-014:** Director `< 10 words` field budget, `32s` upstream timeout, and shared `FallbackPlansMapSchema`.
+- **ADR-015:** `v1alpha` (`uses: 3`) ephemeral tokens for `@google/genai@3.6.1`, lazy `@google/genai` chunk, and `256x256` WebP portraits.
+- **ADR-016:** 30 speaker-gender-neutral, polite-plural Kannada phrases matched by `PhraseSituation` and `honorificGender`.
 
 ## 4. Open Questions
-- **Check-in #4:** Try speaking or typing the mission's Kannada survival phrase on the `p3c-kan` Cloud Run preview URL to watch the teal mastery ring, chime, and flying card land in `Phrases · 1`, then confirm `"merge"` to promote `p3c-kan` to 100% live traffic (`tag: p3c-kannada`) and begin **Phase 4 (`phase/p4-adaptive` · Gemini Decision 1 Adaptive Scoring & XP HUD)**.
+- None; Phase 4 plan (`T4.1`..`T4.3`) is approved by the user and ready to build.
 
 ## 5. Known Issues
-- None; all 9 rows of the Phase 3 Manual Voice Test Matrix in `docs/TESTING.md` are green (`529-823 ms` first-audio latency).
+- None; `11/11` Vitest suites (`35/35` tests) and `4/4` Playwright E2E specs pass with zero warnings.
 
 ## 6. File State
-- All Phase 3c code, `data/phrases.json`, tests (`11/11` Vitest suites / `35/35` tests, `4/4` Playwright E2E), and living docs committed on `phase/p3c-kannada`.
+- Clean working tree on branch `phase/p4-adaptive`, identical to `main` (`tag: p3c-kannada`).
 
 ## 7. The Single Next Task
-- Upon user `"merge"` confirmation, merge `phase/p3c-kannada` (`--no-ff`, tag `p3c-kannada`), route 100% traffic to `p3c-kan`, and start **Phase 4 (`phase/p4-adaptive`, `T4.1`..`T4.3`)**: pure `xpFor` / `starsFor` / `nextDifficulty`, `POST /api/score` calling `gemini-decision-1` (`v1beta` `decisions.create` with `noul`, `score`, `choice`, `< 0.75` confidence guard, sorted choice keys + `other`), `MissionResultCard.tsx`, `WhyChangedDisclosure.tsx`, and `XpCounter.tsx`.
+- Build and ship **Phase 4 (`phase/p4-adaptive`, `T4.1`..`T4.3`)**: score completed missions in under 1 second via `POST /api/score` (`gemini-decision-1` `v1beta` `decisions.create` with `noul`, `score`, `choice`, sorted option keys + `other`, and `< 0.75` confidence fallback) and render `MissionResultCard.tsx`, `WhyChangedDisclosure.tsx`, and `XpCounter.tsx` with 1-click player pace override.
 
 ## 8. Resume Checklist
 1. `AGENTS.md`
