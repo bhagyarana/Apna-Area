@@ -7,7 +7,7 @@ Moving to Bengaluru for a tech park job along the Outer Ring Road (ORR) forces n
 **Ananya, 24, software engineer from Lucknow.**
 - Starts at a company in a Bellandur tech park in 14 days.
 - Speaks fluent Hindi and English; knows zero Kannada.
-- Budget band: INR 15,000 to 25,000 per month for a PG or shared flat (represented only as her preference filter; the app never states unverified rent numbers as facts).
+- Budget band: `15_20k`, `20_30k`, or `30k_plus` (`"15_20k" | "20_30k" | "30k_plus"` preference filter; shapes PG/co-living vs gated-flat mission framing and checklist items without ever stating unverified rupee prices as facts).
 - Top anxieties: getting stuck at Silk Board for 90 minutes each way, freezing up at a fast-moving darshini counter, arguing over an auto meter in rain, and picking the wrong neighbourhood before signing a deposit.
 
 ## 3. Jobs To Be Done
@@ -28,12 +28,12 @@ Moving to Bengaluru for a tech park job along the Outer Ring Road (ORR) forces n
 
 | Screen | Route / State | Single Primary Action | Secondary / Escape Actions |
 |---|---|---|---|
-| **1. Corridor Tour & Landing** | `/` (`idle`, `touring`) | Pick the office you are joining (combobox + 6 chips) | `Skip tour` (`Esc` or click), `Tune` preferences popover |
+| **1. Corridor Tour & Landing** | `/` (`idle`, `touring`) | Pick the office you are joining (combobox + 6 chips) | `Skip tour` (`Esc` or click), `Tune` preferences popover (`languageComfort`: `en` / `hi` / `en_hi`, `budgetBand`: `15_20k` / `20_30k` / `30k_plus`) |
 | **2. Week Builder (Generating)** | `/` (`generating`) | Watch verified week assemble (automatic transition on completion) | `Cancel` back to office picker |
 | **3. Corridor Hub (Week Map)** | `/` (`week_ready`) | `Start Mission N` on the active mission card | Select another unlocked pin, `Open Survival Kit` (available anytime after Mission 1), mute toggle |
 | **4. Live Voice Mission** | `/` (`in_mission`) | Hold or tap large circular `Mic` control to speak | `Need a hint`, `Push-to-talk` toggle, `End mission` |
-| **5. Mission Result & Adaptation** | `/` (`mission_scored`) | `Continue to Mission N+1` (or `Open Survival Kit` after Mission 5) | `Why did this change?` rubric disclosure, `Replay phrase` |
-| **6. Survival Kit** | `/` (`kit_open`) | `Save my kit` (triggers Confirm Sheet before PNG/JSON download) | `Open route in Google Maps` (Confirm Sheet), `Copy phrasebook` (Confirm Sheet), `Back to map` |
+| **5. Mission Result & Adaptation** | `/` (`mission_scored`) | `Continue to Mission N+1` (or `Open Survival Kit` after Mission 5) | `Why did this change?` rubric disclosure, manual pace override (`Keep gentler pace` / `Step up Kannada`), `Replay phrase` |
+| **6. Survival Kit** | `/` (`kit_open`) | `Save my kit` (triggers Confirm Sheet before PNG download) | `Open route in Google Maps` (Confirm Sheet), `Copy phrasebook` (`Copied` check toast), `Back to map` |
 
 ## 6. Success Metrics for the 3-Minute Judge Demo
 - **First interaction latency:** Input acknowledgement under 400 ms on every tap or keystroke.

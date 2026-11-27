@@ -104,17 +104,17 @@ Apna-Area/
 
 ## 3. HTTP & SSE API Contracts
 
-All API endpoints return JSON matching `ApiResult<T> = { ok: true; data: T; requestId: string } | { ok: false; error: { code: string; message: string; retryable: boolean }; requestId: string }`, except `POST /api/world` when `Accept: text/event-stream` is sent. Rate limit: 30 requests per minute per IP across `/api/*` (`POST /api/live-token` capped at 8 per minute per IP).
+All API endpoints return JSON matching `ApiResult<T> = { ok: true; data: T; requestId: string } | { ok: false; error: { code: string; message: string; retryable: boolean }; requestId: string }`, except `POST /api/world` when `Accept: text/event-stream` is sent (with standard JSON fallback if `Accept: application/json` is requested after a transient SSE drop). Fastify boots with `trustProxy: true` so Cloud Run load-balancer headers resolve each visitor IP accurately. Rate limit: 60 requests per minute per IP across `/api/*` (`POST /api/live-token` capped at 30 per minute per IP to accommodate shared conference NAT Wi-Fi).
 
 | Method & Path | Request Schema (Zod) | Response Payload (`data`) | Timeout & Cache |
 |---|---|---|---|
 | `GET /api/health` | none | `{ status: "ok", version: string, commit: string, builtAt: string, upstreams: { placesLoaded: number, geminiConfigured: boolean, mapsConfigured: boolean } }` | 2 s, no cache |
 | `GET /api/config` | none | `{ mapsBrowserKey: string, mapId: string, enabledLanguages: LanguageCode[], orrBbox: BoundingBox, featureFlags: FeatureFlags }` | 2 s, 60 s memory |
 | `GET /api/places` | `?category=` optional | `{ places: VerifiedPlace[], corridor: GeoJSONLineString, verifiedAt: string }` | 2 s, immutable in-process |
-| `POST /api/world` | `{ officePlaceId: string, languageComfort: "en" \| "hi" \| "en_hi", budgetBand: "15_20k" \| "20_30k" \| "30k_plus" }` | SSE events: `progress` (`{ step, detail, count? }`), `complete` (`{ plan: WeekPlan, replayed: boolean }`), `error` (`{ code, message }`) | 20 s total, cached in LRU by `officePlaceId + languageComfort` |
-| `POST /api/live-token` | `{ mission: Mission, officeName: string, placeName: string, difficulty: DifficultyState, activeLanguage: LanguageCode }` | `{ token: string, expireTime: string, model: string, maxDurationSeconds: 90, phrase?: SurvivalPhrase }` | 6 s, never cached (`uses: 1`) |
-| `POST /api/score` | `{ missionId: string, objective: string, transcript: TranscriptTurn[], activePhrase?: SurvivalPhrase, currentDifficulty: DifficultyState }` | `{ answers: RubricAnswers, xpEarned: number, stars: 1 \| 2 \| 3, nextDifficulty: DifficultyState, usedSafeDefault: boolean, summaryLine: string }` | 5 s, idempotent per `missionId + transcriptHash` |
-| `POST /api/kit` | `{ officePlaceId: string, completedMissionIds: string[], learnedPhraseIds: string[] }` | `{ office: VerifiedPlace, neighbourhoods: NeighbourhoodCommute[], phrases: SurvivalPhrase[], checklist: ChecklistItem[] }` | 10 s, commute data cached 6 h per `officePlaceId` |
+| `POST /api/world` | `{ officePlaceId: string, languageComfort: "en" \| "hi" \| "en_hi", budgetBand: "15_20k" \| "20_30k" \| "30k_plus" }` | SSE events: `progress` (`{ step, detail, count? }`), `complete` (`{ plan: WeekPlan, replayed: boolean }`), `error` (`{ code, message }`) | 20 s total, cached in LRU + pre-warms `/api/kit` commutes in background |
+| `POST /api/live-token` | `{ mission: Mission, officeName: string, placeName: string, difficulty: DifficultyState, activeLanguage: LanguageCode }` | `{ token: string, expireTime: string, model: string, maxDurationSeconds: 90, phrase?: SurvivalPhrase }` | 6 s, never cached (`uses: 3` for reconnect safety, 2 min new-session window) |
+| `POST /api/score` | `{ missionId: string, objective: string, transcript: TranscriptTurn[], toolSignals?: { phraseQuality?: "partial" \| "clear"; objectiveCompleted?: boolean }, activePhrase?: SurvivalPhrase, currentDifficulty: DifficultyState }` | `{ answers: RubricAnswers, xpEarned: number, stars: 1 \| 2 \| 3, nextDifficulty: DifficultyState, usedSafeDefault: boolean, summaryLine: string }` | 5 s, idempotent per `missionId + transcriptHash` |
+| `POST /api/kit` | `{ officePlaceId: string, budgetBand: "15_20k" \| "20_30k" \| "30k_plus", recommendedAreas: string[], completedMissionIds: string[], learnedPhraseIds: string[] }` | `{ office: VerifiedPlace, neighbourhoods: NeighbourhoodCommute[], phrases: SurvivalPhrase[], checklist: ChecklistItem[] }` | 8 s, uses `computeRouteMatrix` (4 batched calls) pre-warmed on office pick |
 | `POST /api/tts` | `{ phraseId: string }` | `{ audioWavBase64: string, mimeType: "audio/wav" }` | 8 s, cached in-memory by `phraseId` |
 
 ## 4. Core Sequence Diagrams
@@ -156,15 +156,15 @@ sequenceDiagram
 
   Web->>Srv: POST /api/live-token { mission, difficulty }
   Srv->>Srv: Build fictional NPC systemInstruction + NON_BLOCKING tools
-  Srv->>Auth: authTokens.create (uses=1, liveConnectConstraints locked to model + config)
-  Auth-->>Srv: token.name (ephemeral, 1 min new-session window)
+  Srv->>Auth: authTokens.create (uses=3, liveConnectConstraints locked to model + config)
+  Auth-->>Srv: token.name (ephemeral v1beta token)
   Srv-->>Web: { token, maxDurationSeconds: 90, phrase }
-  Web->>Live: ai.live.connect(model="gemini-3.8-live", apiKey=token)
+  Web->>Live: new GoogleGenAI({ apiKey: token, httpOptions: { apiVersion: "v1beta" } }).live.connect(...)
   Web->>Live: sendRealtimeInput({ audio: 16kHz PCM })
   Live-->>Web: serverContent (24kHz PCM chunks + input/output transcriptions)
   Live-->>Web: toolCall (mark_phrase_attempt / give_hint / complete_objective)
   Web->>Live: sendToolResponse({ functionResponses })
-  Web->>Live: session.close() at objective complete or 90s cap
+  Web->>Live: Wait for turnComplete + PCM buffer drain (max 3.5s), then session.close()
 ```
 
 ### 4.3 Scoring & Adaptation (`POST /api/score`)
@@ -204,9 +204,10 @@ sequenceDiagram
 
 ## 5. Error Handling, Retries, and Caching
 - **Retry policy:** Every Gemini and Maps server call has an AbortSignal timeout, 1 retry with jittered backoff (`250 ms + random(0..200 ms)`) on HTTP `429` or `503`, and structured JSON error logging (`severity`, `event`, `requestId`, `durationMs`).
-- **Director fallback ladder:** `gemini-4-neon` -> 1 verifier-guided retry -> `gemini-4-hydrogen` -> last cached real `WeekPlan` for that `officePlaceId` marked `replayed: true` (renders banner: `Replayed from an earlier run`).
-- **Caching:**
-  - `places.json` and `corridor.geojson`: loaded once into memory on Fastify boot; frozen.
-  - `WeekPlan`: LRU cache (max 50 entries, TTL 2 hours) keyed by `${officePlaceId}:${languageComfort}:${budgetBand}`, plus a persistent last-known-good real generation map per office for emergency fallback.
-  - Routes API commutes: in-memory cache keyed by `${officePlaceId}:${nextMondayDate}` (TTL 6 hours).
-  - Phrase TTS WAV clips: cached in memory by `phraseId` (max 30 clips, ~150 KB each).
+- **Director fallback ladder:** `gemini-4-neon` -> 1 verifier-guided retry -> `gemini-4-hydrogen` -> committed real snapshot in `data/orr/fallback-plans.json` (generated from real `gemini-4-neon` runs at build time so even a fresh cold Cloud Run revision has a non-empty fallback) marked `replayed: true` (renders banner: `Replayed from an earlier run`).
+- **Privacy in structured logs:** `shared/logger.ts` hashes prompts and strictly redacts `transcript` arrays, inline audio, and secrets before writing structured JSON to stdout.
+- **Caching & Pre-warming:**
+  - `places.json`, `corridor.geojson`, and `fallback-plans.json`: loaded once into memory on Fastify boot; frozen.
+  - `WeekPlan`: LRU cache (max 50 entries, TTL 2 hours) keyed by `${officePlaceId}:${languageComfort}:${budgetBand}`.
+  - Routes API commutes (`computeRouteMatrix` v2): pre-warmed asynchronously in the background the moment `POST /api/world` starts for `officePlaceId`, cached by `${officePlaceId}:${nextMondayDate}` (TTL 6 hours) so Survival Kit opens instantaneously even on a cold office pick.
+  - Phrase TTS WAV clips: pre-warmed for Mission 1's active phrase on `/api/live-token` and cached in memory by `phraseId` (max 30 clips).

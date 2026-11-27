@@ -2,9 +2,9 @@
 
 Living design specification for **Apna Area**. Every UI ticket reads this file before building and updates it in the same commit when states or components evolve.
 
-## 1. Aesthetic Direction: Vice City Dusk Over Bengaluru
-Cinematic dusk atmosphere inspired by tropical twilight and Bengaluru's Outer Ring Road neon signage, paired with studio-grade interface discipline (Craft by Gustavo Fior, Emil Kowalski's motion rules, UI SDK keyboard primitives).
-- **Originality rule:** 100% original artwork and UI geometry. Never use GTA logos, Rockstar key art, or the Pricedown typeface.
+## 1. Aesthetic Direction: ORR Neon Dusk
+Cinematic Bengaluru dusk atmosphere inspired by tropical twilight and Outer Ring Road neon signage, paired with studio-grade interface discipline (Craft by Gustavo Fior, Emil Kowalski's motion rules, UI SDK keyboard primitives).
+- **Originality rule:** 100% original artwork, naming, and UI geometry. Never use third-party game logos, key art, or display typefaces.
 - **Copy tone:** Sentence case, warm, concrete, concise. Zero hype words. Zero em dashes anywhere in UI copy. Exclamation marks allowed only inside spoken NPC captions.
 
 ## 2. Design Tokens (`web/src/styles/tokens.css`)
@@ -79,29 +79,29 @@ Cinematic dusk atmosphere inspired by tropical twilight and Bengaluru's Outer Ri
   - Line 1 (when Kannada active): `ಒಂದು ಇಡ್ಲಿ ವಡೆ ಕೊಡಿ`
   - Line 2: `ondu idli vade koḍi · One idli vada, please`
 - **Phrase mastery aha:** When `mark_phrase_attempt` reports `quality: "clear"`, the caption flashes a `260ms` `--accent-teal` ring, plays a soft two-note chime, and animates a phrase card (`transform: translate3d(...) scale(...)`, `420ms`) into the Phrasebook icon.
-- **States:** `connecting` (spinner ring inside mic button), `listening` (pink waveform), `npc_speaking` (yellow waveform, barge-in ready), `permission_denied` (`Microphone access is blocked. Allow mic access in your browser bar or type your reply below.` + text input fallback), `error` (`Voice connection dropped. Tap Retry to reconnect to this mission.`).
+- **States:** `connecting` (spinner ring inside mic button), `listening` (pink waveform), `npc_speaking` (yellow waveform, barge-in ready), `permission_denied` (`Microphone access is blocked. Allow mic access in your browser bar or type your reply below.` + text input fallback credited equally in scoring), `error` (`Voice connection dropped. Tap Retry to reconnect to this mission.`).
+- **Audio gesture & privacy rule:** Clicking or pressing the mic button calls `audioContext.resume()` synchronously inside the user-gesture handler before awaiting `POST /api/live-token`. Below the mic on first open, a quiet 1-line note states: `Live voice streams to Gemini for this scene and is never stored by Apna Area.`
 
 ### 4.4 Mission Result & Adaptive Routing (`mission_scored`)
 - **Choreography:** XP rolls up over `280ms`; earned stars spring-fill (`200ms` each). One clear feedback sentence states how Mission `N+1` changed:
   - Example (high score, Kannada active): `You nailed the greeting. Your next stop will lead with more Kannada and fewer hints.`
   - Example (needed support): `Good effort. Your next stop will use more English and offer an earlier hint.`
-- **Transparency control:** `Why did this change?` disclosure expands in `200ms` to display the 4 calibrated `gemini-decision-1` rubric bars (`Objective`, `Phrase`, `Tone`, `Confidence`).
+- **Transparency & human override controls:** `Why did this change?` disclosure expands in `200ms` to display the 4 calibrated `gemini-decision-1` rubric bars (`Objective`, `Phrase`, `Tone`, `Confidence`), paired with a 1-click player override (`Keep gentler pace` / `Step up Kannada anyway`) so the player always has final say over AI routing.
 
 ### 4.5 Survival Kit & Confirm Sheets (`kit_open`)
 - **Peak headline:** `YOU'RE READY FOR MONDAY.`
 - **Three-column card grid (stacks cleanly at `390x844` mobile):**
-  1. `Where to live`: 3 verified residential pockets near the chosen office with Monday `09:00` and `18:30` IST horizontal duration bars (`Drive`, `Two-wheeler`, `Transit`) and one factual Flash-Lite sentence.
-  2. `Phrases you spoke`: Learned Kannada phrases (`script · transliteration · meaning`) with `40x40px` play buttons (`gemini-3.8-flash-tts` cached WAV).
-  3. `Your first-week checklist`: 6 interactive items persisted in `localStorage`.
-- **Confirm Sheet (mandatory gate for every exit):**
+  1. `Where to live`: 3 verified residential pockets selected for the chosen office and budget band, with Monday `09:00` and `18:30` IST horizontal duration bars (`Drive`, `Two-wheeler`, `Transit`) pre-warmed via `computeRouteMatrix` and one factual Flash-Lite sentence.
+  2. `Phrases you spoke`: Learned Kannada phrases (`script · transliteration · meaning`) with `40x40px` play buttons (`gemini-3.8-flash-tts` cached WAV) and a `Copy phrases` button that confirms inline with `Copied` + check icon (`2s` reset, no blocking modal).
+  3. `Your first-week checklist`: 6 interactive items tailored to `budgetBand` and persisted in `localStorage`.
+- **Confirm Sheet (mandatory gate for external navigation and file downloads):**
   - Built on `@ui-sdk/react` dialog/focus-trap primitives (`Esc` closes, focus returns to trigger).
   - Exact copy per exit:
     - Maps route: Title `Open this route in Google Maps?` · Body `Opens google.com/maps in a new tab with directions from {{areaName}} to {{officeName}}. Nothing else is shared.` · Actions: `Open Google Maps` / `Cancel`.
     - Save kit: Title `Download your Survival Kit?` · Body `Saves a PNG summary card to your device. No account or upload is used.` · Actions: `Download PNG` / `Cancel`.
-    - Copy phrases: Title `Copy phrases to your clipboard?` · Body `Copies your {{count}} Kannada survival phrases with transliteration and meaning.` · Actions: `Copy phrases` / `Cancel`.
 
 ## 5. Accessibility Checklist
 - Minimum `40x40px` hit target on every button, chip, pin, and audio control.
-- Keyboard-only operable across the entire loop (`Tab`, `Arrow` keys inside combobox and chips, `Cmd/Ctrl+K` for office picker, `Space` for push-to-talk when focused, `Esc` to dismiss tour/sheets).
+- Keyboard-only operable across the entire loop (`Tab`, `Arrow` keys inside combobox and chips, `Cmd/Ctrl+K` for office picker, `Space` for push-to-talk strictly when the mic button holds focus, `Esc` to dismiss tour/sheets).
 - Visible `2px` `--accent-teal` focus-visible ring (`offset: 2px`) on every interactive element.
 - Colour never carries state alone: stars pair fill with count (`2 of 3 stars`), health dot pairs teal/red with text tooltip, commute bars pair width with exact tabular minutes (`28 min`).

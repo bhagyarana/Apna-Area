@@ -41,12 +41,14 @@ Each verified place is tagged with its nearest ORR neighbourhood anchor by Haver
 - `Silk Board` (`12.9177, 77.6238`)
 
 ### 3.3 Mission Place Categories
-Queried per neighbourhood inside `ORR_BBOX`:
+Queried per neighbourhood anchor (`7 anchors x 5 categories`) inside `ORR_BBOX` so edge tech parks have balanced local density:
 - `darshini`: South Indian breakfast darshinis, Udupi tiffin rooms, filter coffee stands
 - `pg_coliving`: Paying guest accommodations, co-living spaces, hostels
-- `transit_stop`: BMTC bus stops, Namma Metro stations (ORR Blue Line / Purple-Green transfer feeders), auto-rickshaw stands
+- `transit_stop`: BMTC bus stops, ORR feeder bus bays, and auto-rickshaw stands *(explicitly excludes under-construction Namma Metro Phase 2A Blue Line ORR stations from Silk Board to Marathahalli so the Director never sends players to unbuilt metro stations)*
 - `lake_park`: Bellandur Lake viewpoints, Agara Lake park, neighbourhood parks
 - `cafe_daily`: Everyday cafes, bakeries, supermarkets near tech parks
+
+**Candidate Radius Fallback (`server/world/candidates.ts`):** Selects verified places within `3.0 km` of `officePlaceId` first; if fewer than `8` total candidates or `0` places in a needed category are within `3.0 km`, expands deterministically to `5.0 km` within `ORR_BBOX`.
 
 ## 4. Places API (New) Verification Method (`scripts/verify-places.ts`)
 - **Endpoint:** `POST https://places.googleapis.com/v1/places:searchText`

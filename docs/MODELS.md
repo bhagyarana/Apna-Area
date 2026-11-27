@@ -65,14 +65,17 @@ const interaction = await genaiV1.interactions.create({
 **Response Schema (`WeekPlan`):**
 - `officePlaceId`: `enum` locked to `[office.id]`
 - `weekTheme`: `string` (max 90 chars, no em dashes)
+- `recommendedNeighbourhoods`: array of `3` `enum` values chosen from `NEIGHBOURHOOD_IDS` tailored to `officePlaceId` and `budgetBand`, each with `{ neighbourhoodId, fitReason }`
 - `missions`: array of exactly `5` items (`minItems: 5, maxItems: 5`), each:
   - `id`: `"m1" | "m2" | "m3" | "m4" | "m5"`
   - `day`: `"Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"`
   - `title`: `string` (max 48 chars)
-  - `whyItMatters`: `string` (1 sentence grounded in Ananya's first week, max 120 chars)
-  - `placeId`: `enum` dynamically populated with ONLY `candidatePlaceIds` within 3 km of `officePlaceId`
+  - `whyItMatters`: `string` (1 sentence grounded in a newcomer's first week, max 120 chars)
+  - `whyThisPlace`: `string` (short spatial reason this verified place fits, max 80 chars)
+  - `placeId`: `enum` dynamically populated with ONLY `candidatePlaceIds` near `officePlaceId`
   - `npcRole`: `"auto_driver" | "darshini_owner" | "pg_owner" | "transit_helper" | "office_buddy"`
   - `npcFirstName`: `string` (fictional given name only, never a surname or real employee claim)
+  - `npcGender`: `"male" | "female"` (binds polite Kannada honorifics `aṇṇa` vs `akka` accurately)
   - `objective`: `string` (actionable 1-sentence goal for the 90-second voice scene)
   - `phraseSituation`: `"greeting" | "darshini_order" | "auto_meter" | "directions" | "renting" | "thanks" | "polite_refusal"`
   - `successCriteria`: array of 2 concrete checks (`string`)
@@ -107,6 +110,7 @@ const result = await genaiV1Beta.decisions.create({
   input: [
     { type: "text", text: `Mission objective: ${objective}\n` },
     { type: "text", text: activePhrase ? `Target phrase: ${activePhrase.kannada} (${activePhrase.transliteration} = ${activePhrase.english})\n` : "Target phrase: none\n" },
+    { type: "text", text: `Live audio tool signals: ${JSON.stringify(toolSignals ?? {})}\n` },
     { type: "text", text: `Current difficulty: ${JSON.stringify(currentDifficulty)}\n` },
     { type: "text", text: `Conversation transcript:\n${formattedTranscript}` },
   ],
@@ -116,15 +120,16 @@ const result = await genaiV1Beta.decisions.create({
 
 **Questions Schema & Threshold Rules:**
 1. `objective_met` (`type: "noul"`):
-   - `instructions`: `"Did the player achieve the stated mission objective during the conversation transcript?"`
-   - Threshold: `noul >= 0.60` counts as objective met; `confidence < 0.75` flags `usedSafeDefault`.
+   - `instructions`: `"Did the player achieve the stated mission objective during the conversation transcript or live tool signals?"`
+   - Threshold: `noul >= 0.60` (or `toolSignals?.objectiveCompleted === true`) counts as objective met; `confidence < 0.75` flags `usedSafeDefault`.
 2. `phrase_attempt` (`type: "score"`, included when `activePhrase` is defined in P3c):
-   - `instructions`: `"How clearly did the player attempt the target local phrase (recognising phonetic transliteration in ASR transcripts)?"`
+   - `instructions`: `"How clearly did the player attempt the target local phrase (accounting for phonetic ASR transliteration, typed fallback input, and Live audio tool signals)?"`
    - `criteria` (ordered 0 to 3):
      - `0`: `"No attempt at the target phrase"`
      - `1`: `"Spoke only in their comfort language without trying the phrase"`
      - `2`: `"Partial or hesitant attempt at the target phrase"`
      - `3`: `"Clear, contextually appropriate use of the target phrase"`
+   - **Split-brain guard:** If `toolSignals?.phraseQuality === "clear"`, `shared/game` floors `phrase_attempt` at `>= 2.5` even if `inputAudioTranscription` garbled the Kannada phonetics into English homophones.
 3. `tone` (`type: "score"`):
    - `instructions`: `"How respectful and constructive was the player's conversational tone with the local character?"`
    - `criteria` (ordered 0 to 3): `["Dismissive or rude", "Abrupt or transactional", "Polite and clear", "Warm, curious, and locally respectful"]`
@@ -166,24 +171,25 @@ export interface NpcPersonaConfig {
 **Live Non-Blocking Tools (`behavior: "NON_BLOCKING"`):**
 - `give_hint({ level: 1 | 2 | 3, hintText: string })`: Surfaces a visual hint chip in the HUD when the player pauses or asks for help.
 - `mark_phrase_attempt({ phraseId: string, attempted: boolean, quality: "partial" | "clear" })`: Registered only when `targetPhrase` is present (`P3c`); triggers the teal pulse, chime, and flying phrasebook card on `"clear"`.
-- `complete_objective({ summary: string })`: Signals the client to show the completion beat, close the WebSocket cleanly after the NPC's closing line finishes playing, and call `POST /api/score`.
+- `complete_objective({ summary: string })`: Signals the client to display the completion badge, wait for `serverContent.turnComplete === true` and PCM audio queue drain (capped at `3.5s` max) so the NPC's closing line and trailing transcription finish cleanly, close the WebSocket, and call `POST /api/score`.
 
 **NPC System Instruction Template:**
 ```text
-You are {{firstName}}, a fictional {{roleLabel}} near {{placeCategoryLabel}} on Bengaluru's Outer Ring Road.
-You are speaking with Ananya, who moves to Bengaluru in two weeks.
-Personality: warm, grounded, mildly witty, patient, realistic street cadence. Keep each spoken turn under 2 short sentences (under 12 seconds of speech) so Ananya gets plenty of turns within 90 seconds.
+You are {{firstName}}, a fictional, warm, dignified {{roleLabel}} near {{placeCategoryLabel}} on Bengaluru's Outer Ring Road.
+You are speaking with a newcomer who moves to Bengaluru in two weeks (use their name only if they introduce themselves; never assume a name).
+Personality: friendly, busy street-smart Bengaluru local, mildly witty, patient, respectful. Keep each spoken turn under 2 short sentences (under 12 seconds of speech) so the player gets plenty of turns within 90 seconds.
 Language rules:
 - Enabled languages: {{enabledLanguages}}. Lead in {{primaryLanguage}}.
-- Follow Ananya immediately if she switches between enabled languages.
+- Follow the player immediately if they switch between enabled languages.
+- Always use polite plural Kannada forms (ನೀವು, ಕೊಡಿ, ಹೇಳಿ) and match any honorific to your gender ({{honorificHint}}).
 {{#if targetPhrase}}
-- Naturally teach and invite Ananya to try this one Kannada phrase once: "{{targetPhrase.kannada}}" ({{targetPhrase.transliteration}}, meaning "{{targetPhrase.english}}"). Call mark_phrase_attempt as soon as she tries it.
+- Naturally teach and invite the player to try this one Kannada phrase once: "{{targetPhrase.kannada}}" ({{targetPhrase.transliteration}}, meaning "{{targetPhrase.english}}"). Call mark_phrase_attempt as soon as they try it.
 {{/if}}
 Safety rules:
 - You are a fictional character, never a real employee of any named company or shop.
-- Never state exact rupees, rents, deposits, or fares as facts; speak about process (for example, asking for the meter or checking peak-hour commute) rather than prices.
+- Never state exact rupees, rents, deposits, or fares as facts; speak about practical local habits (such as checking Namma Yatri or meter etiquette, peak-hour commute timing, or water/power backup questions at a PG).
 - Never say anything negative about any real place or business.
-- When Ananya achieves "{{objective}}", give a warm 1-sentence sign-off and call complete_objective.
+- When the player achieves "{{objective}}", give a warm 1-sentence sign-off and call complete_objective.
 ```
 
 ---

@@ -5,7 +5,7 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 ## Foundation (`phase/foundation-docs` -> tag `v0.1-docs`)
 - [x] `T-SETUP`: `.gitignore` committed first (`5b8b64f`), agent rules/skills copied (`e693716`).
 - [x] `T-DOCS`: All 11 living docs drafted, self-checked, and committed.
-- [ ] `T-REVIEW`: Adversarial review (`03-adversarial-review.md`) run on fresh Carbon agent and fixes applied.
+- [x] `T-REVIEW`: Adversarial review (`03-adversarial-review.md`) run on fresh Carbon agent and top 6 fixes applied.
 - [ ] `T-DISCOVER`: Design Discover (`04-design-discover.md`) taste check-in + 3 seeded variations -> lock Section 3 of `Design.md`.
 
 ---
@@ -16,8 +16,8 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
 | `T0.1` | Lead first | Neon | 20m | `package.json`, `tsconfig.base.json`, `eslint.config.js`, `vitest.config.ts`, `web/package.json`, `server/package.json`, `shared/package.json` | Monorepo npm workspaces, strict TypeScript, `dev`, `build`, `check`, `start` scripts. Proof: `npm run check` exits 0. |
-| `T0.2` | Parallel A | Hydrogen | 25m | `shared/src/config.ts`, `shared/src/types.ts`, `shared/src/logger.ts`, `shared/src/__tests__/*` | `MODEL_IDS`, `ORR_BBOX`, `ENABLED_LANGUAGES = ["en"]`, Zod schemas, structured JSON logger. Proof: `vitest run shared`. |
-| `T0.3` | Parallel B | Hydrogen | 25m | `server/src/index.ts`, `server/src/routes/health.ts`, `server/src/routes/config.ts`, `server/src/__tests__/health.test.ts` | Fastify server on `PORT` (`8080`), per-IP rate limit, `GET /api/health` (`commit`, `builtAt`), `GET /api/config`, static SPA fallback. Proof: `vitest run server`. |
+| `T0.2` | Parallel A | Hydrogen | 25m | `shared/src/config.ts`, `shared/src/types.ts`, `shared/src/logger.ts`, `shared/src/__tests__/*` | `MODEL_IDS`, `ORR_BBOX`, `ENABLED_LANGUAGES = ["en"]`, Zod schemas, structured JSON logger redacting transcripts/audio/secrets. Proof: `vitest run shared`. |
+| `T0.3` | Parallel B | Hydrogen | 25m | `server/src/index.ts`, `server/src/routes/health.ts`, `server/src/routes/config.ts`, `server/src/__tests__/health.test.ts` | Fastify server on `PORT` (`8080`) with `trustProxy: true`, per-IP rate limit (`60/min`), `GET /api/health` (`commit`, `builtAt`), `GET /api/config`, static SPA fallback. Proof: `vitest run server`. |
 | `T0.4` | Parallel C | Hydrogen | 25m | `web/index.html`, `web/vite.config.ts`, `web/src/main.tsx`, `web/src/App.tsx`, `web/src/styles/tokens.css` | Vice City dusk CSS tokens, Anton + Hanken Grotesk fonts, wordmark, tagline, live `/api/health` teal status dot, reduced-motion support. Proof: `npm run build --workspace=web`. |
 | `T0.5` | Sequential | Hydrogen | 20m | `Dockerfile`, `.dockerignore`, `playwright.live.config.ts`, `e2e/smoke.spec.ts` | Multi-stage `node:22-slim` non-root image + Playwright smoke test asserting wordmark and green health dot. Proof: Playwright smoke passes against local preview. |
 | `T0.6` | Lead gate | Neon | 20m | `docs/HANDOFF.md`, `docs/TASKS.md` | Run `ship-phase` skill -> Cloud Run `asia-south1` live URL -> tag `p0-skeleton` -> **Check-in #2a**. |
@@ -42,8 +42,8 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
 | `T2.1` | Lead first | Neon | 15m | `shared/src/types.ts` | Lock `PhraseSituation`, `Mission`, `WeekPlan`, and `WorldProgressEvent` Zod contracts. Proof: `npm run check`. |
-| `T2.2` | Parallel A | Hydrogen | 25m | `server/src/world/candidates.ts`, `server/src/world/verify.ts`, `server/src/__tests__/verify.test.ts` | Pure 3 km candidate selector (deterministic distance + ID sort) and strict verifier rejecting unknown/duplicate/out-of-box IDs. Proof: unit tests with valid + malformed fixtures. |
-| `T2.3` | Parallel B | Neon | 35m | `server/src/world/schema.ts`, `server/src/world/director.ts`, `server/src/world/cache.ts`, `server/src/routes/world.ts`, `server/src/__tests__/world.test.ts` | `gemini-4-neon` (`thinking_level: "medium"`) structured output with dynamic `placeId` enum, 1 verifier retry, `gemini-4-hydrogen` fallback, SSE progress stream, session LRU cache. Proof: contract test + live `< 12s` timing log. |
+| `T2.2` | Parallel A | Hydrogen | 25m | `server/src/world/candidates.ts`, `server/src/world/verify.ts`, `server/src/__tests__/verify.test.ts` | Pure 3 km->5 km fallback candidate selector (deterministic distance + ID sort) and strict verifier rejecting unknown/duplicate/out-of-box IDs. Proof: unit tests with valid + malformed fixtures. |
+| `T2.3` | Parallel B | Neon | 35m | `server/src/world/schema.ts`, `server/src/world/director.ts`, `server/src/world/cache.ts`, `data/orr/fallback-plans.json`, `server/src/routes/world.ts`, `server/src/__tests__/world.test.ts` | `gemini-4-neon` (`thinking_level: "medium"`) structured output with dynamic `placeId` enum + 3 recommended areas, 1 verifier retry, `gemini-4-hydrogen` fallback, committed real `fallback-plans.json` for cold-container 503 resilience (`replayed: true`), SSE stream. Proof: contract test + live `< 12s` timing log. |
 | `T2.4` | Parallel C | Hydrogen | 30m | `web/src/hud/ProgressChips.tsx`, `web/src/hud/WeekProgressBar.tsx`, `web/src/hud/MissionCard.tsx` | SSE chip stack, 60ms staggered mission pin drop, 5-step week bar, verified `place_id` provenance tooltip, `whyItMatters` story line. Proof: component + smoke test. |
 | `T2.5` | Lead + Critic | Carbon / Neon | 20m | `Design.md`, `docs/DESIGN_SCORES.md`, `docs/HANDOFF.md` | Subtraction pass + Carbon critic (`>= 9/10`) + `ship-phase` -> tag `p2-director` -> **Check-in #3 (Break)**. |
 
@@ -67,7 +67,7 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 ### Phase 3c · Kannada & Survival Phrases (`phase/p3c-kannada` -> tag `p3c-kannada`)
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
-| `T3c.1` | Parallel A | Carbon / Neon | 25m | `data/phrases.json`, `server/src/live/persona.ts`, `shared/src/config.ts` | Draft & Carbon-review 30 ORR survival phrases across 7 `PhraseSituation` keys; set `ENABLED_LANGUAGES = ["en", "hi", "kn"]`; register `mark_phrase_attempt`. Proof: schema test validating all 30 phrases. |
+| `T3c.1` | Parallel A | Carbon / Neon | 25m | `data/phrases.json`, `server/src/live/persona.ts`, `shared/src/config.ts` | Draft & Carbon-review 30 ORR survival phrases across 7 `PhraseSituation` keys using polite plural Kannada and gender-matched honorifics (`aṇṇa` / `akka` / neutral); set `ENABLED_LANGUAGES = ["en", "hi", "kn"]`; register `mark_phrase_attempt`. Proof: schema test validating all 30 phrases. |
 | `T3c.2` | Parallel B | Hydrogen | 25m | `web/src/live/Captions.tsx`, `web/src/hud/PhraseFlyCard.tsx`, `web/index.html` | Noto Sans Kannada font fallback, 3-line Kannada/transliteration/meaning captions, teal pulse + soft chime + flying card animation on `clear` attempt. Proof: unit + visual test -> `ship-phase` -> tag `p3c-kannada` -> **Check-in #4 (Break)**. |
 
 ---
@@ -88,7 +88,7 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 
 | Ticket | Mode | Tier | Est. | Allowed Files | Goal & Proof Test |
 |---|---|---|---|---|---|
-| `T5.1` | Parallel A | Hydrogen | 30m | `server/src/kit/commute.ts`, `server/src/kit/summary.ts`, `server/src/kit/tts.ts`, `server/src/routes/kit.ts`, `server/src/__tests__/kit.test.ts` | Routes API Monday `09:00` & `18:30` IST (`DRIVE`, `TWO_WHEELER`, `TRANSIT`), `gemini-3.5-flash-lite` factual one-liners, `gemini-3.8-flash-tts` cached WAV replay. Proof: unit tests for commute aggregation & Maps URL builder. |
+| `T5.1` | Parallel A | Hydrogen | 30m | `server/src/kit/commute.ts`, `server/src/kit/summary.ts`, `server/src/kit/tts.ts`, `server/src/routes/kit.ts`, `server/src/__tests__/kit.test.ts` | Routes API `computeRouteMatrix` Monday `09:00` & `18:30` IST (`DRIVE`, `TWO_WHEELER`, `TRANSIT`) pre-warmed on office pick, `gemini-3.5-flash-lite` factual one-liners, `gemini-3.8-flash-tts` cached WAV replay. Proof: unit tests for commute aggregation & Maps URL builder. |
 | `T5.2` | Parallel B | Hydrogen | 25m | `scripts/generate-music.ts`, `web/public/audio/*`, `web/src/audio/ambient.ts` | Pre-generate 4 x 30s `lyria-3-clip-preview` instrumental MP3 loops; gesture-gated WebAudio crossfader + persisted mute toggle. Proof: audio credits file + gesture gate test. |
 | `T5.3` | Parallel C | Hydrogen | 35m | `web/src/kit/ConfirmSheet.tsx`, `web/src/kit/SurvivalKit.tsx`, `web/src/kit/CommuteCard.tsx`, `web/src/kit/PhrasebookCard.tsx`, `e2e/confirm-sheet.spec.ts` | `"YOU'RE READY FOR MONDAY."` 3-card kit + `@ui-sdk/react` focus-trapped Confirm Sheet on every external/export action. Proof: Playwright test proving zero external navigation without Confirm Sheet -> Critic loop -> `ship-phase` -> tag `p5-kit` -> **Check-in #5 (Break)**. |
 

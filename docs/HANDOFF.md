@@ -9,7 +9,8 @@
 - Verified Windows PowerShell (`5.1`), Node (`v26.12.1`), npm (`12.2.3`), and Git (`2.56.0`).
 - Committed `.gitignore` first (`5b8b64f`), unpacked `01-copy-into-repo/` rules and skills to root, added `.env.example` and `docs/.gitkeep` (`e693716`).
 - Installed and verified official `gemini-api` and `google-maps-platform` plugins; verified `@google/genai` (`3.6.1`), `@vis.gl/react-google-maps` (`1.10.2`), and `@ui-sdk/react` (`0.1.0-beta.17`).
-- Drafted and self-checked all 11 core docs (`docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/MODELS.md`, `Design.md`, `docs/DATA.md`, `docs/TASKS.md`, `docs/TESTING.md`, `docs/DEMO.md`, `docs/RISKS.md`, `docs/DECISIONS.md`, `docs/HANDOFF.md`) plus `docs/PROMPT_LOG.md` and `docs/DESIGN_SCORES.md` on `phase/foundation-docs`.
+- Drafted, self-checked, and committed all 11 core docs one by one on `phase/foundation-docs`.
+- Ran independent Carbon adversarial review (`03-adversarial-review.md`) in a fresh subagent context and applied all 6 accepted fixes (`trustProxy: true`, `computeRouteMatrix` background pre-warming, `toolSignals` split-brain scoring guard, committed `fallback-plans.json` snapshot, exclusion of under-construction ORR Blue Line metro stations, polite gender-matched Kannada honorifics, and player difficulty override).
 
 ## 3. Decisions Made
 - Recorded `ADR-001` through `ADR-010` in `docs/DECISIONS.md` (SAFE-only hackathon execution, single Cloud Run container in `asia-south1`, schema-enum + verifier place lock, `v1beta` ephemeral Live tokens omitting `thinkingConfig`, Pro-SKU Places masks, sequential `en` -> `hi` -> `kn` rollout).
