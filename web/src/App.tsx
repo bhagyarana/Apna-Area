@@ -1,12 +1,12 @@
 /**
- * Feature: Phase 5 ORR World, Director, Voice NPC, Adaptive Score & Survival Kit Shell (web/src/App.tsx)
- * Purpose: Coordinates world bootstrap, skippable camera tour, office picker, Week One generation, Live NPC missions, adaptive scoring, Lyria ambience, and Survival Kit.
+ * Feature: Phase 5/8 ORR World, Director, Voice NPC, Adaptive Score, Survival Kit & 3D Dusk Shell (web/src/App.tsx)
+ * Purpose: Coordinates world bootstrap, skippable camera tour, office picker, Week One generation, Live NPC missions, adaptive scoring, Lyria ambience, 3D Dusk mode, and Survival Kit.
  * Inputs: useWorldBootstrap state, useDirectorStream SSE state, useAdaptiveProgress state, and useShellStage state.
  * Outputs: Interactive ORR Neon Dusk map stage with TopbarChrome, StageRouter, Voice Ribbon, and Survival Kit peak screen.
  * Deliberately excludes: Client-side API keys or unconfirmed external exits.
  */
-import { lazy, useMemo, useState, type JSX } from "react";
-import { resolveComfortLanguage, type MissionMood } from "@apna-area/shared";
+import { lazy, useEffect, useMemo, useState, type JSX } from "react";
+import { MAP_3D_CONFIG, resolveComfortLanguage, type MissionMood } from "@apna-area/shared";
 import { ambientAudio } from "./audio/ambient";
 import { useAmbientSync } from "./audio/useAmbientSync";
 import { StageSuspenseBoundary } from "./components/StageSuspenseCard";
@@ -33,11 +33,12 @@ const LazySurvivalKit = lazy(() =>
 
 /**
  * Root Apna Area application shell.
- *
- * @returns Full-viewport interactive map, office picker, Week One HUD, Voice stage, Result card, and Survival Kit.
  */
 export function App(): JSX.Element {
   const [prefs, setPrefs] = useState<PlayerPreferences>(() => loadPlayerPreferences());
+  const [isDesktopViewport, setIsDesktopViewport] = useState<boolean>(
+    () => typeof window !== "undefined" && window.innerWidth >= MAP_3D_CONFIG.minDesktopWidthPx,
+  );
   const { config, world, worldReady, loadError, retryBootstrap } = useWorldBootstrap();
   const { director, buildWeek, retryBuildWeek, cancelGeneration, clearWeek } = useDirectorStream();
   const {
@@ -49,6 +50,14 @@ export function App(): JSX.Element {
     clearResult,
     resetAdaptiveWeek,
   } = useAdaptiveProgress(prefs, setPrefs, config.enabledLanguages);
+
+  useEffect(() => {
+    const onResize = () => {
+      setIsDesktopViewport(window.innerWidth >= MAP_3D_CONFIG.minDesktopWidthPx);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const placesById = useMemo(() => new Map(world.places.map((p) => [p.id, p])), [world.places]);
   const techParks = useMemo(
@@ -95,6 +104,8 @@ export function App(): JSX.Element {
     !stage.tourActive &&
     config.featureFlags.enableAdaptiveScoring &&
     ((director.status === "week_ready" && !stage.kitOpen) || prefs.totalXp > 0);
+  const map3dActive =
+    config.featureFlags.enable3dDusk && isDesktopViewport && Boolean(prefs.map3dEnabled);
   const missions = director.weekPlan?.missions ?? [];
 
   return (
@@ -114,6 +125,8 @@ export function App(): JSX.Element {
         activeMissionIndex={stage.activeMissionIndex}
         inVoiceMission={stage.inVoiceMission}
         hidePins={stage.kitOpen}
+        map3dActive={map3dActive}
+        completedMissions={prefs.missionStars}
         onSelectMission={stage.selectMission}
         tourActive={stage.tourActive}
         onFinishTour={stage.handleFinishTour}
@@ -127,6 +140,7 @@ export function App(): JSX.Element {
         weekPlan={director.weekPlan}
         activeMissionIndex={stage.activeMissionIndex}
         prefs={prefs}
+        map3dActive={map3dActive}
         totalStars={totalStars}
         phrasePulse={stage.phrasePulse}
         canOpenKit={canOpenKit}
@@ -135,11 +149,10 @@ export function App(): JSX.Element {
         onSelectMission={stage.selectMission}
         onToggleKit={() => stage.setKitOpen((prev) => !prev)}
         onToggleMute={() => {
-          if (prefs.musicMuted) {
-            ambientAudio.unlockFromUserGesture();
-          }
+          if (prefs.musicMuted) ambientAudio.unlockFromUserGesture();
           setPrefs(savePlayerPreferences({ musicMuted: !prefs.musicMuted }));
         }}
+        onToggle3d={() => setPrefs(savePlayerPreferences({ map3dEnabled: !map3dActive }))}
         onChangeBudget={(budgetBand) => setPrefs(savePlayerPreferences({ budgetBand }))}
         onChangeLanguageComfort={(languageComfort) =>
           setPrefs(savePlayerPreferences({ languageComfort }))

@@ -1,36 +1,37 @@
 # Session Handoff (`docs/HANDOFF.md`)
 
 ## 1. Now
-- **Current phase:** `main` (Phase 6 and Submission Pack complete)
-- **Current tag:** `p7-submission` (`ffe7093`, preceded by `p6-demo-ready` `3b50e21`, `p5-kit` `16ad715`, `p4-adaptive`, `p3c-kannada`, `p3b-hindi`, `p3a-english`, `p2-director`, `p1-map`, `p0-skeleton`, `v0.1-docs`)
-- **Live URL & revision:** `https://apna-area-481049877093.asia-south1.run.app` (`https://apna-area-qhtgwpzhpq-el.a.run.app`, `100%` live traffic on `apna-area-00019-foc`, tag `p7-sub`)
+- **Current phase:** `phase/p8-3d-dusk` (preview shipped, awaiting human sign-off)
+- **Current production tag (`main`, untouched):** `p7-submission` (`ffe7093`)
+- **Live URL & revision (`100%` traffic locked):** `https://apna-area-481049877093.asia-south1.run.app` (`apna-area-00019-foc`)
+- **Phase 8 preview URL & revision (`0%` live traffic, tag `p8-3d`):** `https://p8-3d---apna-area-qhtgwpzhpq-el.a.run.app` (`apna-area-00021-ret`, built from `0bc07a1`)
 
 ## 2. Done This Session
-- **Shipped `p6-demo-ready` (`3b50e21`, `apna-area-00017-dis`):**
-  - `T6.1`: Completed Carbon adversarial review and hardened `shared/src/{http.ts,config.ts,types.ts}`, `server/src/{app.ts,world/runner.ts,kit/summary.ts,score/questions.ts,routes/health.ts}`, `web/vite.config.ts` (`188.1 KB` gzipped initial JS `< 250 KB` budget), `web/src/components/StageSuspenseCard.tsx`, `web/src/hud/useDirectorStream.ts`, `web/src/live/useLiveSession.ts`, `web/src/kit/useSurvivalKitData.ts`, and `"Replayed from an earlier run"` fallback banner.
-  - `T6.2`: Added `?demo=1` presenter timer (`web/src/components/DemoTimerPill.tsx`), keyboard focus polish (`web/src/picker/OfficePicker.tsx`, `web/src/kit/{ChecklistCard.tsx,SurvivalKit.tsx}`), `e2e/demo-loop.spec.ts` (`7/7` E2E green), Code Review Gate `PASS` (`99/100`), 3-round Design Critic `PASS` (`9.4/10`: `9.4` Desktop / `9.3` Mobile in `docs/DESIGN_SCORES.md`), and 3 consecutive live Cloud Run rehearsals (`0:41`, `0:40`, `0:48` in `docs/DEMO.md`).
-- **Shipped `p7-submission` (`ffe7093`, `apna-area-00019-foc`):**
-  - `T6.3` (`5485e66`): Authored `README.md`, `docs/ARCHITECTURE_OVERVIEW.md` (`358` words, 1 Mermaid diagram), `docs/VIDEO_COVERAGE.md`, `docs/assets/{week-hub-desktop.png,survival-kit-desktop.png}`, passed Carbon `23-self-check` audit, and passed full-history `gitleaks` scan (`0` leaks).
+- Implemented `T8.1`..`T8.4` on `phase/p8-3d-dusk` (`0bc07a1`):
+  - `shared/src/config.ts`, `shared/src/types.ts`, `web/vite.config.ts`, `web/src/state/sessionStore.ts`, `web/src/hud/TopbarChrome.tsx`: added `MAP_3D_CONFIG` + `enable3dDusk: true`, isolated `three` into lazy `vendor-three` (`129.4 KB` gzip, keeping initial 2D JS at `192.6 KB` gzip `< 200 KB`), gated auto-default on hardware desktop WebGL2, and added the `40px` `3D` topbar toggle pill.
+  - `web/src/map/OrrMap.tsx`, `web/src/map/CameraDirector3D.tsx`, `web/src/styles/map3d.css`, `web/src/main.tsx`: wired `RenderingType.VECTOR`, 3-stage parabolic Sky-Drop swoop (`12.6/0` -> `15.2/38` -> `17.4/65`), `1.2 deg/s` voice street orbit, `Q`/`E` camera rotation, and `22vh` twilight horizon scrim.
+  - `web/src/map/OrrWebGlLayer.ts`, `web/src/map/orrTrafficGeometry.ts`, `web/src/map/__tests__/orrTrafficGeometry.test.ts`: built lazy `WebGLOverlayView` + Three.js cylindrical light pillars and `545`-point bi-directional ORR traffic streaks with full disposal.
+  - `web/src/map/RadarMinimap.tsx`, `e2e/map-3d.spec.ts`: shipped `136x136px` heading-locked corner radar (`bottom: 36px; left: 24px` above Google attribution), passed `17/17` Vitest suites (`61/61` tests), `8/8` Playwright E2E specs, Code Review (`95/100` + all 5 polish items fixed), Screenshot Critic (`9.2/10`), and live hardware-GPU smoke test on `apna-area-00021-ret`.
 
 ## 3. Decisions Made
-- **ADR-019 (`docs/DECISIONS.md`):** Production bundle splitting (`188.1 KB` gzip initial JS), non-doubling `32s` Neon + `20s` low-thinking Hydrogen Director timeout, SSE/Live/online resilience, `?demo=1` neutral presenter timer, and 3-round visual polish (`9.4/10`).
+- **ADR-020 (`docs/DECISIONS.md`):** Shipped Route A (`RenderingType.VECTOR` + lazy `WebGLOverlayView` Three.js + `RadarMinimap`) strictly to `--no-traffic --tag p8-3d` preview revision `apna-area-00021-ret`.
 
 ## 4. Open Questions
-- Human final submission tasks only: record the `< 3:00` walkthrough video using `docs/VIDEO_COVERAGE.md`, verify public GitHub visibility in an incognito browser, and check final spend at `https://aistudio.google.com/spend`.
+- Waiting on human review of `https://p8-3d---apna-area-qhtgwpzhpq-el.a.run.app` before deciding whether to `--no-ff` merge `phase/p8-3d-dusk` to `main` and shift traffic.
 
 ## 5. Known Issues
-- None; `16/16` Vitest suites (`57/57` tests), `7/7` local Playwright E2E specs, and live Cloud Run smoke checks pass with `0` warnings and all `.ts/.tsx/.css` files `<= 250` lines.
+- None; all `.ts/.tsx/.css` files are `<= 250` lines with zero em dashes and `0` console errors.
 
 ## 6. File State
-- Clean working tree on `main` synced with `origin/main`.
+- Clean working tree on `phase/p8-3d-dusk` synced with `origin/phase/p8-3d-dusk`.
 
 ## 7. The Single Next Task
-- Record the `< 3:00` demo video against `https://apna-area-481049877093.asia-south1.run.app/?demo=1` following `docs/VIDEO_COVERAGE.md` and submit the live Cloud Run URL, public GitHub repo, and architecture overview (`docs/ARCHITECTURE_OVERVIEW.md`).
+- Human tries `https://p8-3d---apna-area-qhtgwpzhpq-el.a.run.app` on desktop and either approves `--no-ff` merge + traffic promotion to `p8-3d` or keeps `main` locked at `p7-submission` (`apna-area-00019-foc`).
 
 ## 8. Resume Checklist
 1. `AGENTS.md`
 2. `PROJECT_BRIEF.md`
 3. `docs/HANDOFF.md`
-4. `docs/TASKS.md`
-5. `docs/VIDEO_COVERAGE.md`
-6. `docs/DEMO.md`
+4. `docs/TASKS.md` (`Phase 8`)
+5. `Design.md` (`Section 4.6`)
+6. `web/src/map/OrrMap.tsx`, `web/src/map/CameraDirector3D.tsx`, `web/src/map/OrrWebGlLayer.ts`, `web/src/map/RadarMinimap.tsx`

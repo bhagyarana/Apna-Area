@@ -110,6 +110,18 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 4. **Drop fourth:** If one non-English voice language underperforms in testing, revert `ENABLED_LANGUAGES` to the passing subset (`["en", "kn"]` or `["en", "hi"]`) and document in `docs/DECISIONS.md`.
 
 ## Later List (Do Not Touch Until P6 Ships Green)
-- Photorealistic 3D Tiles (`Map3DElement`) toggle for desktop WebGL2 browsers.
+- [x] Vector 3D + `WebGLOverlayView` Neon Dusk Open-World toggle shipped as isolated preview `p8-3d` on `phase/p8-3d-dusk` (`apna-area-00021-ret`, `https://p8-3d---apna-area-qhtgwpzhpq-el.a.run.app`; replaces Photorealistic 3D Tiles `Map3DElement` per `ADR-020`).
 - Build-time Nano Banana neighbourhood postcard exported inside the Survival Kit PNG.
 - 6-second keyed-out looping auto-rickshaw dusk clip (`gemini-omni-1.2-flash`) behind landing headline.
+
+---
+
+## Phase 8 · 3D Neon Dusk Open-World Mode (`phase/p8-3d-dusk` -> tag `p8-3d-dusk`)
+**Goal:** Deliver an opt-in/hardware-gated nocturnal 3D open-world map layer (`RenderingType.VECTOR` at `65deg` tilt/heading + Three.js `WebGLOverlayView` beacons & ORR traffic + Sky-Drop camera + heading-locked Radar Minimap), verify preview `p8-3d`, and promote via `--no-ff` merge to `main` (`p8-3d-dusk`).
+
+| Ticket | Mode | Tier | Est. | Allowed Files (`<= 250` lines each) | Goal & Proof Test |
+|---|---|---|---|---|---|
+| `T8.1` | Lead first | Neon | 25m | `shared/src/config.ts`, `shared/src/types.ts`, `web/package.json`, `web/vite.config.ts`, `web/src/state/sessionStore.ts`, `web/src/hud/TopbarChrome.tsx` | [x] Add `MAP_3D_CONFIG` + `enable3dDusk: true`, install `three` + `@types/three` isolated in lazy `vendor-three` chunk (initial 2D JS stays `< 200 KB` gzipped: `192.6 KB`), persist `map3dEnabled` with hardware WebGL2 check (excluding `SwiftShader`/`llvmpipe`, headless, mobile, and `prefers-reduced-motion`), and add `40px` `3D` topbar toggle pill. |
+| `T8.2` | Parallel A | Neon | 35m | `web/src/map/OrrMap.tsx`, `web/src/map/CameraDirector3D.tsx`, `web/src/styles/map3d.css`, `web/src/main.tsx` | [x] Enable `RenderingType.VECTOR` when 3D mode is active, implement 3-stage parabolic Sky-Drop camera swoop (`zoom 12.6 / tilt 0` -> `zoom 15.2 / tilt 38` -> `zoom 17.4 / tilt 65`), `1.2 deg/s` voice-mission street orbit, `Q`/`E` keyboard camera rotation, and tilted twilight horizon scrim. |
+| `T8.3` | Parallel B | Neon | 45m | `web/src/map/OrrWebGlLayer.ts`, `web/src/map/orrTrafficGeometry.ts` | [x] Lazy-loaded `google.maps.WebGLOverlayView` + Three.js scene rendering cylindrical additive waypoint light pillars (`#FFD24A` office, `#FF4FA0` active stop, `#3DE6D0` completed) and `InstancedMesh` bi-directional neon traffic streaks along all `545` verified `corridor.geojson` coordinates, cleanly disposing geometries/materials on unmount or `2D` switch (`orrTrafficGeometry.test.ts` green). |
+| `T8.4` | Gate + Preview | Neon + Carbon | 35m | `web/src/map/RadarMinimap.tsx`, `e2e/map-3d.spec.ts`, `Design.md`, `docs/HANDOFF.md` | [x] Built `136x136px` heading-locked `RadarMinimap` (`bottom: 36px; left: 24px` above Google attribution), passed `e2e/map-3d.spec.ts` + all existing `7/7` E2E specs (`8/8` total), passed Code Review (`95/100` + all 5 polish items applied) & Screenshot Critic (`9.2/10`), and deployed `--no-traffic --tag p8-3d` preview (`apna-area-00021-ret` at `https://p8-3d---apna-area-qhtgwpzhpq-el.a.run.app`, `main` untouched at `100%` `apna-area-00019-foc`). |

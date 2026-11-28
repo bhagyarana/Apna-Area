@@ -106,6 +106,7 @@ export const FeatureFlagsSchema = z.object({
   enableAdaptiveScoring: z.boolean(),
   enableSurvivalKit: z.boolean(),
   enableAmbientMusic: z.boolean(),
+  enable3dDusk: z.boolean().default(true),
 });
 export type FeatureFlags = z.infer<typeof FeatureFlagsSchema>;
 

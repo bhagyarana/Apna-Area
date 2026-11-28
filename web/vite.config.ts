@@ -23,9 +23,13 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: false,
     target: "es2022",
+    chunkSizeWarningLimit: 550,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          if (id.includes("node_modules/three")) {
+            return "vendor-three";
+          }
           if (id.includes("@vis.gl/react-google-maps")) {
             return "vendor-maps";
           }

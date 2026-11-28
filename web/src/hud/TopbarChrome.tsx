@@ -1,7 +1,7 @@
 /**
  * Feature: Root Topbar Chrome Cluster (web/src/hud/TopbarChrome.tsx)
- * Purpose: Renders the wordmark pill, 5-step WeekProgressBar, XP odometer, Phrasebook/Survival Kit trigger, Lyria sound toggle, Tune popover, and Health badge.
- * Inputs: Tour/kit/voice flags, WeekPlan, persisted PlayerPreferences, PublicConfigData, and action callbacks.
+ * Purpose: Renders the wordmark pill, 5-step WeekProgressBar, XP odometer, Phrasebook/Survival Kit trigger, Lyria sound toggle, 3D Dusk toggle, Tune popover, and Health badge.
+ * Inputs: Tour/kit/voice/3D flags, WeekPlan, persisted PlayerPreferences, PublicConfigData, and action callbacks.
  * Outputs: Accessible single-row topbar header aligned on 40px smoked-acrylic pills.
  * Deliberately excludes: Map canvas or modal state.
  */
@@ -24,6 +24,7 @@ export interface TopbarChromeProps {
   weekPlan: WeekPlan | null;
   activeMissionIndex: number;
   prefs: PlayerPreferences;
+  map3dActive: boolean;
   totalStars: number;
   phrasePulse: boolean;
   canOpenKit: boolean;
@@ -32,6 +33,7 @@ export interface TopbarChromeProps {
   onSelectMission: (idx: number) => void;
   onToggleKit: () => void;
   onToggleMute: () => void;
+  onToggle3d: () => void;
   onChangeBudget: (band: BudgetBand) => void;
   onChangeLanguageComfort: (comfort: LanguageComfort) => void;
 }
@@ -50,6 +52,7 @@ export function TopbarChrome({
   weekPlan,
   activeMissionIndex,
   prefs,
+  map3dActive,
   totalStars,
   phrasePulse,
   canOpenKit,
@@ -58,6 +61,7 @@ export function TopbarChrome({
   onSelectMission,
   onToggleKit,
   onToggleMute,
+  onToggle3d,
   onChangeBudget,
   onChangeLanguageComfort,
 }: TopbarChromeProps): JSX.Element {
@@ -93,6 +97,19 @@ export function TopbarChrome({
           (weekReady || kitOpen) && (
             <AmbientMuteButton muted={prefs.musicMuted} onToggle={onToggleMute} />
           )}
+        {!tourActive && !kitOpen && config.featureFlags.enable3dDusk && (
+          <button
+            type="button"
+            className={map3dActive ? "mode-3d-pill mode-3d-pill-active" : "mode-3d-pill"}
+            aria-pressed={map3dActive}
+            aria-label={map3dActive ? "Switch map to 2D view" : "Switch map to 3D dusk view"}
+            onClick={onToggle3d}
+            data-testid="map-3d-toggle"
+          >
+            <span className="mode-3d-dot" aria-hidden="true" />
+            <span>3D</span>
+          </button>
+        )}
         {!tourActive && !kitOpen && (
           <TunePopover
             budgetBand={prefs.budgetBand}
