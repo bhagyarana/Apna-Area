@@ -116,8 +116,8 @@ Every phase runs on its own short-lived branch (`phase/<step>`) off `main`, merg
 
 ---
 
-## Phase 8 (Stretch Branch) · 3D Neon Dusk Open-World Mode (`phase/p8-3d-dusk` -> preview tag `p8-3d`)
-**Goal:** Deliver an opt-in/hardware-gated nocturnal 3D open-world map layer (`RenderingType.VECTOR` at `65deg` tilt/heading + Three.js `WebGLOverlayView` beacons & ORR traffic + Sky-Drop camera + heading-locked Radar Minimap) on isolated branch `phase/p8-3d-dusk` and deploy to a `--no-traffic --tag p8-3d` Cloud Run preview URL without touching `main` (`p7-submission`, `apna-area-00019-foc`).
+## Phase 8 · 3D Neon Dusk Open-World Mode (`phase/p8-3d-dusk` -> tag `p8-3d-dusk`)
+**Goal:** Deliver an opt-in/hardware-gated nocturnal 3D open-world map layer (`RenderingType.VECTOR` at `65deg` tilt/heading + Three.js `WebGLOverlayView` beacons & ORR traffic + Sky-Drop camera + heading-locked Radar Minimap), verify preview `p8-3d`, and promote via `--no-ff` merge to `main` (`p8-3d-dusk`).
 
 | Ticket | Mode | Tier | Est. | Allowed Files (`<= 250` lines each) | Goal & Proof Test |
 |---|---|---|---|---|---|

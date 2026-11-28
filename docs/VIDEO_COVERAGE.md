@@ -1,6 +1,6 @@
 # Demo Video Feature & Story Coverage Checklist (`docs/VIDEO_COVERAGE.md`)
 
-Every feature listed below is live on `main` (`ENABLED_LANGUAGES = ["en", "hi", "kn"]`, all 6 feature flags enabled in `shared/src/config.ts`). Tick each row during capture and edit so the video covers 100% of shipped functionality in the natural order a newcomer experiences it.
+Every feature listed below is live on `main` (`ENABLED_LANGUAGES = ["en", "hi", "kn"]`, all 7 feature flags enabled in `shared/src/config.ts`). Tick each row during capture and edit so the video covers 100% of shipped functionality in the natural order a newcomer experiences it.
 
 ## 1. Live Feature Coverage Checklist (User Journey Order)
 
@@ -19,11 +19,12 @@ Every feature listed below is live on `main` (`ENABLED_LANGUAGES = ["en", "hi", 
 | 11 | **Human-in-Control Difficulty Override** | Gives the player 1-click authority over AI difficulty routing before starting the next stop. | Inside `Why did this change?`, click `Switch to gentler pace` (then toggle back if desired) -> click `Next stop · Tuesday` -> start Stop 2 briefly to show adapted persona. | Summary and pills update instantaneously (`✓ Gentler pace locked`), proving AI advises while the player decides. | [ ] |
 | 12 | **Survival Kit: Routes API Commutes, TTS Phrasebook & Checklist** | Combines pre-warmed Monday `09:00` and `18:30` IST Google Routes API `computeRouteMatrix` bars (`DRIVE`, `TWO_WHEELER`, `TRANSIT`), `gemini-3.5-flash-lite` spatial notes, `gemini-3.8-flash-tts` (`Sulafat`) WAV replay, inline `Copy phrases`, and persisted move-in checklist. | Click `Phrases · 1` in the topbar (or `Survival Kit` while on `MissionResultCard`) -> play a Kannada phrase audio button -> click `Copy phrases` (`Copied`) -> check off 2 tasks in `Your first-week checklist`. | `"YOU'RE READY FOR MONDAY."` opens in `0 ms` (pre-warmed), highlighting the fastest commute mode in mint-teal and replaying crystal-clear `24 kHz` Kannada pronunciation. | [ ] |
 | 13 | **Mandatory Focus-Trapped Confirm Sheets** | Intercepts every external navigation (`Google Maps`) and local file export (`Save my kit` `1200x675` PNG) with an `@ui-sdk/react/alert-dialog` sheet stating exact destination/file details. | Click `Directions` on any neighbourhood -> press `Esc` or `Cancel` (proving zero popup) -> click `Directions` -> `Open Google Maps`; then click `Save my kit` -> `Download PNG`. | Focus traps cleanly inside the sheet and restores to the exact trigger on `Esc`/`Cancel`, then exports `apna-area-survival-kit.png` locally on explicit confirmation. | [ ] |
+| 14 | **3D Neon Dusk Open-World Layer & Radar Minimap** | Hardware-gated `RenderingType.VECTOR` (`65deg` Sky-Drop swoop, `1.2 deg/s` voice street orbit, `Q`/`E` camera rotation), lazy-loaded Three.js `WebGLOverlayView` vertical light pillars + `545`-point bi-directional ORR dusk traffic streaks, and `136x136px` heading-locked `RadarMinimap`. | Toggle the `3D` topbar pill on desktop (auto-enabled on hardware WebGL2 GPUs), pick an office to watch the parabolic Sky-Drop onto the `#FFD24A` light pillar, and press `E` / `Q` to rotate the camera and corner radar. | Extruded nocturnal Bengaluru streets, glowing waypoint beacons, and live neon ORR traffic streams come alive without touching the `< 195 KB` gzipped 2D bundle. | [ ] |
 
 ---
 
 ## 2. Disabled Flags Check
-- **Disabled features ("not in video"):** None. All 3 languages (`en`, `hi`, `kn`) and all 6 `DEFAULT_FEATURE_FLAGS` are active in production. (`Later` backlog stretch items such as `Map3DElement` 3D tiles were intentionally kept out of scope.)
+- **Disabled features ("not in video"):** None. All 3 languages (`en`, `hi`, `kn`) and all 7 `DEFAULT_FEATURE_FLAGS` (`enableMapPicker`, `enableDirector`, `enableVoiceNpcs`, `enableAdaptiveScoring`, `enableSurvivalKit`, `enableAmbientMusic`, `enable3dDusk`) are active in production. (`Map3DElement` Photorealistic 3D Tiles were replaced by Route A Vector 3D + `WebGLOverlayView` per `ADR-020` after verifying Indian photogrammetry meshes are not yet rolled out.)
 
 ## 3. Chapter-to-Feature Recording Spine (`1920x1080`, `30 fps`, `110%` Zoom)
 1. **0:00 - 0:25 · Hook, Frustration & "What If":** Ananya's offer letter in Bellandur -> static commute/rent overwhelm -> *"What if she could play her first week before it happens?"*

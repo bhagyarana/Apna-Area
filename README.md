@@ -15,7 +15,7 @@ Ananya is 24 and moving from Lucknow in two weeks to join a Bellandur tech park,
 
 ## Try It in 3 Steps (Under 3 Minutes)
 
-1. **Pick any ORR office:** Open https://apna-area-481049877093.asia-south1.run.app, watch or press `Esc` to skip the 8.8-second dusk corridor flight, and choose any verified tech park via `Ctrl/Cmd+K` or the 6 campus quick-pick chips (`RMZ Ecoworld`, `RMZ Ecospace`, `Embassy TechVillage`, `Prestige Tech Park`, `Cessna Business Park`, `Vaishnavi Tech Park`). Click `Build my first week` to watch `gemini-4-neon` stream a verified 5-stop plan.
+1. **Pick any ORR office:** Open https://apna-area-481049877093.asia-south1.run.app, watch or press `Esc` to skip the 8.8-second dusk corridor flight, and choose any verified tech park via `Ctrl/Cmd+K` or the 6 campus quick-pick chips (`RMZ Ecoworld`, `RMZ Ecospace`, `Embassy TechVillage`, `Prestige Tech Park`, `Cessna Business Park`, `Vaishnavi Tech Park`). On hardware-accelerated desktop GPUs, the **3D Neon Dusk** layer (`3D` pill in the topbar, `Q`/`E` orbit keys, and bottom-left `RadarMinimap`) activates automatically with a Sky-Drop swoop; mobile and software/reduced-motion viewports default cleanly to crisp 2D. Click `Build my first week` to watch `gemini-4-neon` stream a verified 5-stop plan.
 2. **Talk out loud in English, Hindi, or Kannada:** Click `Talk with <NPC>` on Stop 1 to open a live `gemini-3.8-live` voice scene (click the mic orb or press `Space` while it is focused to toggle mute, or click `Type instead` in a noisy hall). Speak the displayed polite Kannada survival phrase out loud to trigger the teal mastery pulse, ascending chime, and flying phrasebook card, then inspect the `Why did this change?` rubric scored by `gemini-decision-1`.
 3. **Keep your Survival Kit:** Click `Survival Kit` on the score card (or `Phrases · 1` in the topbar anytime) to open `"YOU'RE READY FOR MONDAY."` and compare real Monday `09:00` and `18:30` IST Google Routes API commutes across 3 nearby residential pockets, replay `gemini-3.8-flash-tts` Kannada audio, check off move-in tasks, and test the focus-trapped Confirm Sheet before opening Google Maps or downloading your `1200x675` PNG summary card.
 
@@ -37,14 +37,14 @@ Ananya is 24 and moving from Lucknow in two weeks to join a Bellandur tech park,
 ```mermaid
 flowchart LR
   subgraph Browser["Browser (React 19 + Vite + @vis.gl/react-google-maps + @ui-sdk/react)"]
-    MapUI["2D Vector ORR Map + Skippable Tour"]
+    MapUI["2D / 3D Vector ORR Map + Lazy Three.js Beacons & Radar"]
     HUD["Office Picker, Week Bar & Mission HUD"]
     LiveClient["AudioWorklet 16kHz In / 24kHz Out + WSS"]
     KitUI["Survival Kit + Focus-Trapped ConfirmSheet"]
   end
 
   subgraph CloudRun["Cloud Run Service (asia-south1, Node 22 + Fastify)"]
-    Static["SPA Static Bundle (< 190 KB gzip initial JS)"]
+    Static["SPA Static Bundle (< 195 KB gzip initial 2D JS)"]
     WorldAPI["POST /api/world (SSE + Verifier + Cache)"]
     TokenAPI["POST /api/live-token (v1alpha AuthToken)"]
     ScoreAPI["POST /api/score (Decisions Rubric)"]
@@ -126,9 +126,9 @@ npm run dev          # Starts shared build + Fastify API (:8080) + Vite dev serv
 
 ### Verification Suite
 ```bash
-npm run check        # Strict TypeScript across all 3 workspaces + ESLint (0 warnings) + 57 Vitest unit/contract tests
-npm run build        # Production build (initial JS < 190 KB gzipped)
-npm run test:smoke   # Runs all 7 Playwright E2E specs against the production server
+npm run check        # Strict TypeScript across all 3 workspaces + ESLint (0 warnings) + 61 Vitest unit/contract tests
+npm run build        # Production build (initial 2D JS < 195 KB gzipped; Three.js isolated in lazy vendor-three chunk)
+npm run test:smoke   # Runs all 8 Playwright E2E specs against the production server
 ```
 
 ### Deploy to Google Cloud Run (`asia-south1`)
@@ -159,6 +159,7 @@ Every milestone shipped on an isolated `phase/<step>` branch, passed automated t
 - [`p5-kit`](https://github.com/bhagyarana/Apna-Area/releases/tag/p5-kit) · Pre-warmed Google Routes API `computeRouteMatrix`, `gemini-3.8-flash-tts` replay, Lyria 3 mood loops, and `ConfirmSheet`
 - [`p6-demo-ready`](https://github.com/bhagyarana/Apna-Area/releases/tag/p6-demo-ready) · 2nd Carbon adversarial audit fixes, `< 190 KB` gzip initial JS, subtraction/a11y polish (`9.4/10` independent critic score), `?demo=1` timer, and 3 sub-3-minute live rehearsals
 - [`p7-submission`](https://github.com/bhagyarana/Apna-Area/releases/tag/p7-submission) · Judge submission pack, architecture overview, video coverage checklist, and full-history secret scan
+- [`p8-3d-dusk`](https://github.com/bhagyarana/Apna-Area/releases/tag/p8-3d-dusk) · Hardware-gated 3D Neon Dusk open-world mode (`RenderingType.VECTOR` `65deg` Sky-Drop + lazy Three.js `WebGLOverlayView` volumetric beacons & `545`-point bi-directional ORR traffic + heading-locked `RadarMinimap`)
 
 **Agent orchestration:** Built in Google Antigravity combining **Gemini 4 Carbon** (architecture, linguistic phrase review, fresh-context adversarial audits, code review gates, and blind screenshot-only design critiques across 3 rounds per UI phase), **Gemini 4 Neon** (phase orchestration and multi-model integration), and **Gemini 4 Hydrogen** (focused parallel implementation tickets).
 
@@ -166,7 +167,7 @@ Every milestone shipped on an isolated `phase/<step>` branch, passed automated t
 
 ## Credits & Licences
 
-- **Map & Routing Data:** Google Maps Platform (Maps JavaScript API via `@vis.gl/react-google-maps`, MIT Licence; Places API (New); and Routes API v2). Map data © Google.
+- **Map & Routing Data:** Google Maps Platform (Maps JavaScript API via `@vis.gl/react-google-maps`, MIT Licence; Places API (New); and Routes API v2) plus `three` (MIT Licence) for the lazy `WebGLOverlayView` 3D dusk layer. Map data © Google.
 - **Ambient Music:** 4 original 30-second instrumental loops generated at build time with Google **Lyria 3 Clip Preview** (`lyria-3-clip-preview`); metadata in [`web/public/audio/credits.json`](web/public/audio/credits.json).
 - **Character Portraits:** 10 original fictional character illustrations generated at build time with **Gemini Nano Banana 2.1** (`gemini-nano-banana-2.1`) in `web/public/art/npcs/`.
 - **UI Behaviour Primitives & Icons:** [`@ui-sdk/react`](https://ui-sdk.dev) (Apache-2.0 Licence) for accessible combobox, toolbar, popover, and alert-dialog focus management; [`@hugeicons/react`](https://hugeicons.com) (`@hugeicons/core-free-icons`, MIT Licence).
