@@ -110,6 +110,18 @@ Selected from `design/discover/variation-1.html` (with two alternatives preserve
     - Maps route: Title `Open this route in Google Maps?` · Target chip `google.com/maps · {{areaName}} to {{officeName}}` · Body `Opens google.com/maps in a new tab with directions from {{areaName}} to {{officeName}}. Nothing else is shared.` · Actions: `Open Google Maps` / `Cancel`.
     - Save kit: Title `Download your Survival Kit?` · Target chip `apna-area-survival-kit.png · 1200 x 675 summary card` · Body `Saves a PNG summary card to your device. No account or upload is used.` · Actions: `Download PNG` / `Cancel`.
 
+### 4.6 Optional 3D Neon Dusk Open-World Layer (`phase/p8-3d-dusk`)
+- **Originality & Compliance Rule:** 100% original Apna Area geometry, tokens (`#0E0A1C`, `#19132E`, `#FF4FA0`, `#FFD24A`, `#3DE6D0`), and `Anton` + `Hanken Grotesk` typography. Zero third-party game logos, key art, or Pricedown fonts. Keep `internalUsageAttributionIds={["gmp_git_agentskills_v1"]}` active and never obscure Google Maps logos or copyright attribution.
+- **Hardware Gate & `3D / 2D` Toggle:** Enabled on hardware-accelerated desktop WebGL2 viewports (`> 768px`, non-SwiftShader, `!prefers-reduced-motion`, `isWebGLOverlayViewAvailable === true`) with a `40px` smoked-acrylic `3D` toggle pill in `TopbarChrome.tsx` persisted in `sessionStore.ts` (`map3dEnabled`). Mobile, reduced-motion, and software/headless renderers default cleanly to 2D.
+- **3-Stage Sky-Drop Camera & Street Orbit (`CameraDirector3D.tsx`):**
+  - Selecting an office or starting a voice mission runs a parabolic sky-to-street camera swoop: corridor overview (`zoom 12.6`, `tilt 0deg`) -> corridor-aligned bank (`zoom 15.2`, `tilt 38deg`) -> street-level lock (`zoom 17.4`, `tilt 65deg`).
+  - During `inVoiceMission`, the camera orbits gently at `1.2 deg/s` around the active `VerifiedPlace` (pausing immediately on pointer drag or `prefers-reduced-motion`), with `Q` and `E` keyboard orbit shortcuts when no input holds focus.
+- **`WebGLOverlayView` Beacons & ORR Dusk Traffic (`OrrWebGlLayer.ts`):**
+  - Lazy-loaded Three.js scene anchored to `ORR_DEFAULT_CENTER` via `CoordinateTransformer`: translucent additive vertical light pillars rising from ground to sky at the selected tech park (`#FFD24A`) and 5 mission stops (`#FF4FA0` active, `#3DE6D0` completed) with subtle ground rings, plus `InstancedMesh` bi-directional tail-light (`#FF4FA0`) and headlight (`#FFD24A`) streaks flowing along all `545` verified `data/orr/corridor.geojson` coordinates.
+- **Heading-Locked Radar Minimap & Twilight Horizon (`RadarMinimap.tsx`, `map3d.css`):**
+  - `136x136px` smoked-acrylic corner radar (`bottom: 36px; left: 24px` on desktop, safely clearing Google Maps attribution; hidden during `tourActive` and `kitOpen`) rotating live with `cameraHeading` to plot the `#FF4FA0` ORR spine, camera FOV cone, office star, and `1..5` mission blips.
+  - When `tilt >= 50deg`, a subtle top `22%` horizon scrim (`#0E0A1C` -> `#231B3F` -> `8%` `#FF4FA0`) frames the tilted vector skyline.
+
 ## 5. Accessibility Checklist
 - Minimum `40x40px` hit target on every button, chip, pin, and audio control.
 - Keyboard-only operable across the entire loop (`Tab`, `Arrow` keys inside combobox and chips, `Cmd/Ctrl+K` for office picker, `Space` for push-to-talk strictly when the mic button holds focus, `Esc` to dismiss tour/sheets).
