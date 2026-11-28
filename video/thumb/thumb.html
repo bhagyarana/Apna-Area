@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@500;600&display=block" rel="stylesheet" />
+<style>
+  :root { --bg: #0E0A1C; --text: #F7F1FF; --muted: rgba(247,241,255,0.62); --pink: #FF4FA0; --faint: rgba(247,241,255,0.14); }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: var(--w); height: var(--h); background: var(--bg); overflow: hidden; }
+  .frame { position: relative; width: var(--w); height: var(--h); display: grid; grid-template-columns: var(--left) 1fr; align-items: center; font-family: "Hanken Grotesk", sans-serif; color: var(--text); }
+  .copy { padding-left: var(--pad); padding-right: 12px; }
+  .mark { font-family: Anton; font-size: calc(var(--u) * 15); letter-spacing: 0.16em; color: var(--muted); }
+  h1 { font-family: Anton; font-weight: 400; text-transform: uppercase; font-size: calc(var(--u) * 66); line-height: 0.98; margin-top: calc(var(--u) * 18); letter-spacing: 0.005em; }
+  h1 em { font-style: normal; color: var(--pink); }
+  .line { width: calc(var(--u) * 84); height: calc(var(--u) * 4); border-radius: 4px; background: var(--pink); margin-top: calc(var(--u) * 24); }
+  .sub { font-size: calc(var(--u) * 17); font-weight: 500; color: var(--muted); margin-top: calc(var(--u) * 16); line-height: 1.35; }
+  .shot { position: relative; height: calc(var(--h) - var(--pad) * 2); margin-right: var(--pad); border-radius: calc(var(--u) * 18); overflow: hidden; border: 1px solid var(--faint); }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos); display: block; }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="copy">
+      <div class="mark">APNA AREA</div>
+      <h1>Play Bengaluru<br />before you <em>move.</em></h1>
+      <div class="line"></div>
+      <div class="sub">Your first week as a voice game.<br />Real places. Real Kannada.</div>
+    </div>
+    <div class="shot"><img src="scene.png" /></div>
+  </div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const w = +(q.get("w") || 1120), h = +(q.get("h") || 560);
+  const u = h / 560;
+  const r = document.documentElement.style;
+  r.setProperty("--w", w + "px"); r.setProperty("--h", h + "px"); r.setProperty("--u", u + "px");
+  r.setProperty("--pad", Math.round(28 * u) + "px");
+  r.setProperty("--left", Math.round((w / h > 1.9 ? 470 : 500) * u) + "px");
+  r.setProperty("--pos", q.get("pos") || "50% 60%");
+</script>
+</body>
+</html>

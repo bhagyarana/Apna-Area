@@ -1,0 +1,21 @@
+{
+  "name": "apna-area-demo-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Demo out/demo_video.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.547",
+    "@remotion/google-fonts": "^4.0.547",
+    "@remotion/media-utils": "^4.0.547",
+    "@types/react": "^19.3.3",
+    "kokoro-js": "^1.2.1",
+    "playwright": "^1.50.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.547",
+    "typescript": "^7.0.2"
+  }
+}

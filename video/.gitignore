@@ -1,0 +1,6 @@
+node_modules/
+out/
+cache/
+public/shots/
+public/shots2/
+thumb/*.png

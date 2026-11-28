@@ -7,7 +7,5 @@ node_modules
 coverage
 playwright-report
 test-results
-apna-area-prompt-pack
-design
 docs
 e2e
