@@ -86,6 +86,30 @@ export const DEFAULT_FEATURE_FLAGS = {
   enableAdaptiveScoring: true,
   enableSurvivalKit: true,
   enableAmbientMusic: true,
+  enable3dDusk: true,
+} as const;
+
+/** Tunables for Phase 8 optional 3D Neon Dusk Open-World mode (RenderingType.VECTOR + WebGLOverlayView). */
+export const MAP_3D_CONFIG = {
+  overviewZoom: 12.6,
+  overviewTiltDeg: 0,
+  idleCorridorTiltDeg: 54,
+  midBankZoom: 15.2,
+  midBankTiltDeg: 38,
+  streetZoom: 17.4,
+  streetTiltDeg: 65,
+  corridorDefaultHeadingDeg: 32,
+  skyDropDurationMs: 1_350,
+  voiceOrbitDegPerSec: 1.2,
+  keyRotateStepDeg: 18,
+  horizonTiltThresholdDeg: 50,
+  pillarHeightMeters: 165,
+  pillarRadiusMeters: 14,
+  trafficStreakCountPerDir: 36,
+  trafficSpeedMetersPerSec: 38,
+  radarSizePx: 136,
+  radarRangeMeters: 2_600,
+  minDesktopWidthPx: 769,
 } as const;
 
 /** Tunables for Phase 5 Survival Kit commutes, summaries, TTS cache, and Lyria ambience. */

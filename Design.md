@@ -119,8 +119,8 @@ Selected from `design/discover/variation-1.html` (with two alternatives preserve
 - **`WebGLOverlayView` Beacons & ORR Dusk Traffic (`OrrWebGlLayer.ts`):**
   - Lazy-loaded Three.js scene anchored to `ORR_DEFAULT_CENTER` via `CoordinateTransformer`: translucent additive vertical light pillars rising from ground to sky at the selected tech park (`#FFD24A`) and 5 mission stops (`#FF4FA0` active, `#3DE6D0` completed) with subtle ground rings, plus `InstancedMesh` bi-directional tail-light (`#FF4FA0`) and headlight (`#FFD24A`) streaks flowing along all `545` verified `data/orr/corridor.geojson` coordinates.
 - **Heading-Locked Radar Minimap & Twilight Horizon (`RadarMinimap.tsx`, `map3d.css`):**
-  - `136x136px` smoked-acrylic corner radar (`bottom: 36px; left: 24px` on desktop, safely clearing Google Maps attribution; hidden during `tourActive` and `kitOpen`) rotating live with `cameraHeading` to plot the `#FF4FA0` ORR spine, camera FOV cone, office star, and `1..5` mission blips.
-  - When `tilt >= 50deg`, a subtle top `22%` horizon scrim (`#0E0A1C` -> `#231B3F` -> `8%` `#FF4FA0`) frames the tilted vector skyline.
+  - `136x136px` smoked-acrylic corner radar (`bottom: 36px; left: 24px` on desktop, safely clearing Google Maps attribution; hidden during `tourActive` and `kitOpen`) rotating live with `cameraHeading` around `ORR_DEFAULT_CENTER` on idle or the active camera focus once an office is chosen, plotting the `#FF4FA0` ORR spine, camera FOV cone, office star, and `1..5` mission blips.
+  - When `tilt >= 50deg`, a seamless top `22%` horizon scrim (`#0E0A1C` -> `#231B3F` -> `5%` `#FF4FA0` -> `0%`) frames the tilted vector skyline.
 
 ## 5. Accessibility Checklist
 - Minimum `40x40px` hit target on every button, chip, pin, and audio control.

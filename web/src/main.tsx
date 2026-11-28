@@ -10,6 +10,7 @@ import { createRoot } from "react-dom/client";
 import "./styles/tokens.css";
 import "./styles/shell.css";
 import "./styles/map.css";
+import "./styles/map3d.css";
 import "./styles/picker.css";
 import "./styles/tune.css";
 import "./styles/hud.css";
